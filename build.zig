@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // pkg/*
+    // pkg/core and frameworks/*
     inline for (.{
         "core",
         "ns",

@@ -1,18 +1,20 @@
 .{
-    .name = .obzc_vision,
+    .name = .obzc_mtl,
     .version = "0.1.0",
-    .fingerprint = 0xac774f18ad47b0ef,
+    .fingerprint = 0xd8ddc58e08bebe2a,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
-        .core = .{ .path = "../core" },
+        .core = .{ .path = "../../pkg/core" },
         .ns = .{ .path = "../ns" },
-        .@"core-graphics" = .{ .path = "../core-graphics" },
+        .@"core-foundation" = .{ .path = "../core-foundation" },
         .@"core-video" = .{ .path = "../core-video" },
+        .@"io-surface" = .{ .path = "../io-surface" },
     },
     .paths = .{
         "build.zig",
         "build.zig.zon",
         "src",
         "tests",
+        "translate",
     },
 }

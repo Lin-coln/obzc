@@ -55,7 +55,7 @@ const TestSuite = struct {
         const dep = b.dependency(package.name, .{ .target = self.options.target, .optimize = self.options.optimize });
 
         const package_test = dep.builder.top_level_steps.get("test") orelse {
-            log.err("pkg/{s} has no test step", .{package.name});
+            log.err("{s} has no test step", .{package.name});
             return error.MissingTestStep;
         };
         const step = &package_test.step;
@@ -96,16 +96,18 @@ fn selectPackages(b: *std.Build, input: ?[]const u8) ![]Package {
     }
 
     const io = b.graph.io;
-    b.dependOnDirectoryContents(b.path("pkg"));
-    const dir = try b.root.openDir(io, "pkg", .{ .iterate = true });
-    defer dir.close(io);
-
     var packages: std.ArrayList(Package) = .empty;
-    var iterator = dir.iterate();
-    while (try iterator.next(io)) |entry| {
-        if (entry.kind != .directory) continue;
-        if (input != null and !Static.containsName(requested.items, entry.name)) continue;
-        try packages.append(b.allocator, .init(try b.allocator.dupe(u8, entry.name)));
+    inline for (.{ "pkg", "frameworks" }) |directory| {
+        b.dependOnDirectoryContents(b.path(directory));
+        const dir = try b.root.openDir(io, directory, .{ .iterate = true });
+        defer dir.close(io);
+
+        var iterator = dir.iterate();
+        while (try iterator.next(io)) |entry| {
+            if (entry.kind != .directory) continue;
+            if (input != null and !Static.containsName(requested.items, entry.name)) continue;
+            try packages.append(b.allocator, .init(try b.allocator.dupe(u8, entry.name)));
+        }
     }
 
     if (input != null and packages.items.len != requested.items.len) {

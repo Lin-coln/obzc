@@ -1,14 +1,15 @@
 .{
-    .name = .obzc_mtl,
+    .name = .obzc_sck,
     .version = "0.1.0",
-    .fingerprint = 0xd8ddc58e08bebe2a,
+    .fingerprint = 0x55825ac17e7c2ac7,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
-        .core = .{ .path = "../core" },
+        .core = .{ .path = "../../pkg/core" },
         .ns = .{ .path = "../ns" },
         .@"core-foundation" = .{ .path = "../core-foundation" },
+        .@"core-graphics" = .{ .path = "../core-graphics" },
+        .@"core-media" = .{ .path = "../core-media" },
         .@"core-video" = .{ .path = "../core-video" },
-        .@"io-surface" = .{ .path = "../io-surface" },
     },
     .paths = .{
         "build.zig",

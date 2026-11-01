@@ -1,14 +1,12 @@
 .{
-    .name = .obzc_sck,
+    .name = .obzc_vision,
     .version = "0.1.0",
-    .fingerprint = 0x55825ac17e7c2ac7,
+    .fingerprint = 0xac774f18ad47b0ef,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
-        .core = .{ .path = "../core" },
+        .core = .{ .path = "../../pkg/core" },
         .ns = .{ .path = "../ns" },
-        .@"core-foundation" = .{ .path = "../core-foundation" },
         .@"core-graphics" = .{ .path = "../core-graphics" },
-        .@"core-media" = .{ .path = "../core-media" },
         .@"core-video" = .{ .path = "../core-video" },
     },
     .paths = .{
@@ -16,6 +14,5 @@
         "build.zig.zon",
         "src",
         "tests",
-        "translate",
     },
 }
