@@ -14,13 +14,11 @@
         .@"core-graphics" = .{ .path = "pkg/core-graphics" },
         .@"core-video" = .{ .path = "pkg/core-video" },
         .@"io-surface" = .{ .path = "pkg/io-surface" },
-        .macos = .{ .path = "shared/macos" },
     },
     .paths = .{
         "build.zig",
         "build.zig.zon",
         "pkg",
-        "shared",
         "build",
     },
 }

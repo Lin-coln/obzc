@@ -5,14 +5,14 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run ScreenCaptureKit tests");
-    const cf, const cg, const cm, const cv, const core, const ns = blk: {
+    const core, const cf, const cg, const cm, const cv, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
+            b.dependency("core", opts).module("core"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-graphics", opts).module("core-graphics"),
             b.dependency("core-media", opts).module("core-media"),
             b.dependency("core-video", opts).module("core-video"),
-            b.dependency("core", opts).module("core"),
             b.dependency("ns", opts).module("ns"),
         };
     };
