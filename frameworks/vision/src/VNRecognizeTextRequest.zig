@@ -1,7 +1,7 @@
 const std = @import("std");
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const cg = @import("core-graphics");
 const VNRecognizedTextObservation = @import("VNRecognizedTextObservation.zig").VNRecognizedTextObservation;
 
@@ -21,8 +21,8 @@ pub const VNRecognizeTextRequest = opaque {
 
     pub const recognitionLevel = h.prop("recognitionLevel", VNRequestTextRecognitionLevel).getter;
     pub const setRecognitionLevel = h.prop("recognitionLevel", VNRequestTextRecognitionLevel).setter;
-    pub const recognitionLanguages = h.prop("recognitionLanguages", *ns.NSArray(ns.NSString)).getter;
-    pub const setRecognitionLanguages = h.prop("recognitionLanguages", *ns.NSArray(ns.NSString)).setter;
+    pub const recognitionLanguages = h.prop("recognitionLanguages", *ns.Array(ns.String)).getter;
+    pub const setRecognitionLanguages = h.prop("recognitionLanguages", *ns.Array(ns.String)).setter;
     pub const usesLanguageCorrection = h.prop("usesLanguageCorrection", bool).getter;
     pub const setUsesLanguageCorrection = h.prop("usesLanguageCorrection", bool).setter;
     pub const minimumTextHeight = h.prop("minimumTextHeight", f32).getter;
@@ -31,7 +31,7 @@ pub const VNRecognizeTextRequest = opaque {
     pub const setRegionOfInterest = h.prop("regionOfInterest", cg.Rect).setter;
 
     /// Results are borrowed and remain null until the request has produced results.
-    pub const results = h.prop("results", ?*ns.NSArray(VNRecognizedTextObservation)).getter;
+    pub const results = h.prop("results", ?*ns.Array(VNRecognizedTextObservation)).getter;
 };
 
 test "VNRecognizeTextRequest: configure recognition and region of interest" {
@@ -59,9 +59,9 @@ test "VNRecognizeTextRequest: configure recognition and region of interest" {
     try std.testing.expectEqual(region.size.height, actual.size.height);
     try std.testing.expect(request.results() == null);
 
-    const language = ns.NSString.init("en-US").?;
+    const language = ns.String.init("en-US").?;
     defer language.release();
-    const languages = ns.NSArray(ns.NSString).init(&.{language});
+    const languages = ns.Array(ns.String).init(&.{language});
     defer languages.release();
     request.setRecognitionLanguages(languages);
 

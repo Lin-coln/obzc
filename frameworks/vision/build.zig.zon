@@ -5,7 +5,7 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .core = .{ .path = "../../pkg/core" },
-        .ns = .{ .path = "../ns" },
+        .foundation = .{ .path = "../foundation" },
         .@"core-graphics" = .{ .path = "../core-graphics" },
         .@"core-video" = .{ .path = "../core-video" },
     },

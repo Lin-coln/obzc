@@ -1,6 +1,6 @@
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const mtl = @import("mtl-abi");
 const MTLRenderPassDescriptor = @import("MTLRenderPassDescriptor.zig").MTLRenderPassDescriptor;
 const MTLRenderCommandEncoder = @import("MTLRenderCommandEncoder.zig").MTLRenderCommandEncoder;
@@ -21,5 +21,5 @@ pub const MTLCommandBuffer = opaque {
     pub const waitUntilCompleted = h.method("waitUntilCompleted", fn () void);
     pub const status = h.method("status", fn () mtl.MTLCommandBufferStatus);
     /// Borrowed error describing a failed command buffer.
-    pub const @"error" = h.method("error", fn () ?*ns.NSError);
+    pub const @"error" = h.method("error", fn () ?*ns.Error);
 };

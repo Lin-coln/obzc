@@ -2,7 +2,7 @@ const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const ios = @import("io-surface");
 const mtl = @import("mtl-abi");
 const MTLCommandQueue = @import("MTLCommandQueue.zig").MTLCommandQueue;
@@ -31,8 +31,8 @@ pub const MTLDevice = opaque {
     pub const newTextureWithIOSurface = h.method("newTextureWithDescriptor:iosurface:plane:", fn (*MTLTextureDescriptor, ?*ios.Surface, usize) ?*MTLTexture);
 
     /// Returns an owned library. Logs the SDK error when compilation fails.
-    pub fn newLibrary(self: *Self, source: *ns.NSString, options: ?*MTLCompileOptions) !*MTLLibrary {
-        var err: ?*ns.NSError = null;
+    pub fn newLibrary(self: *Self, source: *ns.String, options: ?*MTLCompileOptions) !*MTLLibrary {
+        var err: ?*ns.Error = null;
         const library = h.call(self, ?*MTLLibrary, "newLibraryWithSource:options:error:", .{ source, options, &err });
         if (library) |value| return value;
 
@@ -43,7 +43,7 @@ pub const MTLDevice = opaque {
 
     /// Returns an owned pipeline state. Logs the SDK error when creation fails.
     pub fn newRenderPipelineState(self: *Self, descriptor: *MTLRenderPipelineDescriptor) !*MTLRenderPipelineState {
-        var err: ?*ns.NSError = null;
+        var err: ?*ns.Error = null;
         const pipeline = h.call(self, ?*MTLRenderPipelineState, "newRenderPipelineStateWithDescriptor:error:", .{ descriptor, &err });
         if (pipeline) |value| return value;
 
@@ -58,7 +58,7 @@ test "MTLDevice: newLibrary rejects invalid shader source" {
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const source = ns.NSString.init("this is not a Metal shader").?;
+    const source = ns.String.init("this is not a Metal shader").?;
     defer source.release();
     try std.testing.expectError(error.NewLibraryFailed, device.newLibrary(source, null));
 }
@@ -68,7 +68,7 @@ test "MTLDevice: newRenderPipelineState reports incompatible shader interfaces" 
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const source = ns.NSString.init(
+    const source = ns.String.init(
         \\#include <metal_stdlib>
         \\using namespace metal;
         \\struct VertexOutput { float4 position [[position]]; float2 coordinate [[user(locn0)]]; };
@@ -79,11 +79,11 @@ test "MTLDevice: newRenderPipelineState reports incompatible shader interfaces" 
     defer source.release();
     const library = try device.newLibrary(source, null);
     defer library.release();
-    const vertex_name = ns.NSString.init("vertex_main").?;
+    const vertex_name = ns.String.init("vertex_main").?;
     defer vertex_name.release();
     const vertex = library.newFunction(vertex_name).?;
     defer vertex.release();
-    const fragment_name = ns.NSString.init("fragment_main").?;
+    const fragment_name = ns.String.init("fragment_main").?;
     defer fragment_name.release();
     const fragment = library.newFunction(fragment_name).?;
     defer fragment.release();

@@ -1,6 +1,6 @@
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const cg = @import("core-graphics");
 const SCRunningApplication = @import("SCRunningApplication.zig").SCRunningApplication;
 
@@ -16,5 +16,5 @@ pub const SCWindow = opaque {
     pub const frame = h.prop("frame", cg.Rect).getter;
     pub const windowLayer = h.prop("windowLayer", isize).getter;
     pub const owningApplication = h.prop("owningApplication", ?*SCRunningApplication).getter;
-    pub const title = h.prop("title", ?*ns.NSString).getter;
+    pub const title = h.prop("title", ?*ns.String).getter;
 };

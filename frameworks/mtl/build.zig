@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) void {
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-video", opts).module("core-video"),
             b.dependency("io-surface", opts).module("io-surface"),
-            b.dependency("ns", opts).module("ns"),
+            b.dependency("foundation", opts).module("foundation"),
         };
     };
 
@@ -33,7 +33,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "core", .module = core },
-                .{ .name = "ns", .module = ns },
+                .{ .name = "foundation", .module = ns },
                 .{ .name = "io-surface", .module = ios },
                 .{ .name = "mtl-abi", .module = mtl_abi },
             },
@@ -53,7 +53,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "core", .module = core },
-                .{ .name = "ns", .module = ns },
+                .{ .name = "foundation", .module = ns },
                 .{ .name = "mtl", .module = mtl },
                 .{ .name = "core-foundation", .module = cf },
                 .{ .name = "core-video", .module = cv },

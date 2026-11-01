@@ -11,7 +11,7 @@ pub fn build(b: *std.Build) void {
             b.dependency("core", opts).module("core"),
             b.dependency("core-graphics", opts).module("core-graphics"),
             b.dependency("core-video", opts).module("core-video"),
-            b.dependency("ns", opts).module("ns"),
+            b.dependency("foundation", opts).module("foundation"),
         };
     };
 
@@ -22,7 +22,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "core", .module = core },
-                .{ .name = "ns", .module = ns },
+                .{ .name = "foundation", .module = ns },
                 .{ .name = "core-graphics", .module = cg },
                 .{ .name = "core-video", .module = cv },
             },
@@ -46,7 +46,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "core", .module = core },
-                .{ .name = "ns", .module = ns },
+                .{ .name = "foundation", .module = ns },
                 .{ .name = "vision", .module = vision },
                 .{ .name = "core-video", .module = cv },
             },

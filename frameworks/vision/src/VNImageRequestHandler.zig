@@ -3,7 +3,7 @@ const builtin = @import("builtin");
 const core = @import("core");
 const Metadata = core.Metadata;
 const Object = core.ffi.Object;
-const ns = @import("ns");
+const ns = @import("foundation");
 const cv = @import("core-video");
 const VNRequest = @import("VNRequest.zig").VNRequest;
 const VNRecognizeTextRequest = @import("VNRecognizeTextRequest.zig").VNRecognizeTextRequest;
@@ -12,13 +12,13 @@ pub const VNImageRequestHandler = opaque {
     pub const metadata = Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
-    const Options = ns.NSDictionary(ns.NSString, Object);
+    const Options = ns.Dictionary(ns.String, Object);
 
     pub const retain = h.retain;
     pub const release = h.release;
 
     /// Retains the image source, which must not be modified while the handler is alive.
-    pub fn initWithData(data: *ns.NSData, options: *Options) *Self {
+    pub fn initWithData(data: *ns.Data, options: *Options) *Self {
         return h.call(h.cls.alloc(), *Self, "initWithData:options:", .{ data, options });
     }
 
@@ -28,8 +28,8 @@ pub const VNImageRequestHandler = opaque {
     }
 
     /// Runs the requests synchronously, logging the SDK error on failure.
-    pub fn performRequests(self: *Self, requests: *ns.NSArray(VNRequest)) !void {
-        var err: ?*ns.NSError = null;
+    pub fn performRequests(self: *Self, requests: *ns.Array(VNRequest)) !void {
+        var err: ?*ns.Error = null;
         const succeeded = h.call(self, bool, "performRequests:error:", .{ requests, &err });
         if (succeeded) return;
 
@@ -42,15 +42,15 @@ pub const VNImageRequestHandler = opaque {
 test "VNImageRequestHandler: invalid image data fails without producing results" {
     const pool = core.AutoReleasePool.create();
     defer pool.release();
-    const data = ns.NSData.init("not an image");
+    const data = ns.Data.init("not an image");
     defer data.release();
-    const options = ns.NSDictionary(ns.NSString, Object).new();
+    const options = ns.Dictionary(ns.String, Object).new();
     defer options.release();
     const handler = VNImageRequestHandler.initWithData(data, options);
     defer handler.release();
     const request = VNRecognizeTextRequest.new();
     defer request.release();
-    const requests = ns.NSArray(VNRequest).init(&.{@ptrCast(request)});
+    const requests = ns.Array(VNRequest).init(&.{@ptrCast(request)});
     defer requests.release();
 
     try std.testing.expectError(error.PerformRequestsFailed, handler.performRequests(requests));

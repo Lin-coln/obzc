@@ -5,7 +5,7 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .core = .{ .path = "pkg/core" },
-        .ns = .{ .path = "frameworks/ns" },
+        .foundation = .{ .path = "frameworks/foundation" },
         .sck = .{ .path = "frameworks/sck" },
         .mtl = .{ .path = "frameworks/mtl" },
         .vision = .{ .path = "frameworks/vision" },

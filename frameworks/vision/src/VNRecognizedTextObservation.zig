@@ -1,7 +1,7 @@
 const std = @import("std");
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const cg = @import("core-graphics");
 const VNRecognizedText = @import("VNRecognizedText.zig").VNRecognizedText;
 
@@ -17,7 +17,7 @@ pub const VNRecognizedTextObservation = opaque {
     pub const boundingBox = h.prop("boundingBox", cg.Rect).getter;
 
     /// Returns a borrowed array with at most the requested number of candidates.
-    pub const topCandidates = h.method("topCandidates:", fn (usize) *ns.NSArray(VNRecognizedText));
+    pub const topCandidates = h.method("topCandidates:", fn (usize) *ns.Array(VNRecognizedText));
 };
 
 test "VNRecognizedTextObservation: read a bounding box and confidence" {

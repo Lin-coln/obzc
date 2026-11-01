@@ -1,18 +1,18 @@
 const std = @import("std");
 const core = @import("core");
-const ns = @import("ns");
+const ns = @import("foundation");
 
 test "NSDictionary: nested arrays survive their creators and autorelease pool" {
-    const Strings = ns.NSArray(ns.NSString);
-    const Dictionary = ns.NSDictionary(ns.NSString, Strings);
+    const Strings = ns.Array(ns.String);
+    const Dictionary = ns.Dictionary(ns.String, Strings);
     const dictionary = created: {
         const pool = core.AutoReleasePool.create();
         defer pool.release();
-        const key = ns.NSString.init("nested collection contents").?;
+        const key = ns.String.init("nested collection contents").?;
         defer key.release();
-        const first = ns.NSString.init("first retained collection element").?;
+        const first = ns.String.init("first retained collection element").?;
         defer first.release();
-        const second = ns.NSString.init("second retained collection element").?;
+        const second = ns.String.init("second retained collection element").?;
         defer second.release();
         const strings = Strings.init(&.{ first, second });
         defer strings.release();
@@ -22,7 +22,7 @@ test "NSDictionary: nested arrays survive their creators and autorelease pool" {
     defer dictionary.release();
 
     // Look up an equal key created after the original key and pool were released.
-    const key = ns.NSString.init("nested collection contents").?;
+    const key = ns.String.init("nested collection contents").?;
     defer key.release();
     const strings = dictionary.objectForKey(key).?;
     try std.testing.expectEqual(1, dictionary.count());

@@ -1,7 +1,7 @@
 const std = @import("std");
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const cg = @import("core-graphics");
 const SCWindow = @import("SCWindow.zig").SCWindow;
 
@@ -13,12 +13,12 @@ pub const SCShareableContent = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const windows = h.prop("windows", *ns.NSArray(SCWindow)).getter;
+    pub const windows = h.prop("windows", *ns.Array(SCWindow)).getter;
 
     /// The context pointer must remain valid until the completion handler returns.
     pub const getShareableContent = h.cls.m.withCallback(
         "getShareableContentWithCompletionHandler:",
-        fn (fn (?*Self, ?*ns.NSError) void) void,
+        fn (fn (?*Self, ?*ns.Error) void) void,
     );
 
     /// Returns retained content. The caller must release the result.
@@ -39,7 +39,7 @@ test "SCShareableContent: getShareableContent invokes a Zig completion" {
         received_content: bool = false,
         error_code: ?isize = null,
 
-        fn complete(state: *@This(), content: ?*SCShareableContent, err: ?*ns.NSError) void {
+        fn complete(state: *@This(), content: ?*SCShareableContent, err: ?*ns.Error) void {
             state.received_content = content != null;
             if (err) |value| state.error_code = value.code();
             state.ready.post(std.testing.io);

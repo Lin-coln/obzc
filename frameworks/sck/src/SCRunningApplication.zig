@@ -1,6 +1,6 @@
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 
 pub const SCRunningApplication = opaque {
     pub const metadata = Metadata.obj;
@@ -11,5 +11,5 @@ pub const SCRunningApplication = opaque {
     pub const release = h.release;
 
     /// The returned name is borrowed from the application.
-    pub const applicationName = h.prop("applicationName", *ns.NSString).getter;
+    pub const applicationName = h.prop("applicationName", *ns.String).getter;
 };

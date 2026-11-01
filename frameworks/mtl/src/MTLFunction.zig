@@ -15,17 +15,17 @@ pub const MTLFunction = opaque {
 };
 
 test "MTLFunction: functionType identifies a compute function" {
-    const ns = @import("ns");
+    const ns = @import("foundation");
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const source = ns.NSString.init("kernel void compute() {}").?;
+    const source = ns.String.init("kernel void compute() {}").?;
     defer source.release();
     const library = try device.newLibrary(source, null);
     defer library.release();
-    const name = ns.NSString.init("compute").?;
+    const name = ns.String.init("compute").?;
     defer name.release();
     const function = library.newFunction(name).?;
     defer function.release();

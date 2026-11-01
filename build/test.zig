@@ -13,7 +13,7 @@ pub fn addTestStep(b: *std.Build, options: Options) !void {
 }
 
 const Package = struct {
-    const Stage = enum { core, ns, rest };
+    const Stage = enum { core, foundation, rest };
 
     name: []const u8,
     stage: Stage,
@@ -21,8 +21,8 @@ const Package = struct {
     fn init(name: []const u8) Package {
         const stage: Stage = if (std.mem.eql(u8, name, "core"))
             .core
-        else if (std.mem.eql(u8, name, "ns"))
-            .ns
+        else if (std.mem.eql(u8, name, "foundation"))
+            .foundation
         else
             .rest;
         return .{ .name = name, .stage = stage };
@@ -61,7 +61,7 @@ const TestSuite = struct {
         const step = &package_test.step;
         if (self.prerequisite) |previous| step.dependOn(previous);
         self.step.dependOn(step);
-        // Core and ns gate later stages; remaining packages can run together.
+        // Core and Foundation gate later stages; remaining packages can run together.
         if (package.stage != .rest) self.prerequisite = step;
     }
 };

@@ -2,7 +2,7 @@ const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 const SCContentFilter = @import("SCContentFilter.zig").SCContentFilter;
 const SCStreamConfiguration = @import("SCStreamConfiguration.zig").SCStreamConfiguration;
 const SCStreamDelegate = @import("SCStreamDelegate.zig").SCStreamDelegate;
@@ -31,7 +31,7 @@ pub const SCStream = opaque {
 
     /// Adds an output, logging the SDK error on failure.
     pub fn addStreamOutput(self: *Self, output: *SCStreamOutput, output_type: SCStreamOutputType, sample_handler_queue: ?dispatch.queue_t) !void {
-        var err: ?*ns.NSError = null;
+        var err: ?*ns.Error = null;
         const succeeded = h.call(self, bool, "addStreamOutput:type:sampleHandlerQueue:error:", .{ output, output_type, sample_handler_queue, &err });
         if (succeeded) return;
 
@@ -42,7 +42,7 @@ pub const SCStream = opaque {
 
     /// Removes an output, logging the SDK error on failure.
     pub fn removeStreamOutput(self: *Self, output: *SCStreamOutput, output_type: SCStreamOutputType) !void {
-        var err: ?*ns.NSError = null;
+        var err: ?*ns.Error = null;
         const succeeded = h.call(self, bool, "removeStreamOutput:type:error:", .{ output, output_type, &err });
         if (succeeded) return;
 
@@ -51,10 +51,10 @@ pub const SCStream = opaque {
         return error.RemoveStreamOutputFailed;
     }
 
-    pub const startCapture = h.obj.m.withCallback("startCaptureWithCompletionHandler:", fn (fn (?*ns.NSError) void) void);
-    pub const stopCapture = h.obj.m.withCallback("stopCaptureWithCompletionHandler:", fn (fn (?*ns.NSError) void) void);
-    pub const updateContentFilter = h.obj.m.withCallback("updateContentFilter:completionHandler:", fn (*SCContentFilter, fn (?*ns.NSError) void) void);
-    pub const updateConfiguration = h.obj.m.withCallback("updateConfiguration:completionHandler:", fn (*SCStreamConfiguration, fn (?*ns.NSError) void) void);
+    pub const startCapture = h.obj.m.withCallback("startCaptureWithCompletionHandler:", fn (fn (?*ns.Error) void) void);
+    pub const stopCapture = h.obj.m.withCallback("stopCaptureWithCompletionHandler:", fn (fn (?*ns.Error) void) void);
+    pub const updateContentFilter = h.obj.m.withCallback("updateContentFilter:completionHandler:", fn (*SCContentFilter, fn (?*ns.Error) void) void);
+    pub const updateConfiguration = h.obj.m.withCallback("updateConfiguration:completionHandler:", fn (*SCStreamConfiguration, fn (?*ns.Error) void) void);
 
     /// Waits for completion. The calling thread must not be needed to deliver the callback.
     pub const startCaptureSync = h.obj.m.withSync("startCaptureWithCompletionHandler:", fn () anyerror!void);

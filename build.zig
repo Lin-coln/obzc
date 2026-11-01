@@ -7,7 +7,7 @@ pub fn build(b: *std.Build) !void {
     // pkg/core and frameworks/*
     inline for (.{
         "core",
-        "ns",
+        "foundation",
         "sck",
         "mtl",
         "vision",

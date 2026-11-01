@@ -31,13 +31,13 @@ test "MTLRenderPipelineDescriptor: new has empty function slots" {
 }
 
 test "MTLRenderPipelineDescriptor: function slots store and clear functions independently" {
-    const ns = @import("ns");
+    const ns = @import("foundation");
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const source = ns.NSString.init(
+    const source = ns.String.init(
         \\#include <metal_stdlib>
         \\using namespace metal;
         \\vertex float4 vertex_main() { return float4(0); }
@@ -46,11 +46,11 @@ test "MTLRenderPipelineDescriptor: function slots store and clear functions inde
     defer source.release();
     const library = try device.newLibrary(source, null);
     defer library.release();
-    const vertex_name = ns.NSString.init("vertex_main").?;
+    const vertex_name = ns.String.init("vertex_main").?;
     defer vertex_name.release();
     const vertex = library.newFunction(vertex_name).?;
     defer vertex.release();
-    const fragment_name = ns.NSString.init("fragment_main").?;
+    const fragment_name = ns.String.init("fragment_main").?;
     defer fragment_name.release();
     const fragment = library.newFunction(fragment_name).?;
     defer fragment.release();

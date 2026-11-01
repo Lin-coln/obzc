@@ -1,6 +1,6 @@
 const std = @import("std");
 const core = @import("core");
-const ns = @import("ns");
+const ns = @import("foundation");
 const cf = @import("core-foundation");
 const cv = @import("core-video");
 const mtl = @import("mtl");
@@ -33,7 +33,7 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
         @memset(pixels[0 .. pixel_buffer.getBytesPerRow() * 4], 0);
     }
 
-    const source = ns.NSString.init(
+    const source = ns.String.init(
         \\#include <metal_stdlib>
         \\using namespace metal;
         \\vertex float4 vertex_main(uint id [[vertex_id]], constant float4 &offset [[buffer(0)]]) {
@@ -49,11 +49,11 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer options.release();
     const library = try device.newLibrary(source, options);
     defer library.release();
-    const vertex_name = ns.NSString.init("vertex_main").?;
+    const vertex_name = ns.String.init("vertex_main").?;
     defer vertex_name.release();
     const vertex = library.newFunction(vertex_name).?;
     defer vertex.release();
-    const fragment_name = ns.NSString.init("fragment_main").?;
+    const fragment_name = ns.String.init("fragment_main").?;
     defer fragment_name.release();
     const fragment = library.newFunction(fragment_name).?;
     defer fragment.release();

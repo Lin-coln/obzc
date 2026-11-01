@@ -1,6 +1,6 @@
 const core = @import("core");
 const Metadata = core.Metadata;
-const ns = @import("ns");
+const ns = @import("foundation");
 
 pub const VNRecognizedText = opaque {
     pub const metadata = Metadata.obj;
@@ -12,5 +12,5 @@ pub const VNRecognizedText = opaque {
 
     pub const confidence = h.prop("confidence", f32).getter;
     /// The string is borrowed from the recognized text.
-    pub const string = h.prop("string", *ns.NSString).getter;
+    pub const string = h.prop("string", *ns.String).getter;
 };
