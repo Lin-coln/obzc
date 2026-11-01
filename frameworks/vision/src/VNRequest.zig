@@ -1,8 +1,7 @@
 const core = @import("core");
-const Metadata = core.Metadata;
 
 pub const VNRequest = opaque {
-    pub const metadata = Metadata.obj;
+    pub const metadata = core.Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
 

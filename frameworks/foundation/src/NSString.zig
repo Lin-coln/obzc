@@ -1,9 +1,8 @@
 const std = @import("std");
 const core = @import("core");
-const Metadata = core.Metadata;
 
 pub const NSString = opaque {
-    pub const metadata = Metadata.obj;
+    pub const metadata = core.Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
     const utf8_encoding: usize = 4; // NSUTF8StringEncoding in Foundation/NSString.h.

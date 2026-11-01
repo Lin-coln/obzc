@@ -1,6 +1,5 @@
 const std = @import("std");
 const core = @import("core");
-const Metadata = core.Metadata;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const VNRecognizedTextObservation = @import("VNRecognizedTextObservation.zig").VNRecognizedTextObservation;
@@ -11,7 +10,7 @@ pub const VNRequestTextRecognitionLevel = enum(isize) {
 };
 
 pub const VNRecognizeTextRequest = opaque {
-    pub const metadata = Metadata.obj;
+    pub const metadata = core.Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
 

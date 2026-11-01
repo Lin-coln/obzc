@@ -1,18 +1,16 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
-const Metadata = core.Metadata;
-const Object = core.ffi.Object;
 const ns = @import("foundation");
 const cv = @import("core-video");
 const VNRequest = @import("VNRequest.zig").VNRequest;
 const VNRecognizeTextRequest = @import("VNRecognizeTextRequest.zig").VNRecognizeTextRequest;
 
 pub const VNImageRequestHandler = opaque {
-    pub const metadata = Metadata.obj;
+    pub const metadata = core.Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
-    const Options = ns.Dictionary(ns.String, Object);
+    const Options = ns.Dictionary(ns.String, core.ffi.Object);
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -44,7 +42,7 @@ test "VNImageRequestHandler: invalid image data fails without producing results"
     defer pool.release();
     const data = ns.Data.init("not an image");
     defer data.release();
-    const options = ns.Dictionary(ns.String, Object).new();
+    const options = ns.Dictionary(ns.String, core.ffi.Object).new();
     defer options.release();
     const handler = VNImageRequestHandler.initWithData(data, options);
     defer handler.release();

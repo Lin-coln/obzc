@@ -1,12 +1,8 @@
 const std = @import("std");
 const core = @import("core");
-const Object = core.ffi.Object;
 const ns = @import("foundation");
-const vision = @import("vision");
+const vn = @import("vision");
 const cv = @import("core-video");
-const VNRequest = vision.VNRequest;
-const VNRecognizeTextRequest = vision.VNRecognizeTextRequest;
-const VNImageRequestHandler = vision.VNImageRequestHandler;
 
 test "text recognition: encoded image data produces readable candidates" {
     const pool = core.AutoReleasePool.create();
@@ -14,12 +10,12 @@ test "text recognition: encoded image data produces readable candidates" {
     const handler = blk: {
         const data = ns.Data.init(@embedFile("fixtures/text.png"));
         defer data.release();
-        const options = ns.Dictionary(ns.String, Object).new();
+        const options = ns.Dictionary(ns.String, core.ffi.Object).new();
         defer options.release();
-        break :blk VNImageRequestHandler.initWithData(data, options);
+        break :blk vn.ImageRequestHandler.initWithData(data, options);
     };
     defer handler.release();
-    const request = VNRecognizeTextRequest.new();
+    const request = vn.RecognizeTextRequest.new();
     defer request.release();
     request.setRecognitionLevel(.fast);
     request.setUsesLanguageCorrection(false);
@@ -28,7 +24,7 @@ test "text recognition: encoded image data produces readable candidates" {
     const languages = ns.Array(ns.String).init(&.{language});
     defer languages.release();
     request.setRecognitionLanguages(languages);
-    const requests = ns.Array(VNRequest).init(&.{@ptrCast(request)});
+    const requests = ns.Array(vn.Request).init(&.{@ptrCast(request)});
     defer requests.release();
 
     // The handler must keep the image source alive after its caller releases it.
@@ -73,16 +69,16 @@ test "text recognition: a blank pixel buffer produces an empty result" {
             const pixels = pixel_buffer.getBaseAddress().?;
             @memset(pixels[0..pixel_buffer.getDataSize()], 255);
         }
-        const options = ns.Dictionary(ns.String, Object).new();
+        const options = ns.Dictionary(ns.String, core.ffi.Object).new();
         defer options.release();
-        break :created VNImageRequestHandler.initWithCVPixelBuffer(pixel_buffer, options);
+        break :created vn.ImageRequestHandler.initWithCVPixelBuffer(pixel_buffer, options);
     };
     defer handler.release();
-    const request = VNRecognizeTextRequest.new();
+    const request = vn.RecognizeTextRequest.new();
     defer request.release();
     request.setRecognitionLevel(.fast);
     request.setUsesLanguageCorrection(false);
-    const requests = ns.Array(VNRequest).init(&.{@ptrCast(request)});
+    const requests = ns.Array(vn.Request).init(&.{@ptrCast(request)});
     defer requests.release();
 
     // The handler owns the image source after the caller releases its pixel buffer.

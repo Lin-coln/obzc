@@ -8,8 +8,8 @@ pub fn build(b: *std.Build) !void {
     inline for (.{
         "core",
         "foundation",
-        "sck",
-        "mtl",
+        "screen-capture-kit",
+        "metal",
         "vision",
         "core-media",
         "core-foundation",
@@ -22,6 +22,6 @@ pub fn build(b: *std.Build) !void {
     }
 
     // zig build test                 Run tests for every package.
-    // zig build test -Dpkg=mtl,sck   Run tests for the selected packages.
+    // zig build test -Dpkg=metal,screen-capture-kit   Run tests for the selected packages.
     try @import("build/test.zig").addTestStep(b, .{ .target = target, .optimize = optimize });
 }

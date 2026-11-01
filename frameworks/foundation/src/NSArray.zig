@@ -1,10 +1,9 @@
 const std = @import("std");
 const core = @import("core");
-const Metadata = core.Metadata;
 
 pub fn NSArray(comptime T: type) type {
     return opaque {
-        pub const metadata = Metadata.obj;
+        pub const metadata = core.Metadata.obj;
         const Self = @This();
         const h = core.h(Self);
 

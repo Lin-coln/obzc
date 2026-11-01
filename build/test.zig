@@ -44,7 +44,7 @@ const TestSuite = struct {
     fn init(b: *std.Build, options: Options) TestSuite {
         return .{
             .build = b,
-            .step = b.step("test", "Run package tests (optional: -Dpkg=mtl,sck)"),
+            .step = b.step("test", "Run package tests (optional: -Dpkg=metal,screen-capture-kit)"),
             .options = options,
             .package_names = b.option([]const u8, "pkg", "Packages to test, comma separated (default: all)"),
         };
@@ -88,7 +88,7 @@ fn selectPackages(b: *std.Build, input: ?[]const u8) ![]Package {
         var parts = std.mem.splitScalar(u8, names, ',');
         while (parts.next()) |name| {
             if (name.len == 0) {
-                log.err("empty package name in -Dpkg; example: -Dpkg=mtl,sck", .{});
+                log.err("empty package name in -Dpkg; example: -Dpkg=metal,screen-capture-kit", .{});
                 return error.EmptyPackageName;
             }
             if (!Static.containsName(requested.items, name)) try requested.append(b.allocator, name);

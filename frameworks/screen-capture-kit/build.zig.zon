@@ -1,0 +1,21 @@
+.{
+    .name = .obzc_screen_capture_kit,
+    .version = "0.1.0",
+    .fingerprint = 0x319ef03dd702850d,
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{
+        .core = .{ .path = "../../pkg/core" },
+        .foundation = .{ .path = "../foundation" },
+        .@"core-foundation" = .{ .path = "../core-foundation" },
+        .@"core-graphics" = .{ .path = "../core-graphics" },
+        .@"core-media" = .{ .path = "../core-media" },
+        .@"core-video" = .{ .path = "../core-video" },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "tests",
+        "translate",
+    },
+}

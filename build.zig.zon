@@ -6,8 +6,8 @@
     .dependencies = .{
         .core = .{ .path = "pkg/core" },
         .foundation = .{ .path = "frameworks/foundation" },
-        .sck = .{ .path = "frameworks/sck" },
-        .mtl = .{ .path = "frameworks/mtl" },
+        .@"screen-capture-kit" = .{ .path = "frameworks/screen-capture-kit" },
+        .metal = .{ .path = "frameworks/metal" },
         .vision = .{ .path = "frameworks/vision" },
         .@"core-media" = .{ .path = "frameworks/core-media" },
         .@"core-foundation" = .{ .path = "frameworks/core-foundation" },

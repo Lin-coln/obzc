@@ -1,12 +1,10 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
-const Metadata = core.Metadata;
-const Object = core.ffi.Object;
 const NSString = @import("NSString.zig").NSString;
 
 pub const NSError = opaque {
-    pub const metadata = Metadata.obj;
+    pub const metadata = core.Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
 
@@ -22,7 +20,7 @@ pub const NSError = opaque {
             allocated,
             ?*Self,
             "initWithDomain:code:userInfo:",
-            .{ domain_string, error_code, @as(?*Object, null) },
+            .{ domain_string, error_code, @as(?*core.ffi.Object, null) },
         );
     }
 
