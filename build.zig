@@ -11,7 +11,11 @@ pub fn build(b: *std.Build) !void {
         "sck",
         "mtl",
         "vision",
-        "cm",
+        "core-media",
+        "core-foundation",
+        "core-graphics",
+        "core-video",
+        "io-surface",
     }) |name| {
         const dep = b.dependency(name, .{ .target = target, .optimize = optimize });
         try b.modules.put(b.graph.arena, name, dep.module(name));

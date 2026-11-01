@@ -1,0 +1,17 @@
+.{
+    .name = .obzc_core_media,
+    .version = "0.1.0",
+    .fingerprint = 0x47d0ab3f7416329e,
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{
+        .@"core-foundation" = .{ .path = "../core-foundation" },
+        .@"core-video" = .{ .path = "../core-video" },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "root.zig",
+        "ffi",
+        "src",
+    },
+}

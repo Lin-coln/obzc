@@ -1,9 +1,11 @@
 .{
-    .name = .obzc_cm,
+    .name = .obzc_core_video,
     .version = "0.1.0",
-    .fingerprint = 0x256ca1ac43acd242,
+    .fingerprint = 0x513bd01fb98f8680,
     .minimum_zig_version = "0.17.0",
-    .dependencies = .{},
+    .dependencies = .{
+        .@"io-surface" = .{ .path = "../io-surface" },
+    },
     .paths = .{
         "build.zig",
         "build.zig.zon",

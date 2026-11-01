@@ -9,6 +9,11 @@
         .sck = .{ .path = "pkg/sck" },
         .mtl = .{ .path = "pkg/mtl" },
         .vision = .{ .path = "pkg/vision" },
+        .@"core-media" = .{ .path = "pkg/core-media" },
+        .@"core-foundation" = .{ .path = "pkg/core-foundation" },
+        .@"core-graphics" = .{ .path = "pkg/core-graphics" },
+        .@"core-video" = .{ .path = "pkg/core-video" },
+        .@"io-surface" = .{ .path = "pkg/io-surface" },
         .macos = .{ .path = "shared/macos" },
     },
     .paths = .{
