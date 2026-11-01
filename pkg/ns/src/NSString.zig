@@ -11,6 +11,9 @@ pub const NSString = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
+    /// Returns an autoreleased string. Use it within an autorelease pool.
+    pub const stringWithUTF8String = h.cls.m.of("stringWithUTF8String:", fn ([*:0]const u8) ?*Self);
+
     pub fn init(utf8: []const u8) ?*Self {
         const allocated: *Self = h.cls.alloc();
         return h.call(allocated, ?*Self, "initWithBytes:length:encoding:", .{ utf8.ptr, utf8.len, utf8_encoding });
