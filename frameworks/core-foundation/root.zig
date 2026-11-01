@@ -4,11 +4,11 @@ pub const ffi = @import("ffi/root.zig");
 pub const c = ffi.c;
 
 const src = @import("src/root.zig");
-pub const Array = src.Array;
-pub const Dictionary = src.Dictionary;
-pub const MutableDictionary = src.MutableDictionary;
-pub const Number = src.Number;
-pub const String = src.String;
+pub const Array = src.CFArray;
+pub const Dictionary = src.CFDictionary;
+pub const MutableDictionary = src.CFMutableDictionary;
+pub const Number = src.CFNumber;
+pub const String = src.CFString;
 
 pub const retain = src.retain;
 pub const release = src.release;

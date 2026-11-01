@@ -1,6 +1,6 @@
 const c = @import("../ffi/root.zig").c;
 
-pub const Array = opaque {
+pub const CFArray = opaque {
     const Self = @This();
 
     pub fn getCount(self: *const Self) c.CFIndex {

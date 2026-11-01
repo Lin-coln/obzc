@@ -1,6 +1,6 @@
 const std = @import("std");
 
-pub const Surface = @import("Surface.zig").Surface;
+pub const IOSurface = @import("IOSurface.zig").IOSurface;
 
 test {
     std.testing.refAllDecls(@This());

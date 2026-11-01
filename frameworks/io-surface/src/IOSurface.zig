@@ -1,6 +1,6 @@
 const c = @import("../ffi/root.zig").c;
 
-pub const Surface = opaque {
+pub const IOSurface = opaque {
     const Self = @This();
 
     pub fn incrementUseCount(self: *Self) void {

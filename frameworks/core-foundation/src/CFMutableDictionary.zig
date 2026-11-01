@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("../ffi/root.zig").c;
 
-pub const MutableDictionary = opaque {
+pub const CFMutableDictionary = opaque {
     const Self = @This();
 
     pub fn create() ?*Self {
@@ -19,11 +19,11 @@ pub const MutableDictionary = opaque {
 };
 
 test "mutable dictionary stores a value" {
-    const dict = MutableDictionary.create().?;
+    const dict = CFMutableDictionary.create().?;
     defer c.CFRelease(@ptrCast(dict));
 
     dict.setValue(@ptrCast(c.kCFBooleanTrue), @ptrCast(c.kCFBooleanFalse));
-    const read_only: *const @import("Dictionary.zig").Dictionary = @ptrCast(dict);
+    const read_only: *const @import("CFDictionary.zig").CFDictionary = @ptrCast(dict);
     const value = read_only.getValue(@ptrCast(c.kCFBooleanTrue), anyopaque).?;
     try std.testing.expectEqual(@intFromPtr(c.kCFBooleanFalse.?), @intFromPtr(value));
 }

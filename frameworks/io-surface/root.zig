@@ -4,7 +4,7 @@ pub const ffi = @import("ffi/root.zig");
 pub const c = ffi.c;
 
 const src = @import("src/root.zig");
-pub const Surface = src.Surface;
+pub const Surface = src.IOSurface;
 
 test {
     std.testing.refAllDecls(@This());

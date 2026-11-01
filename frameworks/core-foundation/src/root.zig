@@ -1,10 +1,10 @@
 const std = @import("std");
 
-pub const Array = @import("Array.zig").Array;
-pub const Dictionary = @import("Dictionary.zig").Dictionary;
-pub const MutableDictionary = @import("MutableDictionary.zig").MutableDictionary;
-pub const Number = @import("Number.zig").Number;
-pub const String = @import("String.zig").String;
+pub const CFArray = @import("CFArray.zig").CFArray;
+pub const CFDictionary = @import("CFDictionary.zig").CFDictionary;
+pub const CFMutableDictionary = @import("CFMutableDictionary.zig").CFMutableDictionary;
+pub const CFNumber = @import("CFNumber.zig").CFNumber;
+pub const CFString = @import("CFString.zig").CFString;
 
 const c = @import("../ffi/root.zig").c;
 

@@ -1,6 +1,6 @@
 const c = @import("../ffi/root.zig").c;
 
-pub const Dictionary = opaque {
+pub const CFDictionary = opaque {
     const Self = @This();
 
     pub fn getValue(self: *const Self, key: ?*const anyopaque, comptime T: type) ?*const T {

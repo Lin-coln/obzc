@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("../ffi/root.zig").c;
 
-pub const Time = extern struct {
+pub const CMTime = extern struct {
     const Self = @This();
 
     value: c.CMTimeValue align(4),
@@ -20,11 +20,11 @@ pub const Time = extern struct {
 };
 
 test "Time matches CMTime layout" {
-    try std.testing.expectEqual(@sizeOf(c.CMTime), @sizeOf(Time));
-    try std.testing.expectEqual(@alignOf(c.CMTime), @alignOf(Time));
+    try std.testing.expectEqual(@sizeOf(c.CMTime), @sizeOf(CMTime));
+    try std.testing.expectEqual(@alignOf(c.CMTime), @alignOf(CMTime));
     inline for (.{ "value", "timescale", "flags", "epoch" }) |field| {
-        try std.testing.expectEqual(@offsetOf(c.CMTime, field), @offsetOf(Time, field));
+        try std.testing.expectEqual(@offsetOf(c.CMTime, field), @offsetOf(CMTime, field));
     }
-    const time = Time.make(1, 60);
+    const time = CMTime.make(1, 60);
     try std.testing.expectEqual(time.value, time.raw().value);
 }

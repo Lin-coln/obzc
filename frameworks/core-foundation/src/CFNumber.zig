@@ -1,6 +1,6 @@
 const c = @import("../ffi/root.zig").c;
 
-pub const Number = opaque {
+pub const CFNumber = opaque {
     const Self = @This();
 
     pub fn getValue(self: *const Self, comptime T: type) ?T {

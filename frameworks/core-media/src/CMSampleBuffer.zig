@@ -2,7 +2,7 @@ const cf = @import("core-foundation");
 const cv = @import("core-video");
 const c = @import("../ffi/root.zig").c;
 
-pub const SampleBuffer = opaque {
+pub const CMSampleBuffer = opaque {
     const Self = @This();
 
     pub fn isValid(self: *Self) bool {

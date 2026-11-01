@@ -1,8 +1,8 @@
 const c = @import("../ffi/root.zig").c;
 const cf = @import("core-foundation");
-const Surface = @import("io-surface").Surface;
+const ios = @import("io-surface");
 
-pub const Buffer = opaque {
+pub const CVBuffer = opaque {
     const Self = @This();
 
     pub fn create(width: usize, height: usize, pixel_format: c.OSType, attributes: ?*const cf.Dictionary) ?*Self {
@@ -37,7 +37,7 @@ pub const Buffer = opaque {
         return self.raw().?.CVPixelBufferUnlockBaseAddress(flags) == c.kCVReturnSuccess;
     }
 
-    pub fn getIOSurface(self: *Self) ?*Surface {
+    pub fn getIOSurface(self: *Self) ?*ios.Surface {
         const surface = self.raw().?.CVPixelBufferGetIOSurface() orelse return null;
         return @ptrCast(surface);
     }

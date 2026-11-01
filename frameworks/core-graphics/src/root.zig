@@ -1,7 +1,7 @@
 const std = @import("std");
 
-pub const Color = @import("Color.zig").Color;
-pub const Rect = @import("Rect.zig").Rect;
+pub const CGColor = @import("CGColor.zig").CGColor;
+pub const CGRect = @import("CGRect.zig").CGRect;
 const c = @import("../ffi/root.zig").c;
 
 pub fn preflightScreenCaptureAccess() bool {

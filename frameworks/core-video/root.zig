@@ -4,7 +4,7 @@ pub const ffi = @import("ffi/root.zig");
 pub const c = ffi.c;
 
 const src = @import("src/root.zig");
-pub const Buffer = src.Buffer;
+pub const Buffer = src.CVBuffer;
 
 test {
     std.testing.refAllDecls(@This());

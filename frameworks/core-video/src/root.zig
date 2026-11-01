@@ -1,6 +1,6 @@
 const std = @import("std");
 
-pub const Buffer = @import("Buffer.zig").Buffer;
+pub const CVBuffer = @import("CVBuffer.zig").CVBuffer;
 
 test {
     std.testing.refAllDecls(@This());

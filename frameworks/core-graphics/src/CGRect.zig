@@ -1,7 +1,7 @@
 const c = @import("../ffi/root.zig").c;
 const cf = @import("core-foundation");
 
-pub const Rect = extern struct {
+pub const CGRect = extern struct {
     const Self = @This();
     origin: c.CGPoint,
     size: c.CGSize,
