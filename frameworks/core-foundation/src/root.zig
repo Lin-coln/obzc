@@ -3,14 +3,14 @@ const std = @import("std");
 pub const CFArray = @import("CFArray.zig").CFArray;
 pub const CFBoolean = @import("CFBoolean.zig").CFBoolean;
 pub const CFDictionary = @import("CFDictionary.zig").CFDictionary;
-pub const CFMutableDictionary = @import("CFMutableDictionary.zig").CFMutableDictionary;
 pub const CFNumber = @import("CFNumber.zig").CFNumber;
 pub const CFString = @import("CFString.zig").CFString;
 
 const c = @import("../ffi/root.zig").c;
 
 pub fn retain(ptr: *const anyopaque) *const anyopaque {
-    return c.CFRetain(ptr).?;
+    _ = c.CFRetain(ptr);
+    return ptr;
 }
 
 pub fn release(ptr: *const anyopaque) void {
