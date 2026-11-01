@@ -1,0 +1,14 @@
+.{
+    .name = .obzc_cm,
+    .version = "0.1.0",
+    .fingerprint = 0x256ca1ac43acd242,
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "root.zig",
+        "ffi",
+        "src",
+    },
+}

@@ -5,7 +5,14 @@ pub fn build(b: *std.Build) !void {
     const optimize = b.standardOptimizeOption(.{});
 
     // pkg/*
-    inline for (.{ "core", "ns", "sck", "mtl", "vision" }) |name| {
+    inline for (.{
+        "core",
+        "ns",
+        "sck",
+        "mtl",
+        "vision",
+        "cm",
+    }) |name| {
         const dep = b.dependency(name, .{ .target = target, .optimize = optimize });
         try b.modules.put(b.graph.arena, name, dep.module(name));
     }
