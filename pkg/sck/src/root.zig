@@ -1,4 +1,5 @@
 const std = @import("std");
+pub const c = @import("sck-abi");
 pub const SCStreamConfiguration = @import("SCStreamConfiguration.zig").SCStreamConfiguration;
 pub const SCCaptureResolutionType = @import("SCStreamConfiguration.zig").SCCaptureResolutionType;
 pub const SCShareableContent = @import("SCShareableContent.zig").SCShareableContent;

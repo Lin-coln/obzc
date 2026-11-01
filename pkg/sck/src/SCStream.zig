@@ -53,10 +53,12 @@ pub const SCStream = opaque {
 
     pub const startCapture = h.obj.m.withCallback("startCaptureWithCompletionHandler:", fn (fn (?*ns.NSError) void) void);
     pub const stopCapture = h.obj.m.withCallback("stopCaptureWithCompletionHandler:", fn (fn (?*ns.NSError) void) void);
+    pub const updateContentFilter = h.obj.m.withCallback("updateContentFilter:completionHandler:", fn (*SCContentFilter, fn (?*ns.NSError) void) void);
     pub const updateConfiguration = h.obj.m.withCallback("updateConfiguration:completionHandler:", fn (*SCStreamConfiguration, fn (?*ns.NSError) void) void);
 
     /// Waits for completion. The calling thread must not be needed to deliver the callback.
     pub const startCaptureSync = h.obj.m.withSync("startCaptureWithCompletionHandler:", fn () anyerror!void);
     pub const stopCaptureSync = h.obj.m.withSync("stopCaptureWithCompletionHandler:", fn () anyerror!void);
+    pub const updateContentFilterSync = h.obj.m.withSync("updateContentFilter:completionHandler:", fn (*SCContentFilter) anyerror!void);
     pub const updateConfigurationSync = h.obj.m.withSync("updateConfiguration:completionHandler:", fn (*SCStreamConfiguration) anyerror!void);
 };

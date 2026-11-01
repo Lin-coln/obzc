@@ -9,6 +9,15 @@ pub fn build(b: *std.Build) void {
     const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
     const ns = b.dependency("ns", .{ .target = target, .optimize = optimize }).module("ns");
 
+    const sck_abi = blk: {
+        const trans = b.addTranslateC(.{
+            .root_source_file = b.path("translate/sck.h"),
+            .target = target,
+            .optimize = optimize,
+        });
+        break :blk trans.createModule();
+    };
+
     const sck = blk: {
         const opts: std.Build.Module.CreateOptions = .{
             .root_source_file = b.path("src/root.zig"),
@@ -18,6 +27,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
                 .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "sck-abi", .module = sck_abi },
             },
         };
 
