@@ -5,7 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run CoreGraphics tests");
-    const cf = b.dependency("core-foundation", .{ .target = target, .optimize = optimize }).module("core-foundation");
+    const cf = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        break :blk b.dependency("core-foundation", opts).module("core-foundation");
+    };
 
     const cg_abi = blk: {
         const trans = b.addTranslateC(.{

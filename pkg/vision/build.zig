@@ -5,10 +5,15 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Vision tests");
-    const cg = b.dependency("core-graphics", .{ .target = target, .optimize = optimize }).module("core-graphics");
-    const cv = b.dependency("core-video", .{ .target = target, .optimize = optimize }).module("core-video");
-    const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
-    const ns = b.dependency("ns", .{ .target = target, .optimize = optimize }).module("ns");
+    const cg, const cv, const core, const ns = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        break :blk .{
+            b.dependency("core-graphics", opts).module("core-graphics"),
+            b.dependency("core-video", opts).module("core-video"),
+            b.dependency("core", opts).module("core"),
+            b.dependency("ns", opts).module("ns"),
+        };
+    };
 
     const vision = blk: {
         const opts: std.Build.Module.CreateOptions = .{

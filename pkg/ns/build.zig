@@ -5,7 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Foundation tests");
-    const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
+    const core = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        break :blk b.dependency("core", opts).module("core");
+    };
     test_step.dependOn(addCompileErrorTests(b, target, optimize, core));
 
     const ns = blk: {

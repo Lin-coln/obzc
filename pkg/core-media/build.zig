@@ -6,8 +6,13 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run CoreMedia tests");
 
-    const cf = b.dependency("core-foundation", .{ .target = target, .optimize = optimize }).module("core-foundation");
-    const cv = b.dependency("core-video", .{ .target = target, .optimize = optimize }).module("core-video");
+    const cf, const cv = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        break :blk .{
+            b.dependency("core-foundation", opts).module("core-foundation"),
+            b.dependency("core-video", opts).module("core-video"),
+        };
+    };
 
     const cm_abi = blk: {
         const trans = b.addTranslateC(.{

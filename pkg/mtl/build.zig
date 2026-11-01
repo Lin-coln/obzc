@@ -5,11 +5,16 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Metal tests");
-    const cf = b.dependency("core-foundation", .{ .target = target, .optimize = optimize }).module("core-foundation");
-    const cv = b.dependency("core-video", .{ .target = target, .optimize = optimize }).module("core-video");
-    const iosurface = b.dependency("io-surface", .{ .target = target, .optimize = optimize }).module("io-surface");
-    const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
-    const ns = b.dependency("ns", .{ .target = target, .optimize = optimize }).module("ns");
+    const cf, const cv, const ios, const core, const ns = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        break :blk .{
+            b.dependency("core-foundation", opts).module("core-foundation"),
+            b.dependency("core-video", opts).module("core-video"),
+            b.dependency("io-surface", opts).module("io-surface"),
+            b.dependency("core", opts).module("core"),
+            b.dependency("ns", opts).module("ns"),
+        };
+    };
 
     const mtl_abi = blk: {
         const trans = b.addTranslateC(.{
@@ -29,7 +34,7 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
-                .{ .name = "io-surface", .module = iosurface },
+                .{ .name = "io-surface", .module = ios },
                 .{ .name = "mtl-abi", .module = mtl_abi },
             },
         });
@@ -52,7 +57,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "mtl", .module = mtl },
                 .{ .name = "core-foundation", .module = cf },
                 .{ .name = "core-video", .module = cv },
-                .{ .name = "io-surface", .module = iosurface },
+                .{ .name = "io-surface", .module = ios },
             },
         });
 
