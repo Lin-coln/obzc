@@ -5,6 +5,7 @@ pub const c = ffi.c;
 
 const src = @import("src/root.zig");
 pub const Array = src.CFArray;
+pub const Boolean = src.CFBoolean;
 pub const Dictionary = src.CFDictionary;
 pub const MutableDictionary = src.CFMutableDictionary;
 pub const Number = src.CFNumber;

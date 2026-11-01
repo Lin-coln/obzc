@@ -1,6 +1,7 @@
 const std = @import("std");
 
 pub const CFArray = @import("CFArray.zig").CFArray;
+pub const CFBoolean = @import("CFBoolean.zig").CFBoolean;
 pub const CFDictionary = @import("CFDictionary.zig").CFDictionary;
 pub const CFMutableDictionary = @import("CFMutableDictionary.zig").CFMutableDictionary;
 pub const CFNumber = @import("CFNumber.zig").CFNumber;

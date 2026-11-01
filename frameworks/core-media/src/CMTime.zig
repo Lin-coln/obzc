@@ -14,6 +14,11 @@ pub const CMTime = extern struct {
         return @as(*const Self, @ptrCast(&time)).*;
     }
 
+    pub fn add(self: Self, other: Self) Self {
+        const time = c.CMTimeAdd(self.raw(), other.raw());
+        return @as(*const Self, @ptrCast(&time)).*;
+    }
+
     fn raw(self: Self) c.CMTime {
         return @as(*const c.CMTime, @ptrCast(&self)).*;
     }
@@ -27,4 +32,9 @@ test "Time matches CMTime layout" {
     }
     const time = CMTime.make(1, 60);
     try std.testing.expectEqual(time.value, time.raw().value);
+}
+
+test "Time.add uses CoreMedia time arithmetic" {
+    const time = CMTime.make(1, 2).add(CMTime.make(500_000_000, 1_000_000_000));
+    try std.testing.expectEqual(@as(i128, time.timescale), @as(i128, time.value));
 }
