@@ -5,7 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run ScreenCaptureKit tests");
-    const macos_abi = b.dependency("macos", .{ .target = target, .optimize = optimize }).module("abi");
+    const cf = b.dependency("core-foundation", .{ .target = target, .optimize = optimize }).module("core-foundation");
+    const cg = b.dependency("core-graphics", .{ .target = target, .optimize = optimize }).module("core-graphics");
+    const cm = b.dependency("core-media", .{ .target = target, .optimize = optimize }).module("core-media");
+    const cv = b.dependency("core-video", .{ .target = target, .optimize = optimize }).module("core-video");
     const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
     const ns = b.dependency("ns", .{ .target = target, .optimize = optimize }).module("ns");
 
@@ -26,7 +29,10 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
-                .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "core-foundation", .module = cf },
+                .{ .name = "core-graphics", .module = cg },
+                .{ .name = "core-media", .module = cm },
+                .{ .name = "core-video", .module = cv },
                 .{ .name = "sck-abi", .module = sck_abi },
             },
         };
@@ -52,7 +58,8 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "core", .module = core },
                 .{ .name = "sck", .module = sck },
-                .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "core-graphics", .module = cg },
+                .{ .name = "core-media", .module = cm },
             },
         });
 

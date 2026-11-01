@@ -4,7 +4,7 @@ const core = @import("core");
 const Metadata = core.Metadata;
 const Object = core.ffi.Object;
 const ns = @import("ns");
-const macos = @import("macos/abi");
+const cv = @import("core-video");
 const VNRequest = @import("VNRequest.zig").VNRequest;
 const VNRecognizeTextRequest = @import("VNRecognizeTextRequest.zig").VNRecognizeTextRequest;
 
@@ -23,7 +23,7 @@ pub const VNImageRequestHandler = opaque {
     }
 
     /// Retains the image source, which must not be modified while the handler is alive.
-    pub fn initWithCVPixelBuffer(pixel_buffer: macos.CVPixelBufferRef, options: *Options) *Self {
+    pub fn initWithCVPixelBuffer(pixel_buffer: ?*cv.Buffer, options: *Options) *Self {
         return h.call(h.cls.alloc(), *Self, "initWithCVPixelBuffer:options:", .{ pixel_buffer, options });
     }
 

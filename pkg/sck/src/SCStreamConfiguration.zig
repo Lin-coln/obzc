@@ -1,7 +1,10 @@
 const std = @import("std");
 const core = @import("core");
 const Metadata = core.Metadata;
-const macos = @import("macos/abi");
+const cf = @import("core-foundation");
+const cg = @import("core-graphics");
+const cm = @import("core-media");
+const cv = @import("core-video");
 
 /// SCCaptureResolutionType from ScreenCaptureKit/SCStream.h.
 pub const SCCaptureResolutionType = enum(isize) {
@@ -29,17 +32,17 @@ pub const SCStreamConfiguration = opaque {
     pub const setShowsCursor = h.prop("showsCursor", bool).setter;
     pub const capturesAudio = h.prop("capturesAudio", bool).getter;
     pub const setCapturesAudio = h.prop("capturesAudio", bool).setter;
-    pub const minimumFrameInterval = h.prop("minimumFrameInterval", macos.CMTime).getter;
-    pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", macos.CMTime).setter;
-    pub const pixelFormat = h.prop("pixelFormat", macos.OSType).getter;
-    pub const setPixelFormat = h.prop("pixelFormat", macos.OSType).setter;
+    pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
+    pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
+    pub const pixelFormat = h.prop("pixelFormat", cv.c.OSType).getter;
+    pub const setPixelFormat = h.prop("pixelFormat", cv.c.OSType).setter;
     pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;
     pub const setCaptureResolution = h.prop("captureResolution", SCCaptureResolutionType).setter;
     /// Borrowed CoreFoundation references.
-    pub const colorSpaceName = h.prop("colorSpaceName", macos.CFStringRef).getter;
-    pub const setColorSpaceName = h.prop("colorSpaceName", macos.CFStringRef).setter;
-    pub const backgroundColor = h.prop("backgroundColor", macos.CGColorRef).getter;
-    pub const setBackgroundColor = h.prop("backgroundColor", macos.CGColorRef).setter;
+    pub const colorSpaceName = h.prop("colorSpaceName", ?*const cf.String).getter;
+    pub const setColorSpaceName = h.prop("colorSpaceName", ?*const cf.String).setter;
+    pub const backgroundColor = h.prop("backgroundColor", ?*cg.Color).getter;
+    pub const setBackgroundColor = h.prop("backgroundColor", ?*cg.Color).setter;
 };
 
 test "SCStreamConfiguration: configure video and audio properties" {
@@ -68,7 +71,7 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     const configuration = SCStreamConfiguration.new();
     defer configuration.release();
 
-    const interval = macos.CMTimeMake(1, 60);
+    const interval = cm.Time.make(1, 60);
     configuration.setMinimumFrameInterval(interval);
     const actual = configuration.minimumFrameInterval();
     try std.testing.expectEqual(interval.value, actual.value);
@@ -76,14 +79,14 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(interval.flags, actual.flags);
     try std.testing.expectEqual(interval.epoch, actual.epoch);
 
-    configuration.setPixelFormat(macos.kCVPixelFormatType_64RGBAHalf);
+    configuration.setPixelFormat(cv.c.kCVPixelFormatType_64RGBAHalf);
     configuration.setCaptureResolution(.nominal);
-    try std.testing.expectEqual(@as(macos.OSType, macos.kCVPixelFormatType_64RGBAHalf), configuration.pixelFormat());
+    try std.testing.expectEqual(@as(cv.c.OSType, cv.c.kCVPixelFormatType_64RGBAHalf), configuration.pixelFormat());
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
-    configuration.setColorSpaceName(macos.kCGColorSpaceDisplayP3);
-    const color = macos.CGColorGetConstantColor(macos.kCGColorClear);
+    configuration.setColorSpaceName(@ptrCast(cg.c.kCGColorSpaceDisplayP3));
+    const color = cg.Color.clear();
     configuration.setBackgroundColor(color);
-    try std.testing.expect(macos.CFEqual(macos.kCGColorSpaceDisplayP3, configuration.colorSpaceName()) != 0);
-    try std.testing.expect(macos.CGColorEqualToColor(color, configuration.backgroundColor()));
+    try std.testing.expect(cf.c.CFEqual(@ptrCast(cg.c.kCGColorSpaceDisplayP3), @ptrCast(configuration.colorSpaceName())) != 0);
+    try std.testing.expect(cg.c.CGColorEqualToColor(@ptrCast(color), @ptrCast(configuration.backgroundColor())));
 }

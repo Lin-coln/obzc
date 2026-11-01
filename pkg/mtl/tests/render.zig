@@ -1,7 +1,8 @@
 const std = @import("std");
 const core = @import("core");
 const ns = @import("ns");
-const macos = @import("macos/abi");
+const cf = @import("core-foundation");
+const cv = @import("core-video");
 const mtl = @import("mtl");
 const c = mtl.c;
 const MTLDevice = mtl.MTLDevice;
@@ -15,22 +16,21 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const surface_properties = macos.CFDictionaryCreateMutable(null, 0, &macos.kCFTypeDictionaryKeyCallBacks, &macos.kCFTypeDictionaryValueCallBacks).?;
-    defer macos.CFRelease(surface_properties);
-    const attributes = macos.CFDictionaryCreateMutable(null, 0, &macos.kCFTypeDictionaryKeyCallBacks, &macos.kCFTypeDictionaryValueCallBacks).?;
-    defer macos.CFRelease(attributes);
-    macos.CFDictionarySetValue(attributes, macos.kCVPixelBufferIOSurfacePropertiesKey, surface_properties);
-    macos.CFDictionarySetValue(attributes, macos.kCVPixelBufferMetalCompatibilityKey, macos.kCFBooleanTrue);
-    var pixel_buffer: macos.CVPixelBufferRef = null;
-    const status = macos.CVPixelBufferCreate(null, 4, 4, macos.kCVPixelFormatType_32BGRA, attributes, &pixel_buffer);
-    try std.testing.expectEqual(macos.kCVReturnSuccess, status);
-    defer macos.CVBufferRelease(pixel_buffer);
-    const surface = macos.CVPixelBufferGetIOSurface(pixel_buffer).?;
+    const surface_properties = cf.MutableDictionary.create().?;
+    defer cf.release(@ptrCast(surface_properties));
+    const attributes = cf.MutableDictionary.create().?;
+    defer cf.release(@ptrCast(attributes));
+    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferIOSurfacePropertiesKey), @ptrCast(surface_properties));
+    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferMetalCompatibilityKey), @ptrCast(cf.c.kCFBooleanTrue));
+    const pixel_buffer = cv.Buffer.create(4, 4, cv.c.kCVPixelFormatType_32BGRA, @ptrCast(attributes)) orelse
+        return error.PixelBufferCreationFailed;
+    defer pixel_buffer.release();
+    const surface = pixel_buffer.getIOSurface().?;
     {
-        try std.testing.expectEqual(macos.kCVReturnSuccess, macos.CVPixelBufferLockBaseAddress(pixel_buffer, 0));
-        defer _ = macos.CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
-        const pixels: [*]u8 = @ptrCast(macos.CVPixelBufferGetBaseAddress(pixel_buffer).?);
-        @memset(pixels[0 .. macos.CVPixelBufferGetBytesPerRow(pixel_buffer) * 4], 0);
+        try std.testing.expect(pixel_buffer.lockBaseAddress(0));
+        defer _ = pixel_buffer.unlockBaseAddress(0);
+        const pixels = pixel_buffer.getBaseAddress().?;
+        @memset(pixels[0 .. pixel_buffer.getBytesPerRow() * 4], 0);
     }
 
     const source = ns.NSString.init(
@@ -105,10 +105,10 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     try std.testing.expectEqual(@as(c.MTLCommandBufferStatus, c.MTLCommandBufferStatusCompleted), command_buffer.status());
 
     // Check every pixel after the GPU finishes; successful submission alone does not prove that rendering or copying worked.
-    try std.testing.expectEqual(macos.kCVReturnSuccess, macos.CVPixelBufferLockBaseAddress(pixel_buffer, macos.kCVPixelBufferLock_ReadOnly));
-    defer _ = macos.CVPixelBufferUnlockBaseAddress(pixel_buffer, macos.kCVPixelBufferLock_ReadOnly);
-    const pixels: [*]const u8 = @ptrCast(macos.CVPixelBufferGetBaseAddress(pixel_buffer).?);
-    const bytes_per_row = macos.CVPixelBufferGetBytesPerRow(pixel_buffer);
+    try std.testing.expect(pixel_buffer.lockBaseAddress(cv.c.kCVPixelBufferLock_ReadOnly));
+    defer _ = pixel_buffer.unlockBaseAddress(cv.c.kCVPixelBufferLock_ReadOnly);
+    const pixels: [*]const u8 = pixel_buffer.getBaseAddress().?;
+    const bytes_per_row = pixel_buffer.getBytesPerRow();
     for (0..4) |y| {
         for (0..4) |x| {
             const pixel_offset = y * bytes_per_row + x * 4;

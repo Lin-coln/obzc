@@ -1,11 +1,11 @@
 const std = @import("std");
 const core = @import("core");
-const macos = @import("macos/abi");
+const cg = @import("core-graphics");
 const sck = @import("sck");
 const SCShareableContent = sck.SCShareableContent;
 
 test "SCShareableContent: enumerate windows through the synchronous query" {
-    if (!macos.CGPreflightScreenCaptureAccess()) return error.SkipZigTest;
+    if (!cg.preflightScreenCaptureAccess()) return error.SkipZigTest;
     const pool = core.AutoReleasePool.create();
     defer pool.release();
 
@@ -15,7 +15,7 @@ test "SCShareableContent: enumerate windows through the synchronous query" {
     const windows = content.windows();
     for (0..windows.count()) |index| {
         const window = windows.objectAtIndex(index);
-        try std.testing.expect(window.windowID() != macos.kCGNullWindowID);
+        try std.testing.expect(window.windowID() != cg.c.kCGNullWindowID);
         const frame = window.frame();
         try std.testing.expect(std.math.isFinite(frame.origin.x));
         try std.testing.expect(std.math.isFinite(frame.origin.y));

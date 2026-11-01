@@ -5,7 +5,9 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Metal tests");
-    const macos_abi = b.dependency("macos", .{ .target = target, .optimize = optimize }).module("abi");
+    const cf = b.dependency("core-foundation", .{ .target = target, .optimize = optimize }).module("core-foundation");
+    const cv = b.dependency("core-video", .{ .target = target, .optimize = optimize }).module("core-video");
+    const iosurface = b.dependency("io-surface", .{ .target = target, .optimize = optimize }).module("io-surface");
     const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
     const ns = b.dependency("ns", .{ .target = target, .optimize = optimize }).module("ns");
 
@@ -27,7 +29,7 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
-                .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "io-surface", .module = iosurface },
                 .{ .name = "mtl-abi", .module = mtl_abi },
             },
         });
@@ -48,7 +50,9 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
                 .{ .name = "mtl", .module = mtl },
-                .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "core-foundation", .module = cf },
+                .{ .name = "core-video", .module = cv },
+                .{ .name = "io-surface", .module = iosurface },
             },
         });
 

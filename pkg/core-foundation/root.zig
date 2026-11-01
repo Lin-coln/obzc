@@ -6,6 +6,7 @@ pub const c = ffi.c;
 const src = @import("src/root.zig");
 pub const Array = src.Array;
 pub const Dictionary = src.Dictionary;
+pub const MutableDictionary = src.MutableDictionary;
 pub const Number = src.Number;
 pub const String = src.String;
 

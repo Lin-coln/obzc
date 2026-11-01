@@ -6,7 +6,10 @@
     .dependencies = .{
         .core = .{ .path = "../core" },
         .ns = .{ .path = "../ns" },
-        .macos = .{ .path = "../../shared/macos" },
+        .@"core-foundation" = .{ .path = "../core-foundation" },
+        .@"core-graphics" = .{ .path = "../core-graphics" },
+        .@"core-media" = .{ .path = "../core-media" },
+        .@"core-video" = .{ .path = "../core-video" },
     },
     .paths = .{
         "build.zig",

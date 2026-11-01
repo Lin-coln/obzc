@@ -2,7 +2,7 @@ const std = @import("std");
 const core = @import("core");
 const Metadata = core.Metadata;
 const ns = @import("ns");
-const macos = @import("macos/abi");
+const cg = @import("core-graphics");
 const VNRecognizedTextObservation = @import("VNRecognizedTextObservation.zig").VNRecognizedTextObservation;
 
 pub const VNRequestTextRecognitionLevel = enum(isize) {
@@ -27,8 +27,8 @@ pub const VNRecognizeTextRequest = opaque {
     pub const setUsesLanguageCorrection = h.prop("usesLanguageCorrection", bool).setter;
     pub const minimumTextHeight = h.prop("minimumTextHeight", f32).getter;
     pub const setMinimumTextHeight = h.prop("minimumTextHeight", f32).setter;
-    pub const regionOfInterest = h.prop("regionOfInterest", macos.CGRect).getter;
-    pub const setRegionOfInterest = h.prop("regionOfInterest", macos.CGRect).setter;
+    pub const regionOfInterest = h.prop("regionOfInterest", cg.Rect).getter;
+    pub const setRegionOfInterest = h.prop("regionOfInterest", cg.Rect).setter;
 
     /// Results are borrowed and remain null until the request has produced results.
     pub const results = h.prop("results", ?*ns.NSArray(VNRecognizedTextObservation)).getter;
@@ -43,7 +43,7 @@ test "VNRecognizeTextRequest: configure recognition and region of interest" {
     request.setRecognitionLevel(.fast);
     request.setUsesLanguageCorrection(false);
     request.setMinimumTextHeight(0.125);
-    const region: macos.CGRect = .{
+    const region: cg.Rect = .{
         .origin = .{ .x = 0.125, .y = 0.25 },
         .size = .{ .width = 0.5, .height = 0.5 },
     };

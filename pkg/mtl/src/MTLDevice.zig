@@ -3,7 +3,7 @@ const builtin = @import("builtin");
 const core = @import("core");
 const Metadata = core.Metadata;
 const ns = @import("ns");
-const macos = @import("macos/abi");
+const ios = @import("io-surface");
 const mtl = @import("mtl-abi");
 const MTLCommandQueue = @import("MTLCommandQueue.zig").MTLCommandQueue;
 const MTLTextureDescriptor = @import("MTLTextureDescriptor.zig").MTLTextureDescriptor;
@@ -28,7 +28,7 @@ pub const MTLDevice = opaque {
 
     pub const newCommandQueue = h.method("newCommandQueue", fn () ?*MTLCommandQueue);
     pub const newTexture = h.method("newTextureWithDescriptor:", fn (*MTLTextureDescriptor) ?*MTLTexture);
-    pub const newTextureWithIOSurface = h.method("newTextureWithDescriptor:iosurface:plane:", fn (*MTLTextureDescriptor, macos.IOSurfaceRef, usize) ?*MTLTexture);
+    pub const newTextureWithIOSurface = h.method("newTextureWithDescriptor:iosurface:plane:", fn (*MTLTextureDescriptor, ?*ios.Surface, usize) ?*MTLTexture);
 
     /// Returns an owned library. Logs the SDK error when compilation fails.
     pub fn newLibrary(self: *Self, source: *ns.NSString, options: ?*MTLCompileOptions) !*MTLLibrary {

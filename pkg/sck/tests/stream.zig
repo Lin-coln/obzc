@@ -1,6 +1,6 @@
 const std = @import("std");
 const core = @import("core");
-const macos = @import("macos/abi");
+const cg = @import("core-graphics");
 const sck = @import("sck");
 const SCShareableContent = sck.SCShareableContent;
 const SCContentFilter = sck.SCContentFilter;
@@ -10,11 +10,11 @@ const SCStream = sck.SCStream;
 test "SCStream: update a window capture stream with a new configuration" {
     // Compile the remaining bindings without starting a capture session.
     std.testing.refAllDecls(SCStream);
-    if (!macos.CGPreflightScreenCaptureAccess()) return error.SkipZigTest;
+    if (!cg.preflightScreenCaptureAccess()) return error.SkipZigTest;
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     // Initialize CoreGraphics in this command-line test process before creating a filter.
-    _ = macos.CGMainDisplayID();
+    _ = cg.c.CGMainDisplayID();
     const content = try SCShareableContent.getShareableContentSync();
     defer content.release();
     const windows = content.windows();

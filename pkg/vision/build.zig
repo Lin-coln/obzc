@@ -5,7 +5,8 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Vision tests");
-    const macos_abi = b.dependency("macos", .{ .target = target, .optimize = optimize }).module("abi");
+    const cg = b.dependency("core-graphics", .{ .target = target, .optimize = optimize }).module("core-graphics");
+    const cv = b.dependency("core-video", .{ .target = target, .optimize = optimize }).module("core-video");
     const core = b.dependency("core", .{ .target = target, .optimize = optimize }).module("core");
     const ns = b.dependency("ns", .{ .target = target, .optimize = optimize }).module("ns");
 
@@ -17,7 +18,8 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
-                .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "core-graphics", .module = cg },
+                .{ .name = "core-video", .module = cv },
             },
         };
 
@@ -41,7 +43,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "core", .module = core },
                 .{ .name = "ns", .module = ns },
                 .{ .name = "vision", .module = vision },
-                .{ .name = "macos/abi", .module = macos_abi },
+                .{ .name = "core-video", .module = cv },
             },
         });
         mod.linkFramework("CoreVideo", .{});

@@ -2,6 +2,7 @@ const std = @import("std");
 
 pub const Array = @import("Array.zig").Array;
 pub const Dictionary = @import("Dictionary.zig").Dictionary;
+pub const MutableDictionary = @import("MutableDictionary.zig").MutableDictionary;
 pub const Number = @import("Number.zig").Number;
 pub const String = @import("String.zig").String;
 

@@ -3,7 +3,7 @@ const core = @import("core");
 const Object = core.ffi.Object;
 const ns = @import("ns");
 const vision = @import("vision");
-const macos = @import("macos/abi");
+const cv = @import("core-video");
 const VNRequest = vision.VNRequest;
 const VNRecognizeTextRequest = vision.VNRecognizeTextRequest;
 const VNImageRequestHandler = vision.VNImageRequestHandler;
@@ -64,20 +64,15 @@ test "text recognition: a blank pixel buffer produces an empty result" {
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     const handler = created: {
-        var pixel_buffer: macos.CVPixelBufferRef = null;
-        try std.testing.expectEqual(macos.kCVReturnSuccess, macos.CVPixelBufferCreate(
-            null,
-            256,
-            128,
-            macos.kCVPixelFormatType_32BGRA,
-            null,
-            &pixel_buffer,
-        ));
-        defer macos.CVBufferRelease(pixel_buffer);
-        try std.testing.expectEqual(macos.kCVReturnSuccess, macos.CVPixelBufferLockBaseAddress(pixel_buffer, 0));
-        const pixels: [*]u8 = @ptrCast(macos.CVPixelBufferGetBaseAddress(pixel_buffer).?);
-        @memset(pixels[0..macos.CVPixelBufferGetDataSize(pixel_buffer)], 255);
-        try std.testing.expectEqual(macos.kCVReturnSuccess, macos.CVPixelBufferUnlockBaseAddress(pixel_buffer, 0));
+        const pixel_buffer = cv.Buffer.create(256, 128, cv.c.kCVPixelFormatType_32BGRA, null) orelse
+            return error.PixelBufferCreationFailed;
+        defer pixel_buffer.release();
+        {
+            try std.testing.expect(pixel_buffer.lockBaseAddress(0));
+            defer _ = pixel_buffer.unlockBaseAddress(0);
+            const pixels = pixel_buffer.getBaseAddress().?;
+            @memset(pixels[0..pixel_buffer.getDataSize()], 255);
+        }
         const options = ns.NSDictionary(ns.NSString, Object).new();
         defer options.release();
         break :created VNImageRequestHandler.initWithCVPixelBuffer(pixel_buffer, options);

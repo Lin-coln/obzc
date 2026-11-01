@@ -10,11 +10,12 @@ pub const Time = extern struct {
     epoch: c.CMTimeEpoch align(4),
 
     pub fn make(value: i64, timescale: i32) Self {
-        return @bitCast(c.CMTimeMake(value, timescale));
+        const time = c.CMTimeMake(value, timescale);
+        return @as(*const Self, @ptrCast(&time)).*;
     }
 
     fn raw(self: Self) c.CMTime {
-        return @bitCast(self);
+        return @as(*const c.CMTime, @ptrCast(&self)).*;
     }
 };
 
@@ -24,4 +25,6 @@ test "Time matches CMTime layout" {
     inline for (.{ "value", "timescale", "flags", "epoch" }) |field| {
         try std.testing.expectEqual(@offsetOf(c.CMTime, field), @offsetOf(Time, field));
     }
+    const time = Time.make(1, 60);
+    try std.testing.expectEqual(time.value, time.raw().value);
 }

@@ -1,7 +1,7 @@
 const core = @import("core");
 const Metadata = core.Metadata;
 const ns = @import("ns");
-const macos = @import("macos/abi");
+const cg = @import("core-graphics");
 const SCRunningApplication = @import("SCRunningApplication.zig").SCRunningApplication;
 
 pub const SCWindow = opaque {
@@ -12,8 +12,8 @@ pub const SCWindow = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const windowID = h.prop("windowID", macos.CGWindowID).getter;
-    pub const frame = h.prop("frame", macos.CGRect).getter;
+    pub const windowID = h.prop("windowID", cg.c.CGWindowID).getter;
+    pub const frame = h.prop("frame", cg.Rect).getter;
     pub const windowLayer = h.prop("windowLayer", isize).getter;
     pub const owningApplication = h.prop("owningApplication", ?*SCRunningApplication).getter;
     pub const title = h.prop("title", ?*ns.NSString).getter;

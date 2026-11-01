@@ -2,7 +2,7 @@ const std = @import("std");
 const core = @import("core");
 const Metadata = core.Metadata;
 const ns = @import("ns");
-const macos = @import("macos/abi");
+const cg = @import("core-graphics");
 const SCWindow = @import("SCWindow.zig").SCWindow;
 
 pub const SCShareableContent = opaque {
@@ -30,7 +30,7 @@ pub const SCShareableContent = opaque {
 
 test "SCShareableContent: getShareableContent invokes a Zig completion" {
     // Preflight checks Screen Recording permission without requesting it.
-    if (!macos.CGPreflightScreenCaptureAccess()) return error.SkipZigTest;
+    if (!cg.preflightScreenCaptureAccess()) return error.SkipZigTest;
     const pool = core.AutoReleasePool.create();
     defer pool.release();
 
