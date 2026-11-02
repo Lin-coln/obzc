@@ -4,15 +4,15 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const test_step = b.step("test", "Run macOS ABI tests");
+    const test_step = b.step("test", "Run macOS tests");
 
     const abi = blk: {
         const trans = b.addTranslateC(.{
-            .root_source_file = b.path("main.h"),
+            .root_source_file = b.path("ffi/c.h"),
             .target = target,
             .optimize = optimize,
         });
-        break :blk trans.addModule("main-abi");
+        break :blk trans.addModule("macos-abi");
     };
 
     const macos = blk: {
@@ -21,7 +21,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
-                .{ .name = "main-abi", .module = abi },
+                .{ .name = "macos-abi", .module = abi },
             },
         });
         mod.linkFramework("CoreFoundation", .{});

@@ -5,7 +5,7 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .core = .{ .path = "pkg/core" },
-        .@"macos-abi" = .{ .path = "pkg/macos-abi" },
+        .macos = .{ .path = "pkg/macos" },
         .foundation = .{ .path = "frameworks/foundation" },
         .@"screen-capture-kit" = .{ .path = "frameworks/screen-capture-kit" },
         .metal = .{ .path = "frameworks/metal" },

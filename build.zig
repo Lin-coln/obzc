@@ -4,9 +4,10 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // pkg/core and frameworks/*
+    // pkg/* and frameworks/*
     inline for (.{
         // core
+        "macos",
         "core",
 
         // foundation
@@ -27,12 +28,6 @@ pub fn build(b: *std.Build) !void {
         const dep = b.dependency(name, .{ .target = target, .optimize = optimize });
         try b.modules.put(b.graph.arena, name, dep.module(name));
     }
-
-    const macos = blk: {
-        const opts = .{ .target = target, .optimize = optimize };
-        break :blk b.dependency("macos-abi", opts).module("macos");
-    };
-    try b.modules.put(b.graph.arena, "macos", macos);
 
     // zig build test                 Run tests for every package.
     // zig build test -Dpkg=metal,screen-capture-kit   Run tests for the selected packages.

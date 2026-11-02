@@ -1,13 +1,14 @@
 .{
-    .name = .macos_abi,
+    .name = .macos,
     .version = "0.1.0",
-    .fingerprint = 0x1334cdaa95567e54,
+    .fingerprint = 0x45e2f6104b454c82,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{},
     .paths = .{
         "build.zig",
         "build.zig.zon",
         "root.zig",
-        "main.h",
+        "ffi",
+        "helpers",
     },
 }
