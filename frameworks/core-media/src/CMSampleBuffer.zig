@@ -15,9 +15,9 @@ pub const CMSampleBuffer = opaque {
         return @ptrCast(buffer);
     }
 
-    pub fn getSampleAttachmentsArray(self: *Self, create_if_necessary: bool) ?*const cf.Array {
-        const array = self.raw().?.CMSampleBufferGetSampleAttachmentsArray(@intFromBool(create_if_necessary)) orelse return null;
-        return @ptrCast(array);
+    pub fn getSampleAttachmentsArray(self: *Self, create: bool) ?*const cf.Array(cf.Dictionary(anyopaque, anyopaque)) {
+        const arr = self.raw().?.CMSampleBufferGetSampleAttachmentsArray(@intFromBool(create)) orelse return null;
+        return @ptrCast(arr);
     }
 
     pub fn getDataBuffer(self: *Self) ?*CMBlockBuffer {

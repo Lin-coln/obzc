@@ -5,9 +5,14 @@ const ios = @import("io-surface");
 pub const CVBuffer = opaque {
     const Self = @This();
 
-    pub fn create(width: usize, height: usize, pixel_format: c.OSType, attributes: ?*const cf.Dictionary) ?*Self {
+    pub fn create(
+        width: usize,
+        height: usize,
+        pixel_format: c.OSType,
+        attrs: ?*const cf.Dictionary(cf.String, anyopaque),
+    ) ?*Self {
         var buffer: c.CVPixelBufferRef = null;
-        if (c.CVPixelBufferCreate(null, width, height, pixel_format, @ptrCast(attributes), &buffer) != c.kCVReturnSuccess)
+        if (c.CVPixelBufferCreate(null, width, height, pixel_format, @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)
             return null;
         return @ptrCast(buffer);
     }

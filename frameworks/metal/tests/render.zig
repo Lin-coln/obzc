@@ -10,13 +10,13 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer pool.release();
     const device = mtl.Device.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const surface_properties = cf.MutableDictionary.create().?;
-    defer cf.release(@ptrCast(surface_properties));
-    const attributes = cf.MutableDictionary.create().?;
-    defer cf.release(@ptrCast(attributes));
-    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferIOSurfacePropertiesKey), @ptrCast(surface_properties));
-    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferMetalCompatibilityKey), @ptrCast(cf.c.kCFBooleanTrue));
-    const pixel_buffer = cv.Buffer.create(4, 4, cv.c.kCVPixelFormatType_32BGRA, @ptrCast(attributes)) orelse
+    const surface_properties = cf.Dictionary(cf.String, anyopaque).create().?;
+    defer surface_properties.release();
+    const attributes = cf.Dictionary(cf.String, anyopaque).create().?;
+    defer attributes.release();
+    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferIOSurfacePropertiesKey.?), @ptrCast(surface_properties));
+    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferMetalCompatibilityKey.?), @ptrCast(cf.c.kCFBooleanTrue.?));
+    const pixel_buffer = cv.Buffer.create(4, 4, cv.c.kCVPixelFormatType_32BGRA, attributes) orelse
         return error.PixelBufferCreationFailed;
     defer pixel_buffer.release();
     const surface = pixel_buffer.getIOSurface().?;

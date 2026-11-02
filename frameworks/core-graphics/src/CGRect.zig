@@ -6,7 +6,7 @@ pub const CGRect = extern struct {
     origin: c.CGPoint,
     size: c.CGSize,
 
-    pub fn makeWithDictionaryRepresentation(dict: *const cf.Dictionary) ?Self {
+    pub fn makeWithDictionaryRepresentation(dict: *const cf.Dictionary(anyopaque, anyopaque)) ?Self {
         var rect: Self = undefined;
         if (!c.CGRectMakeWithDictionaryRepresentation(@ptrCast(dict), @ptrCast(&rect)))
             return null;
