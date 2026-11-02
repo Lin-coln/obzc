@@ -2,6 +2,8 @@ const c = @import("macos").c;
 
 pub const kCGColor = enum {
     const Self = @This();
+    White,
+    Black,
     Clear,
     const h = @import("macos").helpers.konst(Self);
     pub const raw = h.raw;

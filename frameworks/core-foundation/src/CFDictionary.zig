@@ -28,12 +28,13 @@ pub fn CFDictionary(comptime Key: type, comptime Value: type) type {
 
 test "mutable dictionary stores a value" {
     const Boolean = @import("CFBoolean.zig").CFBoolean;
+    const kCFBoolean = @import("CFBoolean.zig").kCFBoolean;
     const Dictionary = CFDictionary(Boolean, Boolean);
     const dict = Dictionary.create().?;
     defer dict.release();
 
-    const key: *const Boolean = @ptrCast(c.kCFBooleanTrue.?);
-    const stored: *const Boolean = @ptrCast(c.kCFBooleanFalse.?);
+    const key: *const Boolean = @ptrCast(kCFBoolean.True.raw().?);
+    const stored: *const Boolean = @ptrCast(kCFBoolean.False.raw().?);
     dict.setValue(key, stored);
     const read_only: *const Dictionary = dict;
     const value = read_only.getValue(key).?;
