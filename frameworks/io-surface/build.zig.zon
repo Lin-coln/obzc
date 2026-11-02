@@ -3,12 +3,12 @@
     .version = "0.1.0",
     .fingerprint = 0x9bf482106478766d,
     .minimum_zig_version = "0.17.0",
-    .dependencies = .{},
+    .dependencies = .{
+        .macos = .{ .path = "../../pkg/macos" },
+    },
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "root.zig",
-        "ffi",
         "src",
     },
 }
