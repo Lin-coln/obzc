@@ -20,7 +20,7 @@ pub const CMSampleBuffer = opaque {
         return @ptrCast(buffer);
     }
 
-    pub fn getSampleAttachmentsArray(self: *Self, create: bool) ?*const cf.Array(cf.Dictionary(anyopaque, anyopaque)) {
+    pub fn getSampleAttachmentsArray(self: *Self, create: bool) ?*const cf.Array(cf.Dictionary) {
         const arr = c.CMSampleBufferGetSampleAttachmentsArray(self.raw(), @intFromBool(create)) orelse return null;
         return @ptrCast(arr);
     }

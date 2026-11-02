@@ -23,7 +23,7 @@ pub const CVBuffer = opaque {
         width: usize,
         height: usize,
         pixel_format: CVPixelFormat,
-        attrs: ?*const cf.Dictionary(cf.String, anyopaque),
+        attrs: ?*const cf.Dictionary,
     ) ?*Self {
         var buffer: c.CVPixelBufferRef = null;
         if (c.CVPixelBufferCreate(null, width, height, @bitCast(@backingInt(pixel_format)), @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)

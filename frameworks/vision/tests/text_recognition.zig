@@ -60,7 +60,7 @@ test "text recognition: a blank pixel buffer produces an empty result" {
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     const handler = created: {
-        const pixel_buffer = cv.Buffer.create(256, 128, cv.PixelFormat.@"32BGRA", null) orelse
+        const pixel_buffer = cv.Buffer.create(256, 128, .@"32BGRA", null) orelse
             return error.PixelBufferCreationFailed;
         defer pixel_buffer.release();
         {
