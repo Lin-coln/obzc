@@ -1,6 +1,6 @@
 const cf = @import("core-foundation");
 const cv = @import("core-video");
-const c = @import("../ffi/root.zig").c;
+const c = @import("macos").c;
 const CMBlockBuffer = @import("CMBlockBuffer.zig").CMBlockBuffer;
 
 pub const CMSampleBuffer = opaque {

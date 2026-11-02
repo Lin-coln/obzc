@@ -1,4 +1,4 @@
-const c = @import("../ffi/root.zig").c;
+const c = @import("macos").c;
 
 pub const CMBlockBuffer = opaque {
     const Self = @This();

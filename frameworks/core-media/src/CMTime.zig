@@ -1,5 +1,5 @@
 const std = @import("std");
-const c = @import("../ffi/root.zig").c;
+const c = @import("macos").c;
 
 pub const CMTime = extern struct {
     const Self = @This();
