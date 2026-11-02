@@ -4,14 +4,13 @@
     .fingerprint = 0x513bd01fb98f8680,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
+        .macos = .{ .path = "../../pkg/macos" },
         .@"core-foundation" = .{ .path = "../core-foundation" },
         .@"io-surface" = .{ .path = "../io-surface" },
     },
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "root.zig",
-        "ffi",
         "src",
     },
 }

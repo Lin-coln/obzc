@@ -1,9 +1,14 @@
-const c = @import("../ffi/root.zig").c;
+const c = @import("macos").c;
 const cf = @import("core-foundation");
 const ios = @import("io-surface");
 
 pub const CVBuffer = opaque {
     const Self = @This();
+    const h = @import("macos").helpers.ref(Self);
+    const raw = h.raw;
+
+    pub const retain = h.retain;
+    pub const release = h.release;
 
     pub fn create(
         width: usize,
@@ -17,37 +22,29 @@ pub const CVBuffer = opaque {
         return @ptrCast(buffer);
     }
 
-    pub fn release(self: *Self) void {
-        self.raw().?.CVBufferRelease();
-    }
-
     pub fn getBaseAddress(self: *Self) ?[*]u8 {
-        const address = self.raw().?.CVPixelBufferGetBaseAddress() orelse return null;
+        const address = self.raw().CVPixelBufferGetBaseAddress() orelse return null;
         return @ptrCast(address);
     }
 
     pub fn getDataSize(self: *Self) usize {
-        return self.raw().?.CVPixelBufferGetDataSize();
+        return self.raw().CVPixelBufferGetDataSize();
     }
 
     pub fn getBytesPerRow(self: *Self) usize {
-        return self.raw().?.CVPixelBufferGetBytesPerRow();
+        return self.raw().CVPixelBufferGetBytesPerRow();
     }
 
     pub fn lockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return self.raw().?.CVPixelBufferLockBaseAddress(flags) == c.kCVReturnSuccess;
+        return self.raw().CVPixelBufferLockBaseAddress(flags) == c.kCVReturnSuccess;
     }
 
     pub fn unlockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return self.raw().?.CVPixelBufferUnlockBaseAddress(flags) == c.kCVReturnSuccess;
+        return self.raw().CVPixelBufferUnlockBaseAddress(flags) == c.kCVReturnSuccess;
     }
 
     pub fn getIOSurface(self: *Self) ?*ios.Surface {
-        const surface = self.raw().?.CVPixelBufferGetIOSurface() orelse return null;
+        const surface = self.raw().CVPixelBufferGetIOSurface() orelse return null;
         return @ptrCast(surface);
-    }
-
-    fn raw(self: *Self) c.CVBufferRef {
-        return @ptrCast(self);
     }
 };
