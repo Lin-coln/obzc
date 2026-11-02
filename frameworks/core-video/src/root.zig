@@ -1,7 +1,6 @@
 const std = @import("std");
 
 pub const Buffer = @import("CVBuffer.zig").CVBuffer;
-pub const PixelBufferLockFlags = @import("CVPixelBufferLockFlags.zig").CVPixelBufferLockFlags;
 pub const PixelFormat = @import("CVPixelFormat.zig").CVPixelFormat;
 
 pub const k = struct {

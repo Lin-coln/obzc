@@ -1,7 +1,6 @@
 const c = @import("macos").c;
 const cf = @import("core-foundation");
 const ios = @import("io-surface");
-const CVPixelBufferLockFlags = @import("CVPixelBufferLockFlags.zig").CVPixelBufferLockFlags;
 const CVPixelFormat = @import("CVPixelFormat.zig").CVPixelFormat;
 
 pub const kCVPixelBuffer = enum {
@@ -57,4 +56,10 @@ pub const CVBuffer = opaque {
         const surface = c.CVPixelBufferGetIOSurface(self.raw()) orelse return null;
         return @ptrCast(surface);
     }
+};
+
+const CVPixelBufferLockFlags = enum(c.CVPixelBufferLockFlags) {
+    none = 0,
+    readOnly = c.kCVPixelBufferLock_ReadOnly,
+    _,
 };
