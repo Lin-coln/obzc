@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("../ffi/root.zig").c;
 
-pub fn k(comptime T: type) type {
+pub fn konst(comptime T: type) type {
     const O = resolveTypefromConstEnum(T);
 
     return struct {

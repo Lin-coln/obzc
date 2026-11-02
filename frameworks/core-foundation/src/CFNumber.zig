@@ -2,7 +2,7 @@ const c = @import("macos").c;
 
 pub const CFNumber = opaque {
     const Self = @This();
-    const h = @import("macos").helpers.h(Self);
+    const h = @import("macos").helpers.ref(Self);
     const raw = h.raw;
 
     pub const retain = h.retain;

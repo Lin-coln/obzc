@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("../ffi/root.zig").c;
 
-pub fn h(comptime T: type) type {
+pub fn ref(comptime T: type) type {
     const O = resolveTypefromOpaque(T);
 
     return struct {

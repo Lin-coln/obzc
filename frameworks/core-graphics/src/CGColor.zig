@@ -3,8 +3,8 @@ const c = @import("macos").c;
 pub const kCGColor = enum {
     const Self = @This();
     Clear,
-    const k = @import("macos").helpers.k(Self);
-    pub const raw = k.raw;
+    const h = @import("macos").helpers.konst(Self);
+    pub const raw = h.raw;
 };
 
 pub const CGColor = opaque {

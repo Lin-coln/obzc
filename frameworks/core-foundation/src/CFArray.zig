@@ -3,7 +3,7 @@ const c = @import("macos").c;
 pub fn CFArray(comptime T: type) type {
     return opaque {
         const Self = @This();
-        const h = @import("macos").helpers.h(Self);
+        const h = @import("macos").helpers.ref(Self);
         const raw = h.raw;
 
         pub const retain = h.retain;
