@@ -2,6 +2,7 @@ const c = @import("macos").c;
 const cf = @import("core-foundation");
 const ios = @import("io-surface");
 const CVPixelBufferLockFlags = @import("CVPixelBufferLockFlags.zig").CVPixelBufferLockFlags;
+const CVPixelFormat = @import("CVPixelFormat.zig").CVPixelFormat;
 
 pub const kCVPixelBuffer = enum {
     const Self = @This();
@@ -22,11 +23,11 @@ pub const CVBuffer = opaque {
     pub fn create(
         width: usize,
         height: usize,
-        pixel_format: c.OSType,
+        pixel_format: CVPixelFormat,
         attrs: ?*const cf.Dictionary(cf.String, anyopaque),
     ) ?*Self {
         var buffer: c.CVPixelBufferRef = null;
-        if (c.CVPixelBufferCreate(null, width, height, pixel_format, @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)
+        if (c.CVPixelBufferCreate(null, width, height, @bitCast(@backingInt(pixel_format)), @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)
             return null;
         return @ptrCast(buffer);
     }
@@ -45,11 +46,11 @@ pub const CVBuffer = opaque {
     }
 
     pub fn lockBaseAddress(self: *Self, flags: CVPixelBufferLockFlags) bool {
-        return c.CVPixelBufferLockBaseAddress(self.raw(), @intFromEnum(flags)) == c.kCVReturnSuccess;
+        return c.CVPixelBufferLockBaseAddress(self.raw(), @backingInt(flags)) == c.kCVReturnSuccess;
     }
 
     pub fn unlockBaseAddress(self: *Self, flags: CVPixelBufferLockFlags) bool {
-        return c.CVPixelBufferUnlockBaseAddress(self.raw(), @intFromEnum(flags)) == c.kCVReturnSuccess;
+        return c.CVPixelBufferUnlockBaseAddress(self.raw(), @backingInt(flags)) == c.kCVReturnSuccess;
     }
 
     pub fn getIOSurface(self: *Self) ?*ios.Surface {

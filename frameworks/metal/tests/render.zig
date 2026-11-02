@@ -17,7 +17,7 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer attributes.release();
     attributes.setValue(@ptrCast(cv.k.PixelBuffer.IOSurfacePropertiesKey.raw().?), @ptrCast(surface_properties));
     attributes.setValue(@ptrCast(cv.k.PixelBuffer.MetalCompatibilityKey.raw().?), @ptrCast(cf.k.Boolean.True.raw().?));
-    const pixel_buffer = cv.Buffer.create(4, 4, c.kCVPixelFormatType_32BGRA, attributes) orelse
+    const pixel_buffer = cv.Buffer.create(4, 4, cv.PixelFormat.@"32BGRA", attributes) orelse
         return error.PixelBufferCreationFailed;
     defer pixel_buffer.release();
     const surface = pixel_buffer.getIOSurface().?;
