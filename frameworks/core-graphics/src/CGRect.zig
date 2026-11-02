@@ -1,10 +1,12 @@
 const c = @import("macos").c;
 const cf = @import("core-foundation");
+const CGPoint = @import("CGPoint.zig").CGPoint;
+const CGSize = @import("CGSize.zig").CGSize;
 
 pub const CGRect = extern struct {
     const Self = @This();
-    origin: c.CGPoint,
-    size: c.CGSize,
+    origin: CGPoint,
+    size: CGSize,
 
     pub fn makeWithDictionaryRepresentation(dict: *const cf.Dictionary(anyopaque, anyopaque)) ?Self {
         var rect: Self = undefined;
