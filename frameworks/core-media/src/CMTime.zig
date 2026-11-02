@@ -13,12 +13,12 @@ pub const CMTime = extern struct {
 
     pub fn make(value: i64, timescale: i32) Self {
         const time = c.CMTimeMake(value, timescale);
-        return @as(*const Self, @ptrCast(&time)).*;
+        return h.wrap(time);
     }
 
     pub fn add(self: Self, other: Self) Self {
         const time = c.CMTimeAdd(self.raw(), other.raw());
-        return @as(*const Self, @ptrCast(&time)).*;
+        return h.wrap(time);
     }
 };
 

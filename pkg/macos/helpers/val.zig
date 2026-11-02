@@ -5,6 +5,7 @@ pub fn val(comptime T: type) type {
     const O = resolveTypefromExternStruct(T);
     return struct {
         pub const raw = RawCaster(T, O).call;
+        pub const wrap = WrapCaster(T, O).call;
     };
 }
 
@@ -18,6 +19,14 @@ fn RawCaster(comptime T: type, comptime O: type) type {
     return struct {
         pub fn call(self: T) O {
             return @as(*const O, @ptrCast(&self)).*;
+        }
+    };
+}
+
+fn WrapCaster(comptime T: type, comptime O: type) type {
+    return struct {
+        pub fn call(value: O) T {
+            return @as(*const T, @ptrCast(&value)).*;
         }
     };
 }
