@@ -1,12 +1,12 @@
 const std = @import("std");
 
-pub const CFArray = @import("CFArray.zig").CFArray;
-pub const CFBoolean = @import("CFBoolean.zig").CFBoolean;
-pub const CFDictionary = @import("CFDictionary.zig").CFDictionary;
-pub const CFNumber = @import("CFNumber.zig").CFNumber;
-pub const CFString = @import("CFString.zig").CFString;
+pub const Array = @import("CFArray.zig").CFArray;
+pub const Boolean = @import("CFBoolean.zig").CFBoolean;
+pub const Dictionary = @import("CFDictionary.zig").CFDictionary;
+pub const Number = @import("CFNumber.zig").CFNumber;
+pub const String = @import("CFString.zig").CFString;
 
-const c = @import("../ffi/root.zig").c;
+const c = @import("macos").c;
 
 pub fn retain(ptr: *const anyopaque) *const anyopaque {
     _ = c.CFRetain(ptr);

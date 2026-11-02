@@ -1,12 +1,11 @@
 const std = @import("std");
-const c = @import("../ffi/root.zig").c;
-const helpers = @import("../helpers/root.zig");
+const c = @import("macos").c;
 
 pub fn CFDictionary(comptime Key: type, comptime Value: type) type {
     return opaque {
         const Self = @This();
-        const h = helpers.h(Self);
-        const cast = h.cast;
+        const h = @import("macos").helpers.h(Self);
+        const raw = h.raw;
 
         pub const retain = h.retain;
         pub const release = h.release;
@@ -17,11 +16,11 @@ pub fn CFDictionary(comptime Key: type, comptime Value: type) type {
         }
 
         pub fn setValue(self: *Self, key: *const Key, value: *const Value) void {
-            self.cast().CFDictionarySetValue(key, value);
+            self.raw().CFDictionarySetValue(key, value);
         }
 
         pub fn getValue(self: *const Self, key: *const Key) ?*const Value {
-            const value = self.cast().CFDictionaryGetValue(key) orelse return null;
+            const value = self.raw().CFDictionaryGetValue(key) orelse return null;
             return @ptrCast(value);
         }
     };

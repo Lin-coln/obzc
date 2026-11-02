@@ -1,9 +1,8 @@
-const helpers = @import("../helpers/root.zig");
 
 pub const CFString = opaque {
     const Self = @This();
-    const h = helpers.h(Self);
-    const cast = h.cast;
+    const h = @import("macos").helpers.h(Self);
+    const raw = h.raw;
 
     pub const retain = h.retain;
     pub const release = h.release;
