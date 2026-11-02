@@ -1,4 +1,5 @@
 const std = @import("std");
+const c = @import("macos").c;
 const core = @import("core");
 const cg = @import("core-graphics");
 const sck = @import("screen-capture-kit");
@@ -10,7 +11,7 @@ test "SCStream: update a window capture stream with a new configuration" {
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     // Initialize CoreGraphics in this command-line test process before creating a filter.
-    _ = cg.c.CGMainDisplayID();
+    _ = c.CGMainDisplayID();
     const content = try sck.ShareableContent.getShareableContentSync();
     defer content.release();
     const windows = content.windows();

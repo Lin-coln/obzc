@@ -1,4 +1,5 @@
 const std = @import("std");
+const c = @import("macos").c;
 const core = @import("core");
 const ns = @import("foundation");
 const vn = @import("vision");
@@ -60,7 +61,7 @@ test "text recognition: a blank pixel buffer produces an empty result" {
     const pool = core.AutoReleasePool.create();
     defer pool.release();
     const handler = created: {
-        const pixel_buffer = cv.Buffer.create(256, 128, cv.c.kCVPixelFormatType_32BGRA, null) orelse
+        const pixel_buffer = cv.Buffer.create(256, 128, c.kCVPixelFormatType_32BGRA, null) orelse
             return error.PixelBufferCreationFailed;
         defer pixel_buffer.release();
         {

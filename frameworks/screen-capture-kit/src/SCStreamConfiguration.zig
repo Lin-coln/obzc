@@ -1,4 +1,5 @@
 const std = @import("std");
+const c = @import("macos").c;
 const core = @import("core");
 const cf = @import("core-foundation");
 const cg = @import("core-graphics");
@@ -33,8 +34,8 @@ pub const SCStreamConfiguration = opaque {
     pub const setCapturesAudio = h.prop("capturesAudio", bool).setter;
     pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
     pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
-    pub const pixelFormat = h.prop("pixelFormat", cv.c.OSType).getter;
-    pub const setPixelFormat = h.prop("pixelFormat", cv.c.OSType).setter;
+    pub const pixelFormat = h.prop("pixelFormat", c.OSType).getter;
+    pub const setPixelFormat = h.prop("pixelFormat", c.OSType).setter;
     pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;
     pub const setCaptureResolution = h.prop("captureResolution", SCCaptureResolutionType).setter;
     /// Borrowed CoreFoundation references.
@@ -78,14 +79,14 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(interval.flags, actual.flags);
     try std.testing.expectEqual(interval.epoch, actual.epoch);
 
-    configuration.setPixelFormat(cv.c.kCVPixelFormatType_64RGBAHalf);
+    configuration.setPixelFormat(c.kCVPixelFormatType_64RGBAHalf);
     configuration.setCaptureResolution(.nominal);
-    try std.testing.expectEqual(@as(cv.c.OSType, cv.c.kCVPixelFormatType_64RGBAHalf), configuration.pixelFormat());
+    try std.testing.expectEqual(@as(c.OSType, c.kCVPixelFormatType_64RGBAHalf), configuration.pixelFormat());
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
-    configuration.setColorSpaceName(@ptrCast(cg.c.kCGColorSpaceDisplayP3));
-    const color = cg.Color.clear();
+    configuration.setColorSpaceName(@ptrCast(c.kCGColorSpaceDisplayP3));
+    const color = cg.Color.getConstantColor(.Clear).?;
     configuration.setBackgroundColor(color);
-    try std.testing.expect(cf.c.CFEqual(@ptrCast(cg.c.kCGColorSpaceDisplayP3), @ptrCast(configuration.colorSpaceName())) != 0);
-    try std.testing.expect(cg.c.CGColorEqualToColor(@ptrCast(color), @ptrCast(configuration.backgroundColor())));
+    try std.testing.expect(c.CFEqual(@ptrCast(c.kCGColorSpaceDisplayP3), @ptrCast(configuration.colorSpaceName())) != 0);
+    try std.testing.expect(c.CGColorEqualToColor(@ptrCast(color), @ptrCast(configuration.backgroundColor())));
 }

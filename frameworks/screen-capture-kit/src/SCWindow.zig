@@ -1,3 +1,4 @@
+const c = @import("macos").c;
 const core = @import("core");
 const ns = @import("foundation");
 const cg = @import("core-graphics");
@@ -11,7 +12,7 @@ pub const SCWindow = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const windowID = h.prop("windowID", cg.c.CGWindowID).getter;
+    pub const windowID = h.prop("windowID", c.CGWindowID).getter;
     pub const frame = h.prop("frame", cg.Rect).getter;
     pub const windowLayer = h.prop("windowLayer", isize).getter;
     pub const owningApplication = h.prop("owningApplication", ?*SCRunningApplication).getter;

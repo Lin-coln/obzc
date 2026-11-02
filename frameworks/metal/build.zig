@@ -5,9 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Metal tests");
-    const core, const cf, const cv, const ios, const ns = blk: {
+    const macos, const core, const cf, const cv, const ios, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
+            b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-video", opts).module("core-video"),
@@ -52,6 +53,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
+                .{ .name = "macos", .module = macos },
                 .{ .name = "core", .module = core },
                 .{ .name = "foundation", .module = ns },
                 .{ .name = "metal", .module = mtl },

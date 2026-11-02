@@ -1,4 +1,5 @@
 const std = @import("std");
+const c = @import("macos").c;
 const core = @import("core");
 const ns = @import("foundation");
 const cf = @import("core-foundation");
@@ -14,9 +15,9 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer surface_properties.release();
     const attributes = cf.Dictionary(cf.String, anyopaque).create().?;
     defer attributes.release();
-    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferIOSurfacePropertiesKey.?), @ptrCast(surface_properties));
-    attributes.setValue(@ptrCast(cv.c.kCVPixelBufferMetalCompatibilityKey.?), @ptrCast(cf.c.kCFBooleanTrue.?));
-    const pixel_buffer = cv.Buffer.create(4, 4, cv.c.kCVPixelFormatType_32BGRA, attributes) orelse
+    attributes.setValue(@ptrCast(c.kCVPixelBufferIOSurfacePropertiesKey.?), @ptrCast(surface_properties));
+    attributes.setValue(@ptrCast(c.kCVPixelBufferMetalCompatibilityKey.?), @ptrCast(c.kCFBooleanTrue.?));
+    const pixel_buffer = cv.Buffer.create(4, 4, c.kCVPixelFormatType_32BGRA, attributes) orelse
         return error.PixelBufferCreationFailed;
     defer pixel_buffer.release();
     const surface = pixel_buffer.getIOSurface().?;
@@ -99,8 +100,8 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     try std.testing.expectEqual(@as(mtl.c.MTLCommandBufferStatus, mtl.c.MTLCommandBufferStatusCompleted), command_buffer.status());
 
     // Check every pixel after the GPU finishes; successful submission alone does not prove that rendering or copying worked.
-    try std.testing.expect(pixel_buffer.lockBaseAddress(cv.c.kCVPixelBufferLock_ReadOnly));
-    defer _ = pixel_buffer.unlockBaseAddress(cv.c.kCVPixelBufferLock_ReadOnly);
+    try std.testing.expect(pixel_buffer.lockBaseAddress(c.kCVPixelBufferLock_ReadOnly));
+    defer _ = pixel_buffer.unlockBaseAddress(c.kCVPixelBufferLock_ReadOnly);
     const pixels: [*]const u8 = pixel_buffer.getBaseAddress().?;
     const bytes_per_row = pixel_buffer.getBytesPerRow();
     for (0..4) |y| {
