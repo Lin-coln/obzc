@@ -23,28 +23,28 @@ pub const CVBuffer = opaque {
     }
 
     pub fn getBaseAddress(self: *Self) ?[*]u8 {
-        const address = self.raw().CVPixelBufferGetBaseAddress() orelse return null;
+        const address = c.CVPixelBufferGetBaseAddress(self.raw()) orelse return null;
         return @ptrCast(address);
     }
 
     pub fn getDataSize(self: *Self) usize {
-        return self.raw().CVPixelBufferGetDataSize();
+        return c.CVPixelBufferGetDataSize(self.raw());
     }
 
     pub fn getBytesPerRow(self: *Self) usize {
-        return self.raw().CVPixelBufferGetBytesPerRow();
+        return c.CVPixelBufferGetBytesPerRow(self.raw());
     }
 
     pub fn lockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return self.raw().CVPixelBufferLockBaseAddress(flags) == c.kCVReturnSuccess;
+        return c.CVPixelBufferLockBaseAddress(self.raw(), flags) == c.kCVReturnSuccess;
     }
 
     pub fn unlockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return self.raw().CVPixelBufferUnlockBaseAddress(flags) == c.kCVReturnSuccess;
+        return c.CVPixelBufferUnlockBaseAddress(self.raw(), flags) == c.kCVReturnSuccess;
     }
 
     pub fn getIOSurface(self: *Self) ?*ios.Surface {
-        const surface = self.raw().CVPixelBufferGetIOSurface() orelse return null;
+        const surface = c.CVPixelBufferGetIOSurface(self.raw()) orelse return null;
         return @ptrCast(surface);
     }
 };

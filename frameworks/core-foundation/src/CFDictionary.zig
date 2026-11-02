@@ -16,11 +16,11 @@ pub fn CFDictionary(comptime Key: type, comptime Value: type) type {
         }
 
         pub fn setValue(self: *Self, key: *const Key, value: *const Value) void {
-            self.raw().CFDictionarySetValue(key, value);
+            c.CFDictionarySetValue(self.raw(), key, value);
         }
 
         pub fn getValue(self: *const Self, key: *const Key) ?*const Value {
-            const value = self.raw().CFDictionaryGetValue(key) orelse return null;
+            const value = c.CFDictionaryGetValue(self.raw(), key) orelse return null;
             return @ptrCast(value);
         }
     };

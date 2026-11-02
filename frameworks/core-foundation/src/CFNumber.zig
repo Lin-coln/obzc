@@ -1,3 +1,5 @@
+const c = @import("macos").c;
+
 pub const kCFNumber = enum {
     const Self = @This();
     FloatType,
@@ -16,7 +18,7 @@ pub const CFNumber = opaque {
     pub fn getValue(self: *const Self, comptime T: type) ?T {
         const number_type = if (T == f32) kCFNumber.FloatType.raw() else @compileError("unsupported CFNumber value type");
         var value: T = undefined;
-        if (self.raw().CFNumberGetValue(number_type, &value) == 0) return null;
+        if (c.CFNumberGetValue(self.raw(), number_type, &value) == 0) return null;
         return value;
     }
 };

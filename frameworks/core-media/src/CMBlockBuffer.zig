@@ -1,3 +1,5 @@
+const c = @import("macos").c;
+
 pub const CMBlockBuffer = opaque {
     const Self = @This();
     const h = @import("macos").helpers.ref(Self);
@@ -7,10 +9,10 @@ pub const CMBlockBuffer = opaque {
     pub const release = h.release;
 
     pub fn getDataLength(self: *Self) usize {
-        return self.raw().CMBlockBufferGetDataLength();
+        return c.CMBlockBufferGetDataLength(self.raw());
     }
 
     pub fn copyDataBytes(self: *Self, offset: usize, data: []u8) bool {
-        return self.raw().CMBlockBufferCopyDataBytes(offset, data.len, data.ptr) == 0;
+        return c.CMBlockBufferCopyDataBytes(self.raw(), offset, data.len, data.ptr) == 0;
     }
 };

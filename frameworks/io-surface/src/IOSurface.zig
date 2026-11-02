@@ -1,3 +1,5 @@
+const c = @import("macos").c;
+
 pub const IOSurface = opaque {
     const Self = @This();
     const h = @import("macos").helpers.ref(Self);
@@ -7,10 +9,10 @@ pub const IOSurface = opaque {
     pub const release = h.release;
 
     pub fn incrementUseCount(self: *Self) void {
-        self.raw().IOSurfaceIncrementUseCount();
+        c.IOSurfaceIncrementUseCount(self.raw());
     }
 
     pub fn decrementUseCount(self: *Self) void {
-        self.raw().IOSurfaceDecrementUseCount();
+        c.IOSurfaceDecrementUseCount(self.raw());
     }
 };

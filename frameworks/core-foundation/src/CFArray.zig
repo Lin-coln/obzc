@@ -10,11 +10,11 @@ pub fn CFArray(comptime T: type) type {
         pub const release = h.release;
 
         pub fn getCount(self: *const Self) c.CFIndex {
-            return self.raw().CFArrayGetCount();
+            return c.CFArrayGetCount(self.raw());
         }
 
         pub fn getValueAtIndex(self: *const Self, index: c.CFIndex) ?*const T {
-            const value = self.raw().CFArrayGetValueAtIndex(index) orelse return null;
+            const value = c.CFArrayGetValueAtIndex(self.raw(), index) orelse return null;
             return @ptrCast(value);
         }
     };

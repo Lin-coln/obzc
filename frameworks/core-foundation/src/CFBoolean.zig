@@ -1,3 +1,5 @@
+const c = @import("macos").c;
+
 pub const kCFBoolean = enum {
     const Self = @This();
     True,
@@ -15,6 +17,6 @@ pub const CFBoolean = opaque {
     pub const release = h.release;
 
     pub fn getValue(self: *const Self) bool {
-        return self.raw().CFBooleanGetValue() != 0;
+        return c.CFBooleanGetValue(self.raw()) != 0;
     }
 };
