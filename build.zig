@@ -28,6 +28,12 @@ pub fn build(b: *std.Build) !void {
         try b.modules.put(b.graph.arena, name, dep.module(name));
     }
 
+    const macos = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        break :blk b.dependency("macos-abi", opts).module("macos");
+    };
+    try b.modules.put(b.graph.arena, "macos", macos);
+
     // zig build test                 Run tests for every package.
     // zig build test -Dpkg=metal,screen-capture-kit   Run tests for the selected packages.
     try @import("build/test.zig").addTestStep(b, .{ .target = target, .optimize = optimize });
