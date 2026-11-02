@@ -3,6 +3,8 @@ const c = @import("macos").c;
 
 pub const CMTime = extern struct {
     const Self = @This();
+    const h = @import("macos").helpers.val(Self);
+    const raw = h.raw;
 
     value: c.CMTimeValue align(4),
     timescale: c.CMTimeScale,
@@ -17,10 +19,6 @@ pub const CMTime = extern struct {
     pub fn add(self: Self, other: Self) Self {
         const time = c.CMTimeAdd(self.raw(), other.raw());
         return @as(*const Self, @ptrCast(&time)).*;
-    }
-
-    fn raw(self: Self) c.CMTime {
-        return @as(*const c.CMTime, @ptrCast(&self)).*;
     }
 };
 
