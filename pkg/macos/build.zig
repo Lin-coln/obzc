@@ -24,12 +24,6 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "macos-abi", .module = abi },
             },
         });
-        mod.linkFramework("CoreFoundation", .{});
-        mod.linkFramework("CoreGraphics", .{});
-        mod.linkFramework("CoreMedia", .{});
-        mod.linkFramework("CoreVideo", .{});
-        mod.linkFramework("IOSurface", .{});
-
         const tests = b.addTest(.{ .root_module = mod });
         test_step.dependOn(&b.addRunArtifact(tests).step);
         break :blk mod;
