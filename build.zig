@@ -6,16 +6,23 @@ pub fn build(b: *std.Build) !void {
 
     // pkg/core and frameworks/*
     inline for (.{
+        // core
         "core",
+
+        // foundation
         "foundation",
-        "screen-capture-kit",
-        "metal",
-        "vision",
-        "core-media",
         "core-foundation",
+
+        // c frameworks
+        "core-media",
         "core-graphics",
         "core-video",
         "io-surface",
+
+        // objc frameworks
+        "screen-capture-kit",
+        "metal",
+        "vision",
     }) |name| {
         const dep = b.dependency(name, .{ .target = target, .optimize = optimize });
         try b.modules.put(b.graph.arena, name, dep.module(name));

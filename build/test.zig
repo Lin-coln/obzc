@@ -13,7 +13,7 @@ pub fn addTestStep(b: *std.Build, options: Options) !void {
 }
 
 const Package = struct {
-    const Stage = enum { core, foundation, rest };
+    const Stage = enum { core, ns, cf, rest };
 
     name: []const u8,
     stage: Stage,
@@ -22,7 +22,9 @@ const Package = struct {
         const stage: Stage = if (std.mem.eql(u8, name, "core"))
             .core
         else if (std.mem.eql(u8, name, "foundation"))
-            .foundation
+            .ns
+        else if (std.mem.eql(u8, name, "core-foundation"))
+            .cf
         else
             .rest;
         return .{ .name = name, .stage = stage };
