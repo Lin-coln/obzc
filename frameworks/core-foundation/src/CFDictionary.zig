@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("macos").c;
 
-pub fn CFDictionary(comptime Key: type, comptime Value: type) type {
+pub fn CFDictionary(comptime K: type, comptime V: type) type {
     return opaque {
         const Self = @This();
         const h = @import("macos").helpers.ref(Self);
@@ -15,11 +15,11 @@ pub fn CFDictionary(comptime Key: type, comptime Value: type) type {
             return @ptrCast(dict);
         }
 
-        pub fn setValue(self: *Self, key: *const Key, value: *const Value) void {
+        pub fn setValue(self: *Self, key: *const K, value: *const V) void {
             c.CFDictionarySetValue(self.raw(), key, value);
         }
 
-        pub fn getValue(self: *const Self, key: *const Key) ?*const Value {
+        pub fn getValue(self: *const Self, key: *const K) ?*const V {
             const value = c.CFDictionaryGetValue(self.raw(), key) orelse return null;
             return @ptrCast(value);
         }
