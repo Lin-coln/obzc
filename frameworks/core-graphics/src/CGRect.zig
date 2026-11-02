@@ -1,4 +1,4 @@
-const c = @import("../ffi/root.zig").c;
+const c = @import("macos").c;
 const cf = @import("core-foundation");
 
 pub const CGRect = extern struct {
