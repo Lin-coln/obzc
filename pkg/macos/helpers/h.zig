@@ -1,10 +1,38 @@
 const std = @import("std");
 const c = @import("../ffi/root.zig").c;
 
-pub fn resolveOpaqueType(comptime T: type) type {
+pub fn h(comptime T: type) type {
+    const O = resolveTypefromOpaque(T);
+
+    return struct {
+        pub const raw = RawCaster(T, O).call;
+
+        pub fn retain(self: *const T) *const T {
+            return @ptrCast(c.CFRetain(@ptrCast(self)));
+        }
+
+        pub fn release(self: *const T) void {
+            c.CFRelease(@ptrCast(self));
+        }
+    };
+}
+
+fn resolveTypefromOpaque(comptime T: type) type {
     const name = resolveTypeName(@typeName(T));
     const Ref = @field(c, std.fmt.comptimePrint("{s}Ref", .{name}));
     return @typeInfo(@typeInfo(Ref).optional.child).pointer.child;
+}
+
+fn RawCaster(comptime T: type, comptime O: type) type {
+    return struct {
+        pub fn call(self: anytype) if (@TypeOf(self) == *const T) *const O else *O {
+            comptime {
+                if (@TypeOf(self) != *T and @TypeOf(self) != *const T)
+                    @compileError("raw receiver must point to " ++ @typeName(T));
+            }
+            return @ptrCast(self);
+        }
+    };
 }
 
 fn resolveTypeName(comptime full_name: []const u8) [:0]const u8 {
