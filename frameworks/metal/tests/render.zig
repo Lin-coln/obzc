@@ -15,15 +15,15 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer surface_properties.release();
     const attributes = cf.Dictionary(cf.String, anyopaque).create().?;
     defer attributes.release();
-    attributes.setValue(@ptrCast(c.kCVPixelBufferIOSurfacePropertiesKey.?), @ptrCast(surface_properties));
-    attributes.setValue(@ptrCast(c.kCVPixelBufferMetalCompatibilityKey.?), @ptrCast(c.kCFBooleanTrue.?));
+    attributes.setValue(@ptrCast(cv.k.PixelBuffer.IOSurfacePropertiesKey.raw().?), @ptrCast(surface_properties));
+    attributes.setValue(@ptrCast(cv.k.PixelBuffer.MetalCompatibilityKey.raw().?), @ptrCast(cf.k.Boolean.True.raw().?));
     const pixel_buffer = cv.Buffer.create(4, 4, c.kCVPixelFormatType_32BGRA, attributes) orelse
         return error.PixelBufferCreationFailed;
     defer pixel_buffer.release();
     const surface = pixel_buffer.getIOSurface().?;
     {
-        try std.testing.expect(pixel_buffer.lockBaseAddress(0));
-        defer _ = pixel_buffer.unlockBaseAddress(0);
+        try std.testing.expect(pixel_buffer.lockBaseAddress(.none));
+        defer _ = pixel_buffer.unlockBaseAddress(.none);
         const pixels = pixel_buffer.getBaseAddress().?;
         @memset(pixels[0 .. pixel_buffer.getBytesPerRow() * 4], 0);
     }
@@ -100,8 +100,8 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     try std.testing.expectEqual(@as(mtl.c.MTLCommandBufferStatus, mtl.c.MTLCommandBufferStatusCompleted), command_buffer.status());
 
     // Check every pixel after the GPU finishes; successful submission alone does not prove that rendering or copying worked.
-    try std.testing.expect(pixel_buffer.lockBaseAddress(c.kCVPixelBufferLock_ReadOnly));
-    defer _ = pixel_buffer.unlockBaseAddress(c.kCVPixelBufferLock_ReadOnly);
+    try std.testing.expect(pixel_buffer.lockBaseAddress(.readOnly));
+    defer _ = pixel_buffer.unlockBaseAddress(.readOnly);
     const pixels: [*]const u8 = pixel_buffer.getBaseAddress().?;
     const bytes_per_row = pixel_buffer.getBytesPerRow();
     for (0..4) |y| {

@@ -1,6 +1,15 @@
 const c = @import("macos").c;
 const cf = @import("core-foundation");
 const ios = @import("io-surface");
+const CVPixelBufferLockFlags = @import("CVPixelBufferLockFlags.zig").CVPixelBufferLockFlags;
+
+pub const kCVPixelBuffer = enum {
+    const Self = @This();
+    IOSurfacePropertiesKey,
+    MetalCompatibilityKey,
+    const h = @import("macos").helpers.konst(Self);
+    pub const raw = h.raw;
+};
 
 pub const CVBuffer = opaque {
     const Self = @This();
@@ -35,12 +44,12 @@ pub const CVBuffer = opaque {
         return c.CVPixelBufferGetBytesPerRow(self.raw());
     }
 
-    pub fn lockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return c.CVPixelBufferLockBaseAddress(self.raw(), flags) == c.kCVReturnSuccess;
+    pub fn lockBaseAddress(self: *Self, flags: CVPixelBufferLockFlags) bool {
+        return c.CVPixelBufferLockBaseAddress(self.raw(), @intFromEnum(flags)) == c.kCVReturnSuccess;
     }
 
-    pub fn unlockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return c.CVPixelBufferUnlockBaseAddress(self.raw(), flags) == c.kCVReturnSuccess;
+    pub fn unlockBaseAddress(self: *Self, flags: CVPixelBufferLockFlags) bool {
+        return c.CVPixelBufferUnlockBaseAddress(self.raw(), @intFromEnum(flags)) == c.kCVReturnSuccess;
     }
 
     pub fn getIOSurface(self: *Self) ?*ios.Surface {

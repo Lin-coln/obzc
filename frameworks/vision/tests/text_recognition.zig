@@ -65,8 +65,8 @@ test "text recognition: a blank pixel buffer produces an empty result" {
             return error.PixelBufferCreationFailed;
         defer pixel_buffer.release();
         {
-            try std.testing.expect(pixel_buffer.lockBaseAddress(0));
-            defer _ = pixel_buffer.unlockBaseAddress(0);
+            try std.testing.expect(pixel_buffer.lockBaseAddress(.none));
+            defer _ = pixel_buffer.unlockBaseAddress(.none);
             const pixels = pixel_buffer.getBaseAddress().?;
             @memset(pixels[0..pixel_buffer.getDataSize()], 255);
         }
