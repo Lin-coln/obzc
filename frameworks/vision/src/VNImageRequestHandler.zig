@@ -21,7 +21,7 @@ pub const VNImageRequestHandler = opaque {
     }
 
     /// Retains the image source, which must not be modified while the handler is alive.
-    pub fn initWithCVPixelBuffer(pixel_buffer: ?*cv.Buffer, options: *Options) *Self {
+    pub fn initWithCVPixelBuffer(pixel_buffer: ?*cv.PixelBuffer, options: *Options) *Self {
         return h.call(h.cls.alloc(), *Self, "initWithCVPixelBuffer:options:", .{ pixel_buffer, options });
     }
 

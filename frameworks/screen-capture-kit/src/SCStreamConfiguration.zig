@@ -85,7 +85,7 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
     configuration.setColorSpaceName(@ptrCast(c.kCGColorSpaceDisplayP3));
-    const color = cg.Color.getConstantColor(.Clear).?;
+    const color = cg.Color.getConst(.Clear).?;
     configuration.setBackgroundColor(color);
     try std.testing.expect(c.CFEqual(@ptrCast(c.kCGColorSpaceDisplayP3), @ptrCast(configuration.colorSpaceName())) != 0);
     try std.testing.expect(c.CGColorEqualToColor(@ptrCast(color), @ptrCast(configuration.backgroundColor())));
