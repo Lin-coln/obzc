@@ -21,6 +21,5 @@
         "build.zig.zon",
         "pkg",
         "frameworks",
-        "build",
     },
 }
