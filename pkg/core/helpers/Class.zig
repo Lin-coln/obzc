@@ -8,8 +8,13 @@ pub fn Class(comptime T: type) type {
     return struct {
         pub const m = @import("method/root.zig").method(T, call);
 
-        pub const alloc = m.of("alloc", fn () *T);
-        pub const new = m.of("new", fn () *T);
+        pub fn alloc() *T {
+            return call(*T, "alloc", .{});
+        }
+
+        pub fn new() *T {
+            return call(*T, "new", .{});
+        }
 
         /// Calls a class method, converting top-level bool arguments and returns through BOOL.
         pub fn call(comptime Return: type, name: [:0]const u8, args: anytype) Return {
