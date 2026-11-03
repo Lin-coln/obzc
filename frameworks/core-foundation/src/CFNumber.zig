@@ -9,7 +9,7 @@ pub const CFNumber = opaque {
 
     pub fn getValue(self: *const Self, comptime T: type) ?T {
         var value: T = undefined;
-        if (c.CFNumberGetValue(self.raw(), CFNumberType.of(T).raw(), &value) == 0) return null;
+        if (c.CFNumberGetValue(self.raw(), kCFNumber.fromType(T).unwrap(), &value) == 0) return null;
         return value;
     }
 
@@ -18,8 +18,7 @@ pub const CFNumber = opaque {
     }
 };
 
-const CFNumberType = enum(c.CFNumberType) {
-    const Self = @This();
+pub const kCFNumber = enum(c.CFNumberType) {
     SInt8Type = c.kCFNumberSInt8Type,
     SInt16Type = c.kCFNumberSInt16Type,
     SInt32Type = c.kCFNumberSInt32Type,
@@ -37,7 +36,12 @@ const CFNumberType = enum(c.CFNumberType) {
     NSIntegerType = c.kCFNumberNSIntegerType,
     CGFloatType = c.kCFNumberCGFloatType,
 
-    fn of(comptime T: type) Self {
+    const Self = @This();
+    pub fn unwrap(self: Self) c.CFNumberType {
+        return @backingInt(self);
+    }
+
+    pub fn fromType(comptime T: type) Self {
         return switch (T) {
             i8 => .SInt8Type,
             i16 => .SInt16Type,
@@ -53,10 +57,6 @@ const CFNumberType = enum(c.CFNumberType) {
             isize => .CFIndexType,
             else => @compileError("unsupported CFNumber value type"),
         };
-    }
-
-    fn raw(self: Self) c.CFNumberType {
-        return @backingInt(self);
     }
 };
 
@@ -77,7 +77,7 @@ test "getValue reads supported number types" {
         @as(isize, 12),
     }) |value| {
         const T = @TypeOf(value);
-        const raw_number = c.CFNumberCreate(null, CFNumberType.of(T).raw(), &value) orelse return error.OutOfMemory;
+        const raw_number = c.CFNumberCreate(null, kCFNumber.fromType(T).unwrap(), &value) orelse return error.OutOfMemory;
         defer c.CFRelease(raw_number);
 
         const number: *const CFNumber = @ptrCast(raw_number);

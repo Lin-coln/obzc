@@ -7,6 +7,7 @@ pub const CFType = opaque {
     const h = Mixin(Self);
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
 };
 
 fn CFTypeMixin(comptime T: type) type {
@@ -17,6 +18,10 @@ fn CFTypeMixin(comptime T: type) type {
 
         pub fn release(self: *const T) void {
             c.CFRelease(raw(self));
+        }
+
+        pub fn equal(self: *const T, other: *const T) bool {
+            return c.CFEqual(raw(self), raw(other)) != 0;
         }
 
         fn raw(self: *const T) c.CFTypeRef {

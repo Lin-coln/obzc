@@ -3,18 +3,6 @@ const cf = @import("core-foundation");
 const ios = @import("io-surface");
 const CVImageBuffer = @import("CVImageBuffer.zig").CVImageBuffer;
 
-pub const kCVPixelBuffer = enum {
-    IOSurfacePropertiesKey,
-    MetalCompatibilityKey,
-
-    pub fn raw(self: @This()) c.CFStringRef {
-        return switch (self) {
-            .IOSurfacePropertiesKey => c.kCVPixelBufferIOSurfacePropertiesKey,
-            .MetalCompatibilityKey => c.kCVPixelBufferMetalCompatibilityKey,
-        };
-    }
-};
-
 pub const CVPixelBuffer = opaque {
     pub const LockFlag = CVPixelBufferLockFlag;
 
@@ -77,6 +65,20 @@ pub const CVPixelFormat = enum(c.OSType) {
     BGRA32 = c.kCVPixelFormatType_32BGRA,
     RGBA64Half = c.kCVPixelFormatType_64RGBAHalf,
     _,
+};
+
+pub const kCVPixelBuffer = enum {
+    IOSurfacePropertiesKey,
+    MetalCompatibilityKey,
+
+    const Self = @This();
+
+    pub fn unwrap(self: Self) c.CFStringRef {
+        return switch (self) {
+            .IOSurfacePropertiesKey => c.kCVPixelBufferIOSurfacePropertiesKey,
+            .MetalCompatibilityKey => c.kCVPixelBufferMetalCompatibilityKey,
+        };
+    }
 };
 
 const CVPixelBufferLockFlag = struct {

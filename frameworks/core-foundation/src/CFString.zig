@@ -6,6 +6,7 @@ pub const CFString = opaque {
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
 
     fn raw(self: *const Self) c.CFStringRef {
         return @ptrCast(self);

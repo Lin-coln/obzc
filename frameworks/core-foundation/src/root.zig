@@ -7,6 +7,10 @@ pub const Dictionary = @import("CFDictionary.zig").CFDictionary;
 pub const Number = @import("CFNumber.zig").CFNumber;
 pub const String = @import("CFString.zig").CFString;
 
+// const
+pub const kBoolean = @import("CFBoolean.zig").kCFBoolean;
+pub const kNumber = @import("CFNumber.zig").kCFNumber;
+
 test {
     std.testing.refAllDecls(@This());
 }

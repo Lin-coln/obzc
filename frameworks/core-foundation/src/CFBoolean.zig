@@ -15,3 +15,15 @@ pub const CFBoolean = opaque {
         return @ptrCast(self);
     }
 };
+
+pub const kCFBoolean = enum {
+    True,
+    False,
+    const Self = @This();
+    pub fn unwrap(self: Self) c.CFBooleanRef {
+        return switch (self) {
+            .True => c.kCFBooleanTrue,
+            .False => c.kCFBooleanFalse,
+        };
+    }
+};
