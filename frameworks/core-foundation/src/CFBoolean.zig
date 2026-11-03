@@ -20,10 +20,11 @@ pub const kCFBoolean = enum {
     True,
     False,
     const Self = @This();
-    pub fn unwrap(self: Self) c.CFBooleanRef {
-        return switch (self) {
+    pub fn unwrap(self: Self) *const CFBoolean {
+        const value: c.CFBooleanRef = switch (self) {
             .True => c.kCFBooleanTrue,
             .False => c.kCFBooleanFalse,
         };
+        return @ptrCast(value.?);
     }
 };

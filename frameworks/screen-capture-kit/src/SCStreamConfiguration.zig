@@ -49,8 +49,8 @@ pub const SCStreamConfiguration = opaque {
     }
 
     pub fn setColorSpaceName(self: *Self, name: ?cg.kColorSpace) void {
-        const raw: c.CFStringRef = if (name) |value| value.unwrap() else null;
-        h.call(self, void, "setColorSpaceName:", .{raw});
+        const string: ?*const cf.String = if (name) |value| value.unwrap() else null;
+        h.call(self, void, "setColorSpaceName:", .{string});
     }
     pub const backgroundColor = h.prop("backgroundColor", ?*cg.Color).getter;
     pub const setBackgroundColor = h.prop("backgroundColor", ?*cg.Color).setter;

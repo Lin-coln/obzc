@@ -73,11 +73,12 @@ pub const kCVPixelBuffer = enum {
 
     const Self = @This();
 
-    pub fn unwrap(self: Self) c.CFStringRef {
-        return switch (self) {
+    pub fn unwrap(self: Self) *const cf.String {
+        const value: c.CFStringRef = switch (self) {
             .IOSurfacePropertiesKey => c.kCVPixelBufferIOSurfacePropertiesKey,
             .MetalCompatibilityKey => c.kCVPixelBufferMetalCompatibilityKey,
         };
+        return @ptrCast(value.?);
     }
 };
 

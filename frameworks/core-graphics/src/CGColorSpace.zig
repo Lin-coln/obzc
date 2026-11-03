@@ -6,14 +6,15 @@ pub const kCGColorSpace = enum {
 
     const Self = @This();
 
-    pub fn unwrap(self: Self) c.CFStringRef {
-        return switch (self) {
+    pub fn unwrap(self: Self) *const cf.String {
+        const value: c.CFStringRef = switch (self) {
             .DisplayP3 => c.kCGColorSpaceDisplayP3,
         };
+        return @ptrCast(value.?);
     }
 
     pub fn wrap(name: *const cf.String) ?Self {
-        if (name.equal(@ptrCast(c.kCGColorSpaceDisplayP3))) return .DisplayP3;
+        if (name.equal(Self.DisplayP3.unwrap())) return .DisplayP3;
         return null;
     }
 };
