@@ -12,7 +12,7 @@ pub const CFType = opaque {
 fn CFTypeMixin(comptime T: type) type {
     return struct {
         pub fn retain(self: *const T) *const T {
-            return @ptrCast(c.CFRetain(raw(self)));
+            return @ptrCast(c.CFRetain(raw(self)).?);
         }
 
         pub fn release(self: *const T) void {
