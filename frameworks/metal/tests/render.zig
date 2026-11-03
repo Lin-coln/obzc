@@ -17,13 +17,13 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer attributes.release();
     attributes.setValue(@ptrCast(cv.kPixelBuffer.IOSurfacePropertiesKey.unwrap()), @ptrCast(surface_properties));
     attributes.setValue(@ptrCast(cv.kPixelBuffer.MetalCompatibilityKey.unwrap()), @ptrCast(cf.kBoolean.True.unwrap()));
-    const pixel_buffer = cv.PixelBuffer.create(4, 4, cv.PixelFormat.BGRA32, attributes) orelse
+    const pixel_buffer = cv.PixelBuffer.create(4, 4, cv.kPixelFormat.BGRA32, attributes) orelse
         return error.PixelBufferCreationFailed;
     defer pixel_buffer.release();
     const surface = pixel_buffer.getIOSurface().?;
     {
-        try std.testing.expect(pixel_buffer.lockBaseAddress(cv.PixelBuffer.LockFlag.None));
-        defer _ = pixel_buffer.unlockBaseAddress(cv.PixelBuffer.LockFlag.None);
+        try std.testing.expect(pixel_buffer.lockBaseAddress(&.{}));
+        defer _ = pixel_buffer.unlockBaseAddress(&.{});
         const pixels = pixel_buffer.getBaseAddress().?;
         @memset(pixels[0 .. pixel_buffer.getBytesPerRow() * 4], 0);
     }
@@ -100,8 +100,8 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     try std.testing.expectEqual(@as(mtl.c.MTLCommandBufferStatus, mtl.c.MTLCommandBufferStatusCompleted), command_buffer.status());
 
     // Check every pixel after the GPU finishes; successful submission alone does not prove that rendering or copying worked.
-    try std.testing.expect(pixel_buffer.lockBaseAddress(cv.PixelBuffer.LockFlag.ReadOnly));
-    defer _ = pixel_buffer.unlockBaseAddress(cv.PixelBuffer.LockFlag.ReadOnly);
+    try std.testing.expect(pixel_buffer.lockBaseAddress(&.{.ReadOnly}));
+    defer _ = pixel_buffer.unlockBaseAddress(&.{.ReadOnly});
     const pixels: [*]const u8 = pixel_buffer.getBaseAddress().?;
     const bytes_per_row = pixel_buffer.getBytesPerRow();
     for (0..4) |y| {

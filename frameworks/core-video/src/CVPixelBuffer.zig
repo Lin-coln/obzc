@@ -4,8 +4,6 @@ const ios = @import("io-surface");
 const CVImageBuffer = @import("CVImageBuffer.zig").CVImageBuffer;
 
 pub const CVPixelBuffer = opaque {
-    pub const LockFlag = CVPixelBufferLockFlag;
-
     const Self = @This();
     const h = CVImageBuffer.Mixin(Self);
 
@@ -31,12 +29,12 @@ pub const CVPixelBuffer = opaque {
         return c.CVPixelBufferGetBytesPerRow(raw(self));
     }
 
-    pub fn lockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return c.CVPixelBufferLockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
+    pub fn lockBaseAddress(self: *Self, flags: []const kCVPixelBufferLockFlag) bool {
+        return c.CVPixelBufferLockBaseAddress(raw(self), kCVPixelBufferLockFlag.flags(flags)) == c.kCVReturnSuccess;
     }
 
-    pub fn unlockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
-        return c.CVPixelBufferUnlockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
+    pub fn unlockBaseAddress(self: *Self, flags: []const kCVPixelBufferLockFlag) bool {
+        return c.CVPixelBufferUnlockBaseAddress(raw(self), kCVPixelBufferLockFlag.flags(flags)) == c.kCVReturnSuccess;
     }
 
     pub fn getIOSurface(self: *Self) ?*ios.Surface {
@@ -52,19 +50,29 @@ pub const CVPixelBuffer = opaque {
 pub fn CVPixelBufferCreate(
     width: usize,
     height: usize,
-    format: CVPixelFormat,
+    format: kCVPixelFormat,
     attrs: ?*const cf.Dictionary,
 ) ?*CVPixelBuffer {
     var buffer: c.CVPixelBufferRef = null;
-    if (c.CVPixelBufferCreate(null, width, height, @backingInt(format), @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)
+    if (c.CVPixelBufferCreate(null, width, height, format.unwrap(), @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)
         return null;
     return @ptrCast(buffer);
 }
 
-pub const CVPixelFormat = enum(c.OSType) {
+pub const kCVPixelFormat = enum(c.OSType) {
     BGRA32 = c.kCVPixelFormatType_32BGRA,
     RGBA64Half = c.kCVPixelFormatType_64RGBAHalf,
     _,
+
+    const Self = @This();
+
+    pub fn wrap(value: c.OSType) Self {
+        return @fromBackingInt(value);
+    }
+
+    pub fn unwrap(self: Self) c.OSType {
+        return @backingInt(self);
+    }
 };
 
 pub const kCVPixelBuffer = enum {
@@ -82,9 +90,25 @@ pub const kCVPixelBuffer = enum {
     }
 };
 
-const CVPixelBufferLockFlag = struct {
-    pub const None = 0;
-    pub const ReadOnly = c.kCVPixelBufferLock_ReadOnly;
+pub const kCVPixelBufferLockFlag = enum(c_int) {
+    None = 0,
+    ReadOnly = c.kCVPixelBufferLock_ReadOnly,
+    _,
+
+    const Self = @This();
+
+    pub fn unwrap(self: Self) c_int {
+        return @backingInt(self);
+    }
+
+    pub fn flags(args: []const Self) c.CVPixelBufferLockFlags {
+        var bits: c.CVPixelBufferLockFlags = 0;
+        for (args) |flag| {
+            const raw = flag.unwrap();
+            bits |= @as(c.CVPixelBufferLockFlags, @as(u32, @bitCast(raw)));
+        }
+        return bits;
+    }
 };
 
 test "pixel buffer inherits image and buffer operations" {
@@ -93,8 +117,11 @@ test "pixel buffer inherits image and buffer operations" {
     defer buffer.release();
 
     try std.testing.expectEqual(@as(f64, 2), buffer.getEncodedSize().width);
-    try std.testing.expect(buffer.lockBaseAddress(CVPixelBuffer.LockFlag.None));
-    defer _ = buffer.unlockBaseAddress(CVPixelBuffer.LockFlag.None);
+    try std.testing.expectEqual(@as(c.CVPixelBufferLockFlags, 0), kCVPixelBufferLockFlag.flags(&.{}));
+    const extra: kCVPixelBufferLockFlag = @fromBackingInt(2);
+    try std.testing.expectEqual(@as(c.CVPixelBufferLockFlags, 3), kCVPixelBufferLockFlag.flags(&.{ .ReadOnly, extra }));
+    try std.testing.expect(buffer.lockBaseAddress(&.{}));
+    defer _ = buffer.unlockBaseAddress(&.{});
     try std.testing.expect(buffer.getBaseAddress() != null);
     try std.testing.expect(buffer.getBytesPerRow() >= 8);
     const retained = buffer.retain();
