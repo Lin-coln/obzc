@@ -16,11 +16,10 @@ pub const kCVPixelBuffer = enum {
 };
 
 pub const CVPixelBuffer = opaque {
-    pub const Mixin = CVPixelBufferMixin;
     pub const LockFlag = CVPixelBufferLockFlag;
 
     const Self = @This();
-    const h = Mixin(Self);
+    const h = CVImageBuffer.Mixin(Self);
 
     pub const create = CVPixelBufferCreate;
 
@@ -31,56 +30,36 @@ pub const CVPixelBuffer = opaque {
     pub const getDisplaySize = h.getDisplaySize;
     pub const getCleanRect = h.getCleanRect;
 
-    pub const getBaseAddress = h.getBaseAddress;
-    pub const getDataSize = h.getDataSize;
-    pub const getBytesPerRow = h.getBytesPerRow;
-    pub const lockBaseAddress = h.lockBaseAddress;
-    pub const unlockBaseAddress = h.unlockBaseAddress;
-    pub const getIOSurface = h.getIOSurface;
+    pub fn getBaseAddress(self: *Self) ?[*]u8 {
+        const address = c.CVPixelBufferGetBaseAddress(raw(self)) orelse return null;
+        return @ptrCast(address);
+    }
+
+    pub fn getDataSize(self: *Self) usize {
+        return c.CVPixelBufferGetDataSize(raw(self));
+    }
+
+    pub fn getBytesPerRow(self: *Self) usize {
+        return c.CVPixelBufferGetBytesPerRow(raw(self));
+    }
+
+    pub fn lockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
+        return c.CVPixelBufferLockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
+    }
+
+    pub fn unlockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
+        return c.CVPixelBufferUnlockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
+    }
+
+    pub fn getIOSurface(self: *Self) ?*ios.Surface {
+        const surface = c.CVPixelBufferGetIOSurface(raw(self)) orelse return null;
+        return @ptrCast(surface);
+    }
+
+    fn raw(self: *Self) c.CVPixelBufferRef {
+        return @ptrCast(self);
+    }
 };
-
-fn CVPixelBufferMixin(comptime T: type) type {
-    return struct {
-        const h = CVImageBuffer.Mixin(T);
-
-        pub const retain = h.retain;
-        pub const release = h.release;
-
-        pub const getEncodedSize = h.getEncodedSize;
-        pub const getDisplaySize = h.getDisplaySize;
-        pub const getCleanRect = h.getCleanRect;
-
-        pub fn getBaseAddress(self: *T) ?[*]u8 {
-            const address = c.CVPixelBufferGetBaseAddress(raw(self)) orelse return null;
-            return @ptrCast(address);
-        }
-
-        pub fn getDataSize(self: *T) usize {
-            return c.CVPixelBufferGetDataSize(raw(self));
-        }
-
-        pub fn getBytesPerRow(self: *T) usize {
-            return c.CVPixelBufferGetBytesPerRow(raw(self));
-        }
-
-        pub fn lockBaseAddress(self: *T, flags: c.CVPixelBufferLockFlags) bool {
-            return c.CVPixelBufferLockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
-        }
-
-        pub fn unlockBaseAddress(self: *T, flags: c.CVPixelBufferLockFlags) bool {
-            return c.CVPixelBufferUnlockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
-        }
-
-        pub fn getIOSurface(self: *T) ?*ios.Surface {
-            const surface = c.CVPixelBufferGetIOSurface(raw(self)) orelse return null;
-            return @ptrCast(surface);
-        }
-
-        fn raw(self: *T) c.CVPixelBufferRef {
-            return @ptrCast(self);
-        }
-    };
-}
 
 pub fn CVPixelBufferCreate(
     width: usize,
