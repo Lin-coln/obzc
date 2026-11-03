@@ -8,6 +8,8 @@ pub const CFDictionary = opaque {
     const Self = @This();
     const h = Mixin(Self);
 
+    pub const createMutable = h.createMutable;
+
     pub const retain = h.retain;
     pub const release = h.release;
     pub const setValue = h.setValue;
@@ -17,6 +19,11 @@ pub const CFDictionary = opaque {
 fn CFDictionaryMixin(comptime T: type) type {
     return struct {
         const h = @import("CFType.zig").CFType.Mixin(T);
+
+        pub fn createMutable() ?*T {
+            const dict = c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks) orelse return null;
+            return @ptrCast(dict);
+        }
 
         pub const retain = h.retain;
         pub const release = h.release;
@@ -44,6 +51,8 @@ pub fn CFDictionary_WithKey(comptime K: type) type {
         const Self = @This();
         const h = CFDictionaryMixin(Self);
 
+        pub const createMutable = h.createMutable;
+
         pub const retain = h.retain;
         pub const release = h.release;
 
@@ -60,7 +69,7 @@ pub fn CFDictionary_WithKey(comptime K: type) type {
 
 test "mutable dictionary stores a value" {
     const Boolean = @import("CFBoolean.zig").CFBoolean;
-    const dict: *CFDictionary = @ptrCast(c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks).?);
+    const dict = CFDictionary.createMutable().?;
     defer dict.release();
 
     const key: *const Boolean = @ptrCast(c.kCFBooleanTrue.?);
@@ -74,7 +83,7 @@ test "mutable dictionary stores a value" {
 test "dictionary with typed keys stores a value" {
     const Boolean = @import("CFBoolean.zig").CFBoolean;
     const BooleanKeys = CFDictionary.WithKey(Boolean);
-    const dict: *BooleanKeys = @ptrCast(c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks).?);
+    const dict = BooleanKeys.createMutable().?;
     defer dict.release();
 
     const key: *const Boolean = @ptrCast(c.kCFBooleanTrue.?);

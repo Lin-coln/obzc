@@ -1,5 +1,4 @@
 const std = @import("std");
-const c = @import("macos").c;
 const core = @import("core");
 const ns = @import("foundation");
 const cf = @import("core-foundation");
@@ -11,9 +10,9 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer pool.release();
     const device = mtl.Device.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const surface_properties: *cf.Dictionary = @ptrCast(c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks).?);
+    const surface_properties = cf.Dictionary.createMutable().?;
     defer surface_properties.release();
-    const attributes: *cf.Dictionary = @ptrCast(c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks).?);
+    const attributes = cf.Dictionary.createMutable().?;
     defer attributes.release();
     attributes.setValue(@ptrCast(cv.kPixelBuffer.IOSurfacePropertiesKey.unwrap()), @ptrCast(surface_properties));
     attributes.setValue(@ptrCast(cv.kPixelBuffer.MetalCompatibilityKey.unwrap()), @ptrCast(cf.kBoolean.True.unwrap()));
