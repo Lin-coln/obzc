@@ -1,9 +1,9 @@
 const c = @import("macos").c;
+const cf = @import("core-foundation");
 
 pub const IOSurface = opaque {
     const Self = @This();
-    const h = @import("macos").helpers.ref(Self);
-    const raw = h.raw;
+    const h = cf.Type.Mixin(Self);
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -14,5 +14,9 @@ pub const IOSurface = opaque {
 
     pub fn decrementUseCount(self: *Self) void {
         c.IOSurfaceDecrementUseCount(self.raw());
+    }
+
+    fn raw(self: *Self) c.IOSurfaceRef {
+        return @ptrCast(self);
     }
 };
