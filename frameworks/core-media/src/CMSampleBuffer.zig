@@ -5,8 +5,7 @@ const CMBlockBuffer = @import("CMBlockBuffer.zig").CMBlockBuffer;
 
 pub const CMSampleBuffer = opaque {
     const Self = @This();
-    const h = @import("macos").helpers.ref(Self);
-    const raw = h.raw;
+    const h = cf.Type.Mixin(Self);
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -15,12 +14,12 @@ pub const CMSampleBuffer = opaque {
         return c.CMSampleBufferIsValid(self.raw()) != 0;
     }
 
-    pub fn getImageBuffer(self: *Self) ?*cv.Buffer {
+    pub fn getImageBuffer(self: *Self) ?*cv.ImageBuffer {
         const buffer = c.CMSampleBufferGetImageBuffer(self.raw()) orelse return null;
         return @ptrCast(buffer);
     }
 
-    pub fn getSampleAttachmentsArray(self: *Self, create: bool) ?*const cf.Array(cf.Dictionary) {
+    pub fn getSampleAttachmentsArray(self: *Self, create: bool) ?*const cf.Array.With(cf.Dictionary) {
         const arr = c.CMSampleBufferGetSampleAttachmentsArray(self.raw(), @intFromBool(create)) orelse return null;
         return @ptrCast(arr);
     }
@@ -28,5 +27,9 @@ pub const CMSampleBuffer = opaque {
     pub fn getDataBuffer(self: *Self) ?*CMBlockBuffer {
         const buffer = c.CMSampleBufferGetDataBuffer(self.raw()) orelse return null;
         return @ptrCast(buffer);
+    }
+
+    fn raw(self: *Self) c.CMSampleBufferRef {
+        return @ptrCast(self);
     }
 };

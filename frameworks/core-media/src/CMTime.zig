@@ -3,8 +3,6 @@ const c = @import("macos").c;
 
 pub const CMTime = extern struct {
     const Self = @This();
-    const h = @import("macos").helpers.val(Self);
-    const raw = h.raw;
 
     value: c.CMTimeValue align(4),
     timescale: c.CMTimeScale,
@@ -12,13 +10,19 @@ pub const CMTime = extern struct {
     epoch: c.CMTimeEpoch align(4),
 
     pub fn make(value: i64, timescale: i32) Self {
-        const time = c.CMTimeMake(value, timescale);
-        return h.wrap(time);
+        return wrap(c.CMTimeMake(value, timescale));
     }
 
     pub fn add(self: Self, other: Self) Self {
-        const time = c.CMTimeAdd(self.raw(), other.raw());
-        return h.wrap(time);
+        return wrap(c.CMTimeAdd(self.raw(), other.raw()));
+    }
+
+    fn raw(self: Self) c.CMTime {
+        return @as(*const c.CMTime, @ptrCast(&self)).*;
+    }
+
+    fn wrap(value: c.CMTime) Self {
+        return @as(*const Self, @ptrCast(&value)).*;
     }
 };
 
