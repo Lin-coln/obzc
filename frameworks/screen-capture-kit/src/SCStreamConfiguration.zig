@@ -97,7 +97,9 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
 
     configuration.setColorSpaceName(.DisplayP3);
     const color = cg.Color.getConst(.Clear).?;
+    const retained = color.retain();
+    defer retained.release();
     configuration.setBackgroundColor(color);
     try std.testing.expect(configuration.colorSpaceName().? == .DisplayP3);
-    try std.testing.expect(c.CGColorEqualToColor(@ptrCast(color), @ptrCast(configuration.backgroundColor())));
+    try std.testing.expect(color.equal(configuration.backgroundColor().?));
 }
