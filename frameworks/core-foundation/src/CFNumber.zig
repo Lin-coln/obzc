@@ -2,16 +2,19 @@ const c = @import("macos").c;
 
 pub const CFNumber = opaque {
     const Self = @This();
-    const h = @import("macos").helpers.ref(Self);
-    const raw = h.raw;
+    const h = @import("CFType.zig").CFType.Mixin(Self);
 
     pub const retain = h.retain;
     pub const release = h.release;
 
     pub fn getValue(self: *const Self, comptime T: type) ?T {
         var value: T = undefined;
-        if (c.CFNumberGetValue(self.raw(), CFNumberType.of(T)._raw(), &value) == 0) return null;
+        if (c.CFNumberGetValue(self.raw(), CFNumberType.of(T).raw(), &value) == 0) return null;
         return value;
+    }
+
+    fn raw(self: *const Self) c.CFNumberRef {
+        return @ptrCast(self);
     }
 };
 
@@ -52,7 +55,7 @@ const CFNumberType = enum(c.CFNumberType) {
         };
     }
 
-    fn _raw(self: Self) c.CFNumberType {
+    fn raw(self: Self) c.CFNumberType {
         return @backingInt(self);
     }
 };
@@ -74,7 +77,7 @@ test "getValue reads supported number types" {
         @as(isize, 12),
     }) |value| {
         const T = @TypeOf(value);
-        const raw_number = c.CFNumberCreate(null, CFNumberType.of(T)._raw(), &value) orelse return error.OutOfMemory;
+        const raw_number = c.CFNumberCreate(null, CFNumberType.of(T).raw(), &value) orelse return error.OutOfMemory;
         defer c.CFRelease(raw_number);
 
         const number: *const CFNumber = @ptrCast(raw_number);
