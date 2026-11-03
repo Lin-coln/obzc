@@ -18,7 +18,9 @@ pub fn NSArray(comptime T: type) type {
         pub const count = h.prop("count", usize).getter;
 
         /// The returned object is borrowed from the array.
-        pub const objectAtIndex = h.method("objectAtIndex:", fn (usize) *T);
+        pub fn objectAtIndex(self: *Self, index: usize) *T {
+            return h.call(self, *T, "objectAtIndex:", .{index});
+        }
     };
 }
 

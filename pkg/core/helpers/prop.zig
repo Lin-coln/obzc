@@ -9,7 +9,7 @@ pub fn prop(comptime T: type, comptime call: anytype) type {
     return struct {
         pub fn of(comptime name: [:0]const u8, comptime P: type) type {
             return struct {
-                pub fn getter(self: *T) P {
+                pub fn getter(self: *const T) P {
                     return get(self, P, name);
                 }
                 pub fn setter(self: *T, value: P) void {
@@ -18,12 +18,12 @@ pub fn prop(comptime T: type, comptime call: anytype) type {
             };
         }
 
-        pub fn get(self: *T, comptime P: type, name: [:0]const u8) P {
+        pub fn get(self: *const T, comptime P: type, name: [:0]const u8) P {
             const cls = Class.lookup(class_name).?;
             const getter = if (cls.getProperty(name)) |metadata| metadata.copyAttributeValue("G") else null;
             defer if (getter) |custom| std.c.free(custom.ptr);
             const selector = getter orelse name;
-            return call(self, P, selector, .{});
+            return call(@constCast(self), P, selector, .{});
         }
 
         pub fn set(self: *T, comptime P: type, comptime name: [:0]const u8, value: P) void {
@@ -36,7 +36,7 @@ pub fn prop(comptime T: type, comptime call: anytype) type {
 test "helpers.prop.get: selects a custom getter or falls back to the property name" {
     const ObzcHelpers2PropGetProbe = opaque {};
     const Recorder = struct {
-        var receiver: ?*ObzcHelpers2PropGetProbe = null;
+        var receiver: ?*const ObzcHelpers2PropGetProbe = null;
         var selector: [64]u8 = undefined;
         var selector_len: usize = 0;
         var argument_count: usize = 0;
@@ -117,7 +117,7 @@ test "helpers.prop.set: generates the setter and forwards the receiver, type and
 test "helpers.prop.of: binds the property name and type to generated accessors" {
     const NSObject = opaque {};
     const Recorder = struct {
-        var receiver: ?*NSObject = null;
+        var receiver: ?*const NSObject = null;
         var selector: [64]u8 = undefined;
         var selector_len: usize = 0;
         var value: usize = 0;
@@ -134,12 +134,12 @@ test "helpers.prop.of: binds the property name and type to generated accessors" 
         }
     };
     const accessor = prop(NSObject, Recorder.call).of("obzcBoundValue", usize);
-    try std.testing.expect(@TypeOf(accessor.getter) == fn (*NSObject) usize);
+    try std.testing.expect(@TypeOf(accessor.getter) == fn (*const NSObject) usize);
     try std.testing.expect(@TypeOf(accessor.setter) == fn (*NSObject, usize) void);
 
     var first_context: u8 = 0;
     var second_context: u8 = 0;
-    const first: *NSObject = @ptrCast(&first_context);
+    const first: *const NSObject = @ptrCast(&first_context);
     const second: *NSObject = @ptrCast(&second_context);
     try std.testing.expectEqual(@as(usize, 41), accessor.getter(first));
     try std.testing.expectEqualStrings("obzcBoundValue", Recorder.selector[0..Recorder.selector_len]);
