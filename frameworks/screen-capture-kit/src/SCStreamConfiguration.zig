@@ -35,7 +35,7 @@ pub const SCStreamConfiguration = opaque {
     pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
     pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
     pub fn pixelFormat(self: *Self) cv.PixelFormat {
-        return @enumFromInt(h.call(self, c.OSType, "pixelFormat", .{}));
+        return @fromBackingInt(@intCast(h.call(self, c.OSType, "pixelFormat", .{})));
     }
 
     pub fn setPixelFormat(self: *Self, format: cv.PixelFormat) void {
