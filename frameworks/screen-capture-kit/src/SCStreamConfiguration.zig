@@ -34,8 +34,13 @@ pub const SCStreamConfiguration = opaque {
     pub const setCapturesAudio = h.prop("capturesAudio", bool).setter;
     pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
     pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
-    pub const pixelFormat = h.prop("pixelFormat", c.OSType).getter;
-    pub const setPixelFormat = h.prop("pixelFormat", c.OSType).setter;
+    pub fn pixelFormat(self: *Self) cv.PixelFormat {
+        return @enumFromInt(h.call(self, c.OSType, "pixelFormat", .{}));
+    }
+
+    pub fn setPixelFormat(self: *Self, format: cv.PixelFormat) void {
+        h.call(self, void, "setPixelFormat:", .{@backingInt(format)});
+    }
     pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;
     pub const setCaptureResolution = h.prop("captureResolution", SCCaptureResolutionType).setter;
     /// Borrowed CoreFoundation references.
@@ -79,9 +84,9 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(interval.flags, actual.flags);
     try std.testing.expectEqual(interval.epoch, actual.epoch);
 
-    configuration.setPixelFormat(c.kCVPixelFormatType_64RGBAHalf);
+    configuration.setPixelFormat(.RGBA64Half);
     configuration.setCaptureResolution(.nominal);
-    try std.testing.expectEqual(@as(c.OSType, c.kCVPixelFormatType_64RGBAHalf), configuration.pixelFormat());
+    try std.testing.expectEqual(cv.PixelFormat.RGBA64Half, configuration.pixelFormat());
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
     configuration.setColorSpaceName(@ptrCast(c.kCGColorSpaceDisplayP3));

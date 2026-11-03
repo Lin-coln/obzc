@@ -75,6 +75,7 @@ pub fn CVPixelBufferCreate(
 
 pub const CVPixelFormat = enum(c.OSType) {
     BGRA32 = c.kCVPixelFormatType_32BGRA,
+    RGBA64Half = c.kCVPixelFormatType_64RGBAHalf,
     _,
 };
 
