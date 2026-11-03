@@ -12,7 +12,10 @@ pub const SCWindow = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const windowID = h.prop("windowID", c.CGWindowID).getter;
+    pub fn windowID(self: *Self) cg.kWindowID {
+        return cg.kWindowID.wrap(h.call(self, c.CGWindowID, "windowID", .{}));
+    }
+
     pub const frame = h.prop("frame", cg.Rect).getter;
     pub const windowLayer = h.prop("windowLayer", isize).getter;
     pub const owningApplication = h.prop("owningApplication", ?*SCRunningApplication).getter;

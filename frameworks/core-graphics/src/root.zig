@@ -10,6 +10,11 @@ pub const Rect = @import("CGRect.zig").CGRect;
 // const
 pub const kColor = @import("CGColor.zig").kCGColor;
 pub const kColorSpace = @import("CGColorSpace.zig").kCGColorSpace;
+pub const kWindowID = @import("CGWindow.zig").kCGWindowID;
+
+pub fn mainDisplayID() c.CGDirectDisplayID {
+    return c.CGMainDisplayID();
+}
 
 pub fn preflightScreenCaptureAccess() bool {
     return c.CGPreflightScreenCaptureAccess();

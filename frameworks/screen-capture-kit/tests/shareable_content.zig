@@ -1,5 +1,4 @@
 const std = @import("std");
-const c = @import("macos").c;
 const core = @import("core");
 const cg = @import("core-graphics");
 const sck = @import("screen-capture-kit");
@@ -15,7 +14,7 @@ test "SCShareableContent: enumerate windows through the synchronous query" {
     const windows = content.windows();
     for (0..windows.count()) |index| {
         const window = windows.objectAtIndex(index);
-        try std.testing.expect(window.windowID() != c.kCGNullWindowID);
+        try std.testing.expect(window.windowID() != cg.kWindowID.Null);
         const frame = window.frame();
         try std.testing.expect(std.math.isFinite(frame.origin.x));
         try std.testing.expect(std.math.isFinite(frame.origin.y));
