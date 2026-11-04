@@ -5,6 +5,7 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .core = .{ .path = "../../pkg/core" },
+        .@"core-foundation" = .{ .path = "../core-foundation" },
     },
     .paths = .{
         "build.zig",

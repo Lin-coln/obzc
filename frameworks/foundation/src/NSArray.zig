@@ -1,5 +1,6 @@
 const std = @import("std");
 const core = @import("core");
+const cf = @import("core-foundation");
 
 pub fn NSArray(comptime T: type) type {
     return opaque {
@@ -9,6 +10,10 @@ pub fn NSArray(comptime T: type) type {
 
         pub const retain = h.retain;
         pub const release = h.release;
+
+        pub fn asCFArray(self: *const Self) *const cf.Array.With(T) {
+            return @ptrCast(self);
+        }
 
         pub fn init(objects: []const *T) *Self {
             const allocated: *Self = h.cls.alloc();
@@ -38,6 +43,10 @@ test "NSArray: create and read objects" {
     try std.testing.expectEqual(2, array.count());
     try std.testing.expectEqualStrings("first", array.objectAtIndex(0).utf8String());
     try std.testing.expectEqualStrings("second", array.objectAtIndex(1).utf8String());
+
+    const cf_array = array.asCFArray();
+    try std.testing.expectEqual(@as(usize, 2), cf_array.getCount());
+    try std.testing.expectEqual(@intFromPtr(first), @intFromPtr(cf_array.getValueAtIndex(0).?));
 }
 
 test "NSArray: initialize an empty array" {

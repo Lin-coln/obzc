@@ -5,9 +5,12 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Foundation tests");
-    const core = blk: {
+    const core, const cf = blk: {
         const opts = .{ .target = target, .optimize = optimize };
-        break :blk b.dependency("core", opts).module("core");
+        break :blk .{
+            b.dependency("core", opts).module("core"),
+            b.dependency("core-foundation", opts).module("core-foundation"),
+        };
     };
     test_step.dependOn(addCompileErrorTests(b, target, optimize, core));
 
@@ -18,6 +21,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "core", .module = core },
+                .{ .name = "core-foundation", .module = cf },
             },
         });
 

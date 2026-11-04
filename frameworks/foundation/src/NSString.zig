@@ -1,5 +1,6 @@
 const std = @import("std");
 const core = @import("core");
+const cf = @import("core-foundation");
 
 pub const NSString = opaque {
     pub const metadata = core.Metadata.obj;
@@ -9,6 +10,10 @@ pub const NSString = opaque {
 
     pub const retain = h.retain;
     pub const release = h.release;
+
+    pub fn asCFString(self: *const Self) *const cf.String {
+        return @ptrCast(self);
+    }
 
     /// Returns an autoreleased string. Use it within an autorelease pool.
     pub const stringWithUTF8String = h.cls.m.of("stringWithUTF8String:", fn ([*:0]const u8) ?*Self);
@@ -39,6 +44,7 @@ test "NSString: UTF-8 text and length" {
     try std.testing.expectEqual(4, string.length());
     const readonly: *const NSString = string;
     try std.testing.expectEqual(4, readonly.length());
+    try std.testing.expectEqual(@as(usize, 4), readonly.asCFString().getLength());
 }
 
 test "NSString: embedded NUL and invalid UTF-8" {

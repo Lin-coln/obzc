@@ -20,12 +20,12 @@ fn CFArrayMixin(comptime T: type) type {
         pub const retain = h.retain;
         pub const release = h.release;
 
-        pub fn getCount(self: *const T) c.CFIndex {
-            return c.CFArrayGetCount(raw(self));
+        pub fn getCount(self: *const T) usize {
+            return @intCast(c.CFArrayGetCount(raw(self)));
         }
 
-        pub fn getValueAtIndex(self: *const T, index: c.CFIndex) ?*const T {
-            const value = c.CFArrayGetValueAtIndex(raw(self), index) orelse return null;
+        pub fn getValueAtIndex(self: *const T, index: usize) ?*const T {
+            const value = c.CFArrayGetValueAtIndex(raw(self), @intCast(index)) orelse return null;
             return @ptrCast(value);
         }
 
@@ -44,8 +44,8 @@ pub fn CFArray_With(comptime T: type) type {
         pub const release = h.release;
         pub const getCount = h.getCount;
 
-        pub fn getValueAtIndex(self: *const Self, index: c.CFIndex) ?*const T {
-            const value = c.CFArrayGetValueAtIndex(h.raw(self), index) orelse return null;
+        pub fn getValueAtIndex(self: *const Self, index: usize) ?*const T {
+            const value = c.CFArrayGetValueAtIndex(h.raw(self), @intCast(index)) orelse return null;
             return @ptrCast(value);
         }
     };
@@ -58,7 +58,7 @@ test "CFArray uses CFType mixin" {
     defer c.CFRelease(raw_array);
 
     const array: *const CFArray = @ptrCast(raw_array);
-    try std.testing.expectEqual(@as(c.CFIndex, 1), array.getCount());
+    try std.testing.expectEqual(@as(usize, 1), array.getCount());
     const retained = array.retain();
     retained.release();
 
