@@ -35,8 +35,8 @@ fn CFTypeMixin(comptime T: type) type {
             return c.CFHash(raw(self));
         }
 
-        pub fn getRetainCount(self: *const T) c.CFIndex {
-            return c.CFGetRetainCount(raw(self));
+        pub fn getRetainCount(self: *const T) isize {
+            return @intCast(c.CFGetRetainCount(raw(self)));
         }
 
         fn raw(self: *const T) c.CFTypeRef {

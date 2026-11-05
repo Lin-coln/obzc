@@ -10,10 +10,12 @@ pub fn isObject(comptime T: type) bool {
 /// Descriptor for a block with a signature and no copy/dispose helpers.
 pub fn Descriptor(comptime Block: type) type {
     return extern struct {
+        const Self = @This();
+
         reserved: c_ulong,
         size: c_ulong,
         signature: [*:0]const u8,
-        pub fn init(signature: [*:0]const u8) @This() {
+        pub fn init(signature: [*:0]const u8) Self {
             return .{
                 .reserved = 0,
                 .size = @sizeOf(Block),

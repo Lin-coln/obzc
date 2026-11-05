@@ -34,11 +34,13 @@ test "SCShareableContent: getShareableContent invokes a Zig completion" {
     defer pool.release();
 
     const State = struct {
+        const Self = @This();
+
         ready: std.Io.Semaphore = .{},
         received_content: bool = false,
         error_code: ?isize = null,
 
-        fn complete(state: *@This(), content: ?*SCShareableContent, err: ?*ns.Error) void {
+        fn complete(state: *Self, content: ?*SCShareableContent, err: ?*ns.Error) void {
             state.received_content = content != null;
             if (err) |value| state.error_code = value.code();
             state.ready.post(std.testing.io);
