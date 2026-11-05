@@ -1,5 +1,5 @@
 const c = @import("macos").c;
-const CFString = @import("../CFString.zig").CFString;
+const CFString = @import("../CFString/CFString.zig").CFString;
 
 pub const CFError = opaque {
     const Self = @This();
