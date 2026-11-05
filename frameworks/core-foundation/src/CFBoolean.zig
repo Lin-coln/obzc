@@ -19,12 +19,21 @@ pub const CFBoolean = opaque {
 pub const kCFBoolean = enum {
     True,
     False,
+
     const Self = @This();
+
     pub fn unwrap(self: Self) *const CFBoolean {
         const value: c.CFBooleanRef = switch (self) {
             .True => c.kCFBooleanTrue,
             .False => c.kCFBooleanFalse,
         };
         return @ptrCast(value.?);
+    }
+
+    pub fn fromRaw(raw: c.CFBooleanRef) Self {
+        return switch (c.CFBooleanGetValue(raw)) {
+            0 => .False,
+            else => .True,
+        };
     }
 };

@@ -73,6 +73,10 @@ pub const kCVPixelFormat = enum(c.OSType) {
     pub fn unwrap(self: Self) c.OSType {
         return @backingInt(self);
     }
+
+    pub fn fromRaw(raw: c.OSType) Self {
+        return @fromBackingInt(raw);
+    }
 };
 
 pub const kCVPixelBufferKey = enum {
@@ -88,6 +92,13 @@ pub const kCVPixelBufferKey = enum {
         };
         return @ptrCast(value.?);
     }
+
+    pub fn fromRaw(raw: c.CFStringRef) ?Self {
+        const key: *const cf.String = @ptrCast(raw orelse return null);
+        if (key.equal(Self.IOSurfaceProperties.unwrap())) return .IOSurfaceProperties;
+        if (key.equal(Self.MetalCompatibility.unwrap())) return .MetalCompatibility;
+        return null;
+    }
 };
 
 pub const kCVPixelBufferLockFlag = enum(c_int) {
@@ -99,6 +110,10 @@ pub const kCVPixelBufferLockFlag = enum(c_int) {
 
     pub fn unwrap(self: Self) c_int {
         return @backingInt(self);
+    }
+
+    pub fn fromRaw(raw: c_int) Self {
+        return @fromBackingInt(raw);
     }
 
     pub fn flags(args: []const Self) c.CVPixelBufferLockFlags {
@@ -113,6 +128,9 @@ pub const kCVPixelBufferLockFlag = enum(c_int) {
 
 test "pixel buffer inherits image and buffer operations" {
     const std = @import("std");
+    try std.testing.expectEqual(kCVPixelFormat.BGRA32, kCVPixelFormat.fromRaw(kCVPixelFormat.BGRA32.unwrap()));
+    try std.testing.expectEqual(kCVPixelBufferLockFlag.ReadOnly, kCVPixelBufferLockFlag.fromRaw(kCVPixelBufferLockFlag.ReadOnly.unwrap()));
+    try std.testing.expectEqual(kCVPixelBufferKey.IOSurfaceProperties, kCVPixelBufferKey.fromRaw(@ptrCast(kCVPixelBufferKey.IOSurfaceProperties.unwrap())).?);
     const buffer = CVPixelBuffer.create(2, 2, .BGRA32, null) orelse return error.PixelBufferCreationFailed;
     defer buffer.release();
 

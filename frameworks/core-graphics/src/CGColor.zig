@@ -39,4 +39,19 @@ pub const kCGColor = enum {
         };
         return @ptrCast(value.?);
     }
+
+    pub fn fromRaw(raw: c.CFStringRef) ?Self {
+        const name: *const cf.String = @ptrCast(raw orelse return null);
+        if (name.equal(Self.White.unwrap())) return .White;
+        if (name.equal(Self.Black.unwrap())) return .Black;
+        if (name.equal(Self.Clear.unwrap())) return .Clear;
+        return null;
+    }
 };
+
+test "constant color names convert from raw" {
+    const std = @import("std");
+    for (std.meta.tags(kCGColor)) |color| {
+        try std.testing.expectEqual(color, kCGColor.fromRaw(@ptrCast(color.unwrap())).?);
+    }
+}

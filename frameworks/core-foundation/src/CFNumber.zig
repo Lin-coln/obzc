@@ -41,6 +41,28 @@ pub const kCFNumber = enum(c.CFNumberType) {
         return @backingInt(self);
     }
 
+    pub fn fromRaw(raw: c.CFNumberType) ?Self {
+        return switch (raw) {
+            c.kCFNumberSInt8Type => .SInt8Type,
+            c.kCFNumberSInt16Type => .SInt16Type,
+            c.kCFNumberSInt32Type => .SInt32Type,
+            c.kCFNumberSInt64Type => .SInt64Type,
+            c.kCFNumberFloat32Type => .Float32Type,
+            c.kCFNumberFloat64Type => .Float64Type,
+            c.kCFNumberCharType => .CharType,
+            c.kCFNumberShortType => .ShortType,
+            c.kCFNumberIntType => .IntType,
+            c.kCFNumberLongType => .LongType,
+            c.kCFNumberLongLongType => .LongLongType,
+            c.kCFNumberFloatType => .FloatType,
+            c.kCFNumberDoubleType => .DoubleType,
+            c.kCFNumberCFIndexType => .CFIndexType,
+            c.kCFNumberNSIntegerType => .NSIntegerType,
+            c.kCFNumberCGFloatType => .CGFloatType,
+            else => null,
+        };
+    }
+
     pub fn fromType(comptime T: type) Self {
         return switch (T) {
             i8 => .SInt8Type,
@@ -62,6 +84,9 @@ pub const kCFNumber = enum(c.CFNumberType) {
 
 test "getValue reads supported number types" {
     const std = @import("std");
+    for (std.meta.tags(kCFNumber)) |kind| {
+        try std.testing.expectEqual(kind, kCFNumber.fromRaw(kind.unwrap()).?);
+    }
     inline for (.{
         @as(i8, 1),
         @as(i16, 2),

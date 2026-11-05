@@ -13,6 +13,11 @@ pub const kCGColorSpace = enum {
         return @ptrCast(value.?);
     }
 
+    pub fn fromRaw(raw: c.CFStringRef) ?Self {
+        const name: *const cf.String = @ptrCast(raw orelse return null);
+        return .wrap(name);
+    }
+
     pub fn wrap(name: *const cf.String) ?Self {
         if (name.equal(Self.DisplayP3.unwrap())) return .DisplayP3;
         return null;
@@ -26,3 +31,8 @@ pub const CGColorSpace = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 };
+
+test "color space name converts from raw" {
+    const std = @import("std");
+    try std.testing.expectEqual(kCGColorSpace.DisplayP3, kCGColorSpace.fromRaw(@ptrCast(kCGColorSpace.DisplayP3.unwrap())).?);
+}

@@ -42,11 +42,20 @@ pub const kCMSampleAttachmentKey = enum {
         };
         return @ptrCast(value.?);
     }
+
+    pub fn fromRaw(raw: c.CFStringRef) ?Self {
+        const key: *const cf.String = @ptrCast(raw orelse return null);
+        inline for (@import("std").meta.tags(Self)) |candidate| {
+            if (key.equal(candidate.unwrap())) return candidate;
+        }
+        return null;
+    }
 };
 
 test "sample attachment keys resolve" {
     const std = @import("std");
     for (std.meta.tags(kCMSampleAttachmentKey)) |key| {
         try std.testing.expect(@intFromPtr(key.unwrap()) != 0);
+        try std.testing.expectEqual(key, kCMSampleAttachmentKey.fromRaw(@ptrCast(key.unwrap())).?);
     }
 }
