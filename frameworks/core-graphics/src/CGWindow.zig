@@ -1,25 +1,12 @@
 const c = @import("macos").c;
 
-pub const kCGWindowID = enum(c.CGWindowID) {
-    Null = c.kCGNullWindowID,
-    _,
+pub inline fn kCGWindowID(value: enum { Null }) u32 {
+    return switch (value) {
+        .Null => c.kCGNullWindowID,
+    };
+}
 
-    const Self = @This();
-
-    pub fn wrap(value: c.CGWindowID) Self {
-        return @fromBackingInt(value);
-    }
-
-    pub fn unwrap(self: Self) c.CGWindowID {
-        return @backingInt(self);
-    }
-
-    pub fn fromRaw(raw: c.CGWindowID) Self {
-        return @fromBackingInt(raw);
-    }
-};
-
-test "window ID converts from raw" {
+test "null window ID matches Core Graphics" {
     const std = @import("std");
-    try std.testing.expectEqual(kCGWindowID.Null, kCGWindowID.fromRaw(kCGWindowID.Null.unwrap()));
+    try std.testing.expectEqual(c.kCGNullWindowID, kCGWindowID(.Null));
 }

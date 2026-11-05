@@ -43,14 +43,12 @@ pub const SCStreamConfiguration = opaque {
     }
     pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;
     pub const setCaptureResolution = h.prop("captureResolution", SCCaptureResolutionType).setter;
-    pub fn colorSpaceName(self: *Self) ?cg.kColorSpace {
-        const name = h.call(self, ?*const cf.String, "colorSpaceName", .{}) orelse return null;
-        return cg.kColorSpace.wrap(name);
+    pub fn colorSpaceName(self: *Self) ?*const cf.String {
+        return h.call(self, ?*const cf.String, "colorSpaceName", .{});
     }
 
-    pub fn setColorSpaceName(self: *Self, name: ?cg.kColorSpace) void {
-        const string: ?*const cf.String = if (name) |value| value.unwrap() else null;
-        h.call(self, void, "setColorSpaceName:", .{string});
+    pub fn setColorSpaceName(self: *Self, name: ?*const cf.String) void {
+        h.call(self, void, "setColorSpaceName:", .{name});
     }
     pub const backgroundColor = h.prop("backgroundColor", ?*cg.Color).getter;
     pub const setBackgroundColor = h.prop("backgroundColor", ?*cg.Color).setter;
@@ -95,11 +93,11 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(cv.kPixelFormat.RGBA64Half, configuration.pixelFormat());
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
-    configuration.setColorSpaceName(.DisplayP3);
-    const color = cg.Color.getConst(.Clear).?;
+    configuration.setColorSpaceName(cg.kColorSpace(.DisplayP3));
+    const color = cg.Color.getConst(cg.kColor(.Clear)).?;
     const retained = color.retain();
     defer retained.release();
     configuration.setBackgroundColor(color);
-    try std.testing.expect(configuration.colorSpaceName().? == .DisplayP3);
+    try std.testing.expect(configuration.colorSpaceName().?.equal(cg.kColorSpace(.DisplayP3)));
     try std.testing.expect(color.equal(configuration.backgroundColor().?));
 }

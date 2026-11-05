@@ -4,9 +4,9 @@ const cf = @import("core-foundation");
 pub const CGColor = opaque {
     const Self = @This();
 
-    pub fn getConst(color: kCGColor) ?*Self {
-        const cgColor = c.CGColorGetConstantColor(@ptrCast(color.unwrap())) orelse return null;
-        return @ptrCast(cgColor);
+    pub fn getConst(name: *const cf.String) ?*Self {
+        const color = c.CGColorGetConstantColor(@ptrCast(name)) orelse return null;
+        return @ptrCast(color);
     }
 
     pub fn retain(self: *const Self) *const Self {
@@ -26,30 +26,20 @@ pub const CGColor = opaque {
     }
 };
 
-pub const kCGColor = enum {
+pub inline fn kCGColor(value: enum {
     White,
     Black,
     Clear,
-    const Self = @This();
-    pub fn unwrap(self: Self) *const cf.String {
-        const raw: c.CFStringRef = switch (self) {
-            inline else => |color| @field(c, "kCGColor" ++ @tagName(color)),
-        };
-        return @ptrCast(raw.?);
-    }
+}) *const cf.String {
+    const raw: c.CFStringRef = switch (value) {
+        inline else => |color| @field(c, "kCGColor" ++ @tagName(color)),
+    };
+    return @ptrCast(raw.?);
+}
 
-    pub fn fromRaw(raw: c.CFStringRef) ?Self {
-        const name: *const cf.String = @ptrCast(raw orelse return null);
-        inline for (@import("std").meta.tags(Self)) |color| {
-            if (name.equal(color.unwrap())) return color;
-        }
-        return null;
-    }
-};
-
-test "constant color names convert from raw" {
+test "constant color names resolve to colors" {
     const std = @import("std");
-    for (std.meta.tags(kCGColor)) |color| {
-        try std.testing.expectEqual(color, kCGColor.fromRaw(@ptrCast(color.unwrap())).?);
+    inline for (.{ .White, .Black, .Clear }) |color| {
+        try std.testing.expect(CGColor.getConst(kCGColor(color)) != null);
     }
 }
