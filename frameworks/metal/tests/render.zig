@@ -14,15 +14,15 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     defer surface_properties.release();
     const attrs = cf.Dictionary.createMutable().?;
     defer attrs.release();
-    attrs.set(@ptrCast(cv.kPixelBufferKey.IOSurfaceProperties.unwrap()), @ptrCast(surface_properties));
-    attrs.set(@ptrCast(cv.kPixelBufferKey.MetalCompatibility.unwrap()), @ptrCast(cf.kBoolean(.True)));
-    const pixel_buffer = cv.PixelBuffer.create(4, 4, cv.kPixelFormat.BGRA32, attrs) orelse
+    attrs.set(@ptrCast(cv.kPixelBufferKey(.IOSurfaceProperties)), @ptrCast(surface_properties));
+    attrs.set(@ptrCast(cv.kPixelBufferKey(.MetalCompatibility)), @ptrCast(cf.kBoolean(.True)));
+    const pixel_buffer = cv.PixelBuffer.create(4, 4, cv.kPixelFormat(.BGRA32), attrs) orelse
         return error.PixelBufferCreationFailed;
     defer pixel_buffer.release();
     const surface = pixel_buffer.getIOSurface().?;
     {
-        try std.testing.expect(pixel_buffer.lockBaseAddress(&.{}));
-        defer _ = pixel_buffer.unlockBaseAddress(&.{});
+        try std.testing.expect(pixel_buffer.lockBaseAddress(0));
+        defer _ = pixel_buffer.unlockBaseAddress(0);
         const pixels = pixel_buffer.getBaseAddress().?;
         @memset(pixels[0 .. pixel_buffer.getBytesPerRow() * 4], 0);
     }
@@ -99,8 +99,8 @@ test "Metal: compile, render, and read copied pixels through an IOSurface" {
     try std.testing.expectEqual(@as(mtl.c.MTLCommandBufferStatus, mtl.c.MTLCommandBufferStatusCompleted), command_buffer.status());
 
     // Check every pixel after the GPU finishes; successful submission alone does not prove that rendering or copying worked.
-    try std.testing.expect(pixel_buffer.lockBaseAddress(&.{.ReadOnly}));
-    defer _ = pixel_buffer.unlockBaseAddress(&.{.ReadOnly});
+    try std.testing.expect(pixel_buffer.lockBaseAddress(cv.kPixelBufferLockFlag(.ReadOnly)));
+    defer _ = pixel_buffer.unlockBaseAddress(cv.kPixelBufferLockFlag(.ReadOnly));
     const pixels: [*]const u8 = pixel_buffer.getBaseAddress().?;
     const bytes_per_row = pixel_buffer.getBytesPerRow();
     for (0..4) |y| {

@@ -34,12 +34,12 @@ pub const SCStreamConfiguration = opaque {
     pub const setCapturesAudio = h.prop("capturesAudio", bool).setter;
     pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
     pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
-    pub fn pixelFormat(self: *Self) cv.kPixelFormat {
-        return cv.kPixelFormat.wrap(h.call(self, c.OSType, "pixelFormat", .{}));
+    pub fn pixelFormat(self: *Self) u32 {
+        return h.call(self, u32, "pixelFormat", .{});
     }
 
-    pub fn setPixelFormat(self: *Self, format: cv.kPixelFormat) void {
-        h.call(self, void, "setPixelFormat:", .{format.unwrap()});
+    pub fn setPixelFormat(self: *Self, format: u32) void {
+        h.call(self, void, "setPixelFormat:", .{format});
     }
     pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;
     pub const setCaptureResolution = h.prop("captureResolution", SCCaptureResolutionType).setter;
@@ -88,9 +88,9 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(interval.flags, actual.flags);
     try std.testing.expectEqual(interval.epoch, actual.epoch);
 
-    configuration.setPixelFormat(.RGBA64Half);
+    configuration.setPixelFormat(cv.kPixelFormat(.RGBA64Half));
     configuration.setCaptureResolution(.nominal);
-    try std.testing.expectEqual(cv.kPixelFormat.RGBA64Half, configuration.pixelFormat());
+    try std.testing.expectEqual(cv.kPixelFormat(.RGBA64Half), configuration.pixelFormat());
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
     configuration.setColorSpaceName(cg.kColorSpace(.DisplayP3));

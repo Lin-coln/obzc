@@ -1,5 +1,5 @@
 const c = @import("macos").c;
-const CVBuffer = @import("CVBuffer.zig").CVBuffer;
+const cv = @import("root.zig");
 
 pub const CVImageBuffer = opaque {
     pub const Mixin = CVImageBufferMixin;
@@ -17,7 +17,7 @@ pub const CVImageBuffer = opaque {
 
 fn CVImageBufferMixin(comptime T: type) type {
     return struct {
-        const h = CVBuffer.Mixin(T);
+        const h = cv.Buffer.Mixin(T);
 
         pub const retain = h.retain;
         pub const release = h.release;
