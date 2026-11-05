@@ -8,6 +8,9 @@ pub const CFType = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
     pub const equal = h.equal;
+    pub const getTypeID = h.getTypeID;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
 };
 
 fn CFTypeMixin(comptime T: type) type {
@@ -24,6 +27,18 @@ fn CFTypeMixin(comptime T: type) type {
             return c.CFEqual(raw(self), raw(other)) != 0;
         }
 
+        pub fn getTypeID(self: *const T) c.CFTypeID {
+            return c.CFGetTypeID(raw(self));
+        }
+
+        pub fn hash(self: *const T) c.CFHashCode {
+            return c.CFHash(raw(self));
+        }
+
+        pub fn getRetainCount(self: *const T) c.CFIndex {
+            return c.CFGetRetainCount(raw(self));
+        }
+
         fn raw(self: *const T) c.CFTypeRef {
             if (@TypeOf(self) != *T and
                 @TypeOf(self) != *const T)
@@ -33,4 +48,18 @@ fn CFTypeMixin(comptime T: type) type {
             return @ptrCast(self);
         }
     };
+}
+
+test "CFType methods work on generic and concrete references" {
+    const std = @import("std");
+    const CFBoolean = @import("CFBoolean.zig").CFBoolean;
+    const boolean: *const CFBoolean = @ptrCast(c.kCFBooleanTrue.?);
+    const generic: *const CFType = @ptrCast(boolean);
+
+    try std.testing.expectEqual(c.CFBooleanGetTypeID(), CFBoolean.getTypeID());
+    try std.testing.expectEqual(CFBoolean.getTypeID(), generic.getTypeID());
+    try std.testing.expectEqual(c.CFHash(@ptrCast(boolean)), boolean.hash());
+    try std.testing.expectEqual(boolean.hash(), generic.hash());
+    try std.testing.expect(boolean.getRetainCount() > 0);
+    try std.testing.expect(generic.getRetainCount() > 0);
 }

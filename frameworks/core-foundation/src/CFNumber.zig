@@ -6,6 +6,12 @@ pub const CFNumber = opaque {
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
+
+    pub fn getTypeID() c.CFTypeID {
+        return c.CFNumberGetTypeID();
+    }
 
     pub fn val(self: *const Self, comptime T: type) ?T {
         var value: T = undefined;
@@ -19,24 +25,8 @@ pub const CFNumber = opaque {
 };
 
 pub const kCFNumberType = enum(c.CFNumberType) {
-    SInt8Type = c.kCFNumberSInt8Type,
-    SInt16Type = c.kCFNumberSInt16Type,
-    SInt32Type = c.kCFNumberSInt32Type,
-    SInt64Type = c.kCFNumberSInt64Type,
-    Float32Type = c.kCFNumberFloat32Type,
-    Float64Type = c.kCFNumberFloat64Type,
-    CharType = c.kCFNumberCharType,
-    ShortType = c.kCFNumberShortType,
-    IntType = c.kCFNumberIntType,
-    LongType = c.kCFNumberLongType,
-    LongLongType = c.kCFNumberLongLongType,
-    FloatType = c.kCFNumberFloatType,
-    DoubleType = c.kCFNumberDoubleType,
-    CFIndexType = c.kCFNumberCFIndexType,
-    NSIntegerType = c.kCFNumberNSIntegerType,
-    CGFloatType = c.kCFNumberCGFloatType,
-
     const Self = @This();
+
     pub fn unwrap(self: Self) c.CFNumberType {
         return @backingInt(self);
     }
@@ -65,6 +55,23 @@ pub const kCFNumberType = enum(c.CFNumberType) {
             else => @compileError("unsupported CFNumber value type"),
         };
     }
+
+    SInt8Type = c.kCFNumberSInt8Type,
+    SInt16Type = c.kCFNumberSInt16Type,
+    SInt32Type = c.kCFNumberSInt32Type,
+    SInt64Type = c.kCFNumberSInt64Type,
+    Float32Type = c.kCFNumberFloat32Type,
+    Float64Type = c.kCFNumberFloat64Type,
+    CharType = c.kCFNumberCharType,
+    ShortType = c.kCFNumberShortType,
+    IntType = c.kCFNumberIntType,
+    LongType = c.kCFNumberLongType,
+    LongLongType = c.kCFNumberLongLongType,
+    FloatType = c.kCFNumberFloatType,
+    DoubleType = c.kCFNumberDoubleType,
+    CFIndexType = c.kCFNumberCFIndexType,
+    NSIntegerType = c.kCFNumberNSIntegerType,
+    CGFloatType = c.kCFNumberCGFloatType,
 };
 
 test "getValue reads supported number types" {

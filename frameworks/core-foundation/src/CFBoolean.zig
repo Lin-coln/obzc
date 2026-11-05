@@ -6,6 +6,12 @@ pub const CFBoolean = opaque {
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
+
+    pub fn getTypeID() c.CFTypeID {
+        return c.CFBooleanGetTypeID();
+    }
 
     pub fn val(self: *const Self) bool {
         return c.CFBooleanGetValue(self.raw()) != 0;

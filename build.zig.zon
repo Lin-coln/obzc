@@ -19,7 +19,5 @@
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "pkg",
-        "frameworks",
     },
 }

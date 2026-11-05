@@ -12,6 +12,9 @@ pub const CFDictionary = opaque {
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const getTypeID = h.getTypeID;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
     pub const set = h.set;
     pub const get = h.get;
 };
@@ -27,6 +30,12 @@ fn CFDictionaryMixin(comptime T: type) type {
 
         pub const retain = h.retain;
         pub const release = h.release;
+        pub const hash = h.hash;
+        pub const getRetainCount = h.getRetainCount;
+
+        pub fn getTypeID() c.CFTypeID {
+            return c.CFDictionaryGetTypeID();
+        }
 
         pub fn set(self: *T, key: *const anyopaque, value: *const anyopaque) void {
             c.CFDictionarySetValue(raw(self), key, value);
@@ -55,6 +64,9 @@ pub fn CFDictionary_WithKey(comptime K: type) type {
 
         pub const retain = h.retain;
         pub const release = h.release;
+        pub const getTypeID = h.getTypeID;
+        pub const hash = h.hash;
+        pub const getRetainCount = h.getRetainCount;
 
         pub fn set(self: *Self, key: *const K, value: *const anyopaque) void {
             h.set(self, key, value);

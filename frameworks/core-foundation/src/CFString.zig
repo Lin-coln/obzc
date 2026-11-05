@@ -7,6 +7,12 @@ pub const CFString = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
     pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
+
+    pub fn getTypeID() c.CFTypeID {
+        return c.CFStringGetTypeID();
+    }
 
     pub fn length(self: *const Self) usize {
         return @intCast(c.CFStringGetLength(self.raw()));

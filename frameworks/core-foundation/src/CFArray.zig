@@ -9,6 +9,9 @@ pub const CFArray = opaque {
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const getTypeID = h.getTypeID;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
     pub const count = h.count;
     pub const at = h.at;
 };
@@ -19,6 +22,12 @@ fn CFArrayMixin(comptime T: type) type {
 
         pub const retain = h.retain;
         pub const release = h.release;
+        pub const hash = h.hash;
+        pub const getRetainCount = h.getRetainCount;
+
+        pub fn getTypeID() c.CFTypeID {
+            return c.CFArrayGetTypeID();
+        }
 
         pub fn count(self: *const T) usize {
             return @intCast(c.CFArrayGetCount(raw(self)));
@@ -42,6 +51,9 @@ pub fn CFArray_With(comptime T: type) type {
 
         pub const retain = h.retain;
         pub const release = h.release;
+        pub const getTypeID = h.getTypeID;
+        pub const hash = h.hash;
+        pub const getRetainCount = h.getRetainCount;
         pub const count = h.count;
 
         pub fn at(self: *const Self, index: usize) ?*const T {
