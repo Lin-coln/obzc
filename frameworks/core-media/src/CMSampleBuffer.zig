@@ -1,7 +1,7 @@
 const c = @import("macos").c;
 const cf = @import("core-foundation");
 const cv = @import("core-video");
-const CMBlockBuffer = @import("CMBlockBuffer.zig").CMBlockBuffer;
+const cm = @import("root.zig");
 
 pub const CMSampleBuffer = opaque {
     const Self = @This();
@@ -24,7 +24,7 @@ pub const CMSampleBuffer = opaque {
         return @ptrCast(arr);
     }
 
-    pub fn getDataBuffer(self: *Self) ?*CMBlockBuffer {
+    pub fn getDataBuffer(self: *Self) ?*cm.BlockBuffer {
         const buffer = c.CMSampleBufferGetDataBuffer(self.raw()) orelse return null;
         return @ptrCast(buffer);
     }

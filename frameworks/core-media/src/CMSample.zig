@@ -1,24 +1,7 @@
 const c = @import("macos").c;
 const cf = @import("core-foundation");
 
-pub const kCMSampleAttachmentKey = enum {
-    const Self = @This();
-
-    pub fn unwrap(self: Self) *const cf.String {
-        const raw: c.CFStringRef = switch (self) {
-            inline else => |key| @field(c, "kCMSampleAttachmentKey_" ++ @tagName(key)),
-        };
-        return @ptrCast(raw.?);
-    }
-
-    pub fn fromRaw(raw: c.CFStringRef) ?Self {
-        const key: *const cf.String = @ptrCast(raw orelse return null);
-        inline for (@import("std").meta.tags(Self)) |candidate| {
-            if (key.equal(candidate.unwrap())) return candidate;
-        }
-        return null;
-    }
-
+pub inline fn kCMSampleAttachmentKey(value: enum {
     NotSync,
     PartialSync,
     HasRedundantCoding,
@@ -35,12 +18,15 @@ pub const kCMSampleAttachmentKey = enum {
     CryptorSubsampleAuxiliaryData,
     HDR10PlusPerFrameData,
     PostDecodeProcessingMetadata,
-};
+}) *const cf.String {
+    const raw: c.CFStringRef = switch (value) {
+        inline else => |key| @field(c, "kCMSampleAttachmentKey_" ++ @tagName(key)),
+    };
+    return @ptrCast(raw.?);
+}
 
 test "sample attachment keys resolve" {
     const std = @import("std");
-    for (std.meta.tags(kCMSampleAttachmentKey)) |key| {
-        try std.testing.expect(@intFromPtr(key.unwrap()) != 0);
-        try std.testing.expectEqual(key, kCMSampleAttachmentKey.fromRaw(@ptrCast(key.unwrap())).?);
-    }
+    try std.testing.expect(kCMSampleAttachmentKey(.NotSync).equal(@ptrCast(c.kCMSampleAttachmentKey_NotSync.?)));
+    try std.testing.expect(kCMSampleAttachmentKey(.HDR10PlusPerFrameData).equal(@ptrCast(c.kCMSampleAttachmentKey_HDR10PlusPerFrameData.?)));
 }

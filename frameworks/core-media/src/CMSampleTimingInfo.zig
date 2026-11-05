@@ -1,11 +1,11 @@
 const std = @import("std");
 const c = @import("macos").c;
-const CMTime = @import("CMTime.zig").CMTime;
+const cm = @import("root.zig");
 
 pub const CMSampleTimingInfo = extern struct {
-    duration: CMTime,
-    presentationTimeStamp: CMTime,
-    decodeTimeStamp: CMTime,
+    duration: cm.Time,
+    presentationTimeStamp: cm.Time,
+    decodeTimeStamp: cm.Time,
 };
 
 test "SampleTimingInfo matches CMSampleTimingInfo layout" {
