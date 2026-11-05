@@ -45,8 +45,8 @@ test "NSArray: create and read objects" {
     try std.testing.expectEqualStrings("second", array.objectAtIndex(1).utf8String());
 
     const cf_array = array.asCFArray();
-    try std.testing.expectEqual(@as(usize, 2), cf_array.getCount());
-    try std.testing.expectEqual(@intFromPtr(first), @intFromPtr(cf_array.getValueAtIndex(0).?));
+    try std.testing.expectEqual(@as(usize, 2), cf_array.count());
+    try std.testing.expectEqual(@intFromPtr(first), @intFromPtr(cf_array.at(0).?));
 }
 
 test "NSArray: initialize an empty array" {

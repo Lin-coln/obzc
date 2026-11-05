@@ -75,16 +75,16 @@ pub const kCVPixelFormat = enum(c.OSType) {
     }
 };
 
-pub const kCVPixelBuffer = enum {
-    IOSurfacePropertiesKey,
-    MetalCompatibilityKey,
+pub const kCVPixelBufferKey = enum {
+    IOSurfaceProperties,
+    MetalCompatibility,
 
     const Self = @This();
 
     pub fn unwrap(self: Self) *const cf.String {
         const value: c.CFStringRef = switch (self) {
-            .IOSurfacePropertiesKey => c.kCVPixelBufferIOSurfacePropertiesKey,
-            .MetalCompatibilityKey => c.kCVPixelBufferMetalCompatibilityKey,
+            .IOSurfaceProperties => c.kCVPixelBufferIOSurfacePropertiesKey,
+            .MetalCompatibility => c.kCVPixelBufferMetalCompatibilityKey,
         };
         return @ptrCast(value.?);
     }

@@ -7,7 +7,7 @@ pub const CFBoolean = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub fn getValue(self: *const Self) bool {
+    pub fn val(self: *const Self) bool {
         return c.CFBooleanGetValue(self.raw()) != 0;
     }
 

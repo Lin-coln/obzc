@@ -7,7 +7,7 @@ pub const CFNumber = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub fn getValue(self: *const Self, comptime T: type) ?T {
+    pub fn val(self: *const Self, comptime T: type) ?T {
         var value: T = undefined;
         if (c.CFNumberGetValue(self.raw(), kCFNumber.fromType(T).unwrap(), &value) == 0) return null;
         return value;
@@ -81,6 +81,6 @@ test "getValue reads supported number types" {
         defer c.CFRelease(raw_number);
 
         const number: *const CFNumber = @ptrCast(raw_number);
-        try std.testing.expectEqual(value, number.getValue(T).?);
+        try std.testing.expectEqual(value, number.val(T).?);
     }
 }
