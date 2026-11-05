@@ -24,8 +24,7 @@ pub const kCFBoolean = enum {
 
     pub fn unwrap(self: Self) *const CFBoolean {
         const raw: c.CFBooleanRef = switch (self) {
-            .True => c.kCFBooleanTrue,
-            .False => c.kCFBooleanFalse,
+            inline else => |value| @field(c, "kCFBoolean" ++ @tagName(value)),
         };
         return @ptrCast(raw.?);
     }

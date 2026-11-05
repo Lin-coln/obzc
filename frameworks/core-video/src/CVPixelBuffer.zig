@@ -86,17 +86,17 @@ pub const kCVPixelBufferKey = enum {
     const Self = @This();
 
     pub fn unwrap(self: Self) *const cf.String {
-        const value: c.CFStringRef = switch (self) {
-            .IOSurfaceProperties => c.kCVPixelBufferIOSurfacePropertiesKey,
-            .MetalCompatibility => c.kCVPixelBufferMetalCompatibilityKey,
+        const raw: c.CFStringRef = switch (self) {
+            inline else => |key| @field(c, "kCVPixelBuffer" ++ @tagName(key) ++ "Key"),
         };
-        return @ptrCast(value.?);
+        return @ptrCast(raw.?);
     }
 
     pub fn fromRaw(raw: c.CFStringRef) ?Self {
         const key: *const cf.String = @ptrCast(raw orelse return null);
-        if (key.equal(Self.IOSurfaceProperties.unwrap())) return .IOSurfaceProperties;
-        if (key.equal(Self.MetalCompatibility.unwrap())) return .MetalCompatibility;
+        inline for (@import("std").meta.tags(Self)) |candidate| {
+            if (key.equal(candidate.unwrap())) return candidate;
+        }
         return null;
     }
 };

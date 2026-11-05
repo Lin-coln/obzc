@@ -7,10 +7,10 @@ pub const kCGColorSpace = enum {
     const Self = @This();
 
     pub fn unwrap(self: Self) *const cf.String {
-        const value: c.CFStringRef = switch (self) {
-            .DisplayP3 => c.kCGColorSpaceDisplayP3,
+        const raw: c.CFStringRef = switch (self) {
+            inline else => |name| @field(c, "kCGColorSpace" ++ @tagName(name)),
         };
-        return @ptrCast(value.?);
+        return @ptrCast(raw.?);
     }
 
     pub fn fromRaw(raw: c.CFStringRef) ?Self {
@@ -19,7 +19,9 @@ pub const kCGColorSpace = enum {
     }
 
     pub fn wrap(name: *const cf.String) ?Self {
-        if (name.equal(Self.DisplayP3.unwrap())) return .DisplayP3;
+        inline for (@import("std").meta.tags(Self)) |candidate| {
+            if (name.equal(candidate.unwrap())) return candidate;
+        }
         return null;
     }
 };

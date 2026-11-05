@@ -32,19 +32,17 @@ pub const kCGColor = enum {
     Clear,
     const Self = @This();
     pub fn unwrap(self: Self) *const cf.String {
-        const value: c.CFStringRef = switch (self) {
-            .White => c.kCGColorWhite,
-            .Black => c.kCGColorBlack,
-            .Clear => c.kCGColorClear,
+        const raw: c.CFStringRef = switch (self) {
+            inline else => |color| @field(c, "kCGColor" ++ @tagName(color)),
         };
-        return @ptrCast(value.?);
+        return @ptrCast(raw.?);
     }
 
     pub fn fromRaw(raw: c.CFStringRef) ?Self {
         const name: *const cf.String = @ptrCast(raw orelse return null);
-        if (name.equal(Self.White.unwrap())) return .White;
-        if (name.equal(Self.Black.unwrap())) return .Black;
-        if (name.equal(Self.Clear.unwrap())) return .Clear;
+        inline for (@import("std").meta.tags(Self)) |color| {
+            if (name.equal(color.unwrap())) return color;
+        }
         return null;
     }
 };
