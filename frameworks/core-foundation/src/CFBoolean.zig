@@ -23,11 +23,11 @@ pub const kCFBoolean = enum {
     const Self = @This();
 
     pub fn unwrap(self: Self) *const CFBoolean {
-        const value: c.CFBooleanRef = switch (self) {
+        const raw: c.CFBooleanRef = switch (self) {
             .True => c.kCFBooleanTrue,
             .False => c.kCFBooleanFalse,
         };
-        return @ptrCast(value.?);
+        return @ptrCast(raw.?);
     }
 
     pub fn fromRaw(raw: c.CFBooleanRef) Self {

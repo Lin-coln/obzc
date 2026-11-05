@@ -9,7 +9,7 @@ pub const CFNumber = opaque {
 
     pub fn val(self: *const Self, comptime T: type) ?T {
         var value: T = undefined;
-        if (c.CFNumberGetValue(self.raw(), kCFNumber.fromType(T).unwrap(), &value) == 0) return null;
+        if (c.CFNumberGetValue(self.raw(), kCFNumberType.fromType(T).unwrap(), &value) == 0) return null;
         return value;
     }
 
@@ -18,7 +18,7 @@ pub const CFNumber = opaque {
     }
 };
 
-pub const kCFNumber = enum(c.CFNumberType) {
+pub const kCFNumberType = enum(c.CFNumberType) {
     SInt8Type = c.kCFNumberSInt8Type,
     SInt16Type = c.kCFNumberSInt16Type,
     SInt32Type = c.kCFNumberSInt32Type,
@@ -42,25 +42,10 @@ pub const kCFNumber = enum(c.CFNumberType) {
     }
 
     pub fn fromRaw(raw: c.CFNumberType) ?Self {
-        return switch (raw) {
-            c.kCFNumberSInt8Type => .SInt8Type,
-            c.kCFNumberSInt16Type => .SInt16Type,
-            c.kCFNumberSInt32Type => .SInt32Type,
-            c.kCFNumberSInt64Type => .SInt64Type,
-            c.kCFNumberFloat32Type => .Float32Type,
-            c.kCFNumberFloat64Type => .Float64Type,
-            c.kCFNumberCharType => .CharType,
-            c.kCFNumberShortType => .ShortType,
-            c.kCFNumberIntType => .IntType,
-            c.kCFNumberLongType => .LongType,
-            c.kCFNumberLongLongType => .LongLongType,
-            c.kCFNumberFloatType => .FloatType,
-            c.kCFNumberDoubleType => .DoubleType,
-            c.kCFNumberCFIndexType => .CFIndexType,
-            c.kCFNumberNSIntegerType => .NSIntegerType,
-            c.kCFNumberCGFloatType => .CGFloatType,
-            else => null,
-        };
+        inline for (@typeInfo(Self).@"enum".field_names) |name| {
+            if (raw == @field(c, "kCFNumber" ++ name)) return @field(Self, name);
+        }
+        return null;
     }
 
     pub fn fromType(comptime T: type) Self {
@@ -84,8 +69,8 @@ pub const kCFNumber = enum(c.CFNumberType) {
 
 test "getValue reads supported number types" {
     const std = @import("std");
-    for (std.meta.tags(kCFNumber)) |kind| {
-        try std.testing.expectEqual(kind, kCFNumber.fromRaw(kind.unwrap()).?);
+    for (std.meta.tags(kCFNumberType)) |kind| {
+        try std.testing.expectEqual(kind, kCFNumberType.fromRaw(kind.unwrap()).?);
     }
     inline for (.{
         @as(i8, 1),
@@ -102,7 +87,7 @@ test "getValue reads supported number types" {
         @as(isize, 12),
     }) |value| {
         const T = @TypeOf(value);
-        const raw_number = c.CFNumberCreate(null, kCFNumber.fromType(T).unwrap(), &value) orelse return error.OutOfMemory;
+        const raw_number = c.CFNumberCreate(null, kCFNumberType.fromType(T).unwrap(), &value) orelse return error.OutOfMemory;
         defer c.CFRelease(raw_number);
 
         const number: *const CFNumber = @ptrCast(raw_number);

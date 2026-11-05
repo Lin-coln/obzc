@@ -9,7 +9,7 @@ pub const String = @import("CFString.zig").CFString;
 
 // const
 pub const kBoolean = @import("CFBoolean.zig").kCFBoolean;
-pub const kNumber = @import("CFNumber.zig").kCFNumber;
+pub const kNumberType = @import("CFNumber.zig").kCFNumberType;
 
 test {
     std.testing.refAllDecls(@This());
