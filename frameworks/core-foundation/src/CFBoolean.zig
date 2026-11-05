@@ -22,23 +22,16 @@ pub const CFBoolean = opaque {
     }
 };
 
-pub const kCFBoolean = enum {
-    True,
-    False,
+pub fn kCFBoolean(value: enum { True, False }) *const CFBoolean {
+    const raw: c.CFBooleanRef = switch (value) {
+        .True => c.kCFBooleanTrue,
+        .False => c.kCFBooleanFalse,
+    };
+    return @ptrCast(raw.?);
+}
 
-    const Self = @This();
-
-    pub fn unwrap(self: Self) *const CFBoolean {
-        const raw: c.CFBooleanRef = switch (self) {
-            inline else => |value| @field(c, "kCFBoolean" ++ @tagName(value)),
-        };
-        return @ptrCast(raw.?);
-    }
-
-    pub fn fromRaw(raw: c.CFBooleanRef) Self {
-        return switch (c.CFBooleanGetValue(raw)) {
-            0 => .False,
-            else => .True,
-        };
-    }
-};
+test "kCFBoolean returns the two singleton values" {
+    const std = @import("std");
+    try std.testing.expect(kCFBoolean(.True).val());
+    try std.testing.expect(!kCFBoolean(.False).val());
+}
