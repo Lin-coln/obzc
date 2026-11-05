@@ -52,7 +52,7 @@ fn CFTypeMixin(comptime T: type) type {
 
 test "CFType methods work on generic and concrete references" {
     const std = @import("std");
-    const CFBoolean = @import("CFBoolean.zig").CFBoolean;
+    const CFBoolean = @import("../CFBoolean.zig").CFBoolean;
     const boolean: *const CFBoolean = @ptrCast(c.kCFBooleanTrue.?);
     const generic: *const CFType = @ptrCast(boolean);
 

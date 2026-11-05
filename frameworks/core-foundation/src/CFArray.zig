@@ -18,7 +18,7 @@ pub const CFArray = opaque {
 
 fn CFArrayMixin(comptime T: type) type {
     return struct {
-        const h = @import("CFType.zig").CFType.Mixin(T);
+        const h = @import("CFBase/CFType.zig").CFType.Mixin(T);
 
         pub const retain = h.retain;
         pub const release = h.release;

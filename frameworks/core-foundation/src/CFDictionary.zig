@@ -21,7 +21,7 @@ pub const CFDictionary = opaque {
 
 fn CFDictionaryMixin(comptime T: type) type {
     return struct {
-        const h = @import("CFType.zig").CFType.Mixin(T);
+        const h = @import("CFBase/CFType.zig").CFType.Mixin(T);
 
         pub fn createMutable() ?*T {
             const dict = c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks) orelse return null;

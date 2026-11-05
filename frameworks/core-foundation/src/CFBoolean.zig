@@ -2,7 +2,7 @@ const c = @import("macos").c;
 
 pub const CFBoolean = opaque {
     const Self = @This();
-    const h = @import("CFType.zig").CFType.Mixin(Self);
+    const h = @import("CFBase/CFType.zig").CFType.Mixin(Self);
 
     pub const retain = h.retain;
     pub const release = h.release;
