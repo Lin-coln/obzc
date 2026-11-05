@@ -39,9 +39,21 @@ pub const CFError = opaque {
     }
 };
 
+pub fn kCFErrorDomain(value: enum {
+    POSIX,
+    OSStatus,
+    Mach,
+    Cocoa,
+}) *const cf.String {
+    const raw: c.CFErrorDomain = switch (value) {
+        inline else => |domain| @field(c, "kCFErrorDomain" ++ @tagName(domain)),
+    };
+    return @ptrCast(raw.?);
+}
+
 test "CFError reads an error" {
     const std = @import("std");
-    const domain_string: *const cf.String = @ptrCast(c.kCFErrorDomainPOSIX.?);
+    const domain_string = cf.kErrorDomain(.POSIX);
     const created = c.CFErrorCreate(null, @ptrCast(domain_string), 42, null) orelse return error.OutOfMemory;
     const err: *CFError = @ptrCast(created);
     defer err.release();

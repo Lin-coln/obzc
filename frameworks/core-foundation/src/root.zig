@@ -11,6 +11,7 @@ pub const String = @import("CFString/CFString.zig").CFString;
 
 // const
 pub const kBoolean = @import("CFBoolean.zig").kCFBoolean;
+pub const kErrorDomain = @import("CFBase/CFError.zig").kCFErrorDomain;
 pub const kNumberType = @import("CFNumber.zig").kCFNumberType;
 pub const kStringCompareFlags = @import("CFString/CFStringCompareFlags.zig").kCFStringCompareFlags;
 pub const kStringEncoding = @import("CFString/CFStringEncoding.zig").kCFStringEncoding;
