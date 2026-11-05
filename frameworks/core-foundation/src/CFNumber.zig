@@ -25,7 +25,7 @@ pub const CFNumber = opaque {
     }
 };
 
-pub fn kCFNumberType(kind: enum {
+pub inline fn kCFNumberType(kind: enum {
     SInt8Type,
     SInt16Type,
     SInt32Type,
@@ -43,10 +43,9 @@ pub fn kCFNumberType(kind: enum {
     NSIntegerType,
     CGFloatType,
 }) c.CFNumberType {
-    const raw: c.CFNumberType = switch (kind) {
+    return switch (kind) {
         inline else => |value| @field(c, "kCFNumber" ++ @tagName(value)),
     };
-    return raw;
 }
 
 fn fromType(comptime T: type) c.CFNumberType {

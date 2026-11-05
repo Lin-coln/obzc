@@ -39,7 +39,7 @@ pub const CFError = opaque {
     }
 };
 
-pub fn kCFErrorDomain(value: enum {
+pub inline fn kCFErrorDomain(value: enum {
     POSIX,
     OSStatus,
     Mach,

@@ -23,7 +23,7 @@ pub const CFBoolean = opaque {
     }
 };
 
-pub fn kCFBoolean(value: enum { True, False }) *const CFBoolean {
+pub inline fn kCFBoolean(value: enum { True, False }) *const CFBoolean {
     const raw: c.CFBooleanRef = switch (value) {
         .True => c.kCFBooleanTrue,
         .False => c.kCFBooleanFalse,

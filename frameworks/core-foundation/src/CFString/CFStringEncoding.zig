@@ -1,6 +1,6 @@
 const c = @import("macos").c;
 
-pub fn kCFStringEncoding(kind: enum {
+pub inline fn kCFStringEncoding(kind: enum {
     MacRoman,
     WindowsLatin1,
     ISOLatin1,
@@ -16,10 +16,9 @@ pub fn kCFStringEncoding(kind: enum {
     UTF32BE,
     UTF32LE,
 }) c.CFStringEncoding {
-    const raw: c.CFStringEncoding = switch (kind) {
+    return switch (kind) {
         inline else => |value| @field(c, "kCFStringEncoding" ++ @tagName(value)),
     };
-    return raw;
 }
 
 test "built-in string encodings use the Core Foundation values" {
