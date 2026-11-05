@@ -1,7 +1,5 @@
 const c = @import("macos").c;
 
-pub const CFStringEncoding = u32;
-
 pub fn kCFStringEncoding(kind: enum {
     MacRoman,
     WindowsLatin1,
@@ -17,7 +15,7 @@ pub fn kCFStringEncoding(kind: enum {
     UTF32,
     UTF32BE,
     UTF32LE,
-}) CFStringEncoding {
+}) c.CFStringEncoding {
     const raw: c.CFStringEncoding = switch (kind) {
         inline else => |value| @field(c, "kCFStringEncoding" ++ @tagName(value)),
     };
@@ -26,6 +24,6 @@ pub fn kCFStringEncoding(kind: enum {
 
 test "built-in string encodings use the Core Foundation values" {
     const std = @import("std");
-    try std.testing.expectEqual(@as(CFStringEncoding, c.kCFStringEncodingUTF8), kCFStringEncoding(.UTF8));
+    try std.testing.expectEqual(@as(c.CFStringEncoding, c.kCFStringEncodingUTF8), kCFStringEncoding(.UTF8));
     try std.testing.expectEqual(kCFStringEncoding(.Unicode), kCFStringEncoding(.UTF16));
 }

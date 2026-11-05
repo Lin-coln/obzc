@@ -1,6 +1,6 @@
 const c = @import("macos").c;
 
-pub const CFStringCompareFlags = enum {
+pub const kCFStringCompareFlags = enum {
     CaseInsensitive,
     Backwards,
     Anchored,
@@ -28,7 +28,7 @@ test "comparison flags combine into the Core Foundation bitmask" {
     const std = @import("std");
     try std.testing.expectEqual(
         @as(c.CFStringCompareFlags, c.kCFCompareCaseInsensitive | c.kCFCompareNumerically),
-        CFStringCompareFlags.create(&.{ .CaseInsensitive, .Numerically }),
+        kCFStringCompareFlags.create(&.{ .CaseInsensitive, .Numerically }),
     );
-    try std.testing.expectEqual(@as(c.CFStringCompareFlags, 0), CFStringCompareFlags.create(&.{}));
+    try std.testing.expectEqual(@as(c.CFStringCompareFlags, 0), kCFStringCompareFlags.create(&.{}));
 }
