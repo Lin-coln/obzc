@@ -1,4 +1,5 @@
 const c = @import("macos").c;
+const cf = @import("root.zig");
 
 pub const CFArray = opaque {
     pub const Mixin = CFArrayMixin;
@@ -18,7 +19,7 @@ pub const CFArray = opaque {
 
 fn CFArrayMixin(comptime T: type) type {
     return struct {
-        const h = @import("CFBase/CFType.zig").CFType.Mixin(T);
+        const h = cf.Type.Mixin(T);
 
         pub const retain = h.retain;
         pub const release = h.release;
@@ -74,7 +75,7 @@ test "CFArray uses CFType mixin" {
     const retained = array.retain();
     retained.release();
 
-    const Booleans = CFArray_With(@import("CFBoolean.zig").CFBoolean);
+    const Booleans = CFArray_With(cf.Boolean);
     const booleans: *const Booleans = @ptrCast(raw_array);
     try std.testing.expect(booleans.at(0).?.val());
 }

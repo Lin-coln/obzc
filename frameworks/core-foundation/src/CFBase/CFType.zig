@@ -1,4 +1,5 @@
 const c = @import("macos").c;
+const cf = @import("../root.zig");
 
 pub const CFType = opaque {
     pub const Mixin = CFTypeMixin;
@@ -52,12 +53,11 @@ fn CFTypeMixin(comptime T: type) type {
 
 test "CFType methods work on generic and concrete references" {
     const std = @import("std");
-    const CFBoolean = @import("../CFBoolean.zig").CFBoolean;
-    const boolean: *const CFBoolean = @ptrCast(c.kCFBooleanTrue.?);
+    const boolean: *const cf.Boolean = @ptrCast(c.kCFBooleanTrue.?);
     const generic: *const CFType = @ptrCast(boolean);
 
-    try std.testing.expectEqual(c.CFBooleanGetTypeID(), CFBoolean.getTypeID());
-    try std.testing.expectEqual(CFBoolean.getTypeID(), generic.getTypeID());
+    try std.testing.expectEqual(c.CFBooleanGetTypeID(), cf.Boolean.getTypeID());
+    try std.testing.expectEqual(cf.Boolean.getTypeID(), generic.getTypeID());
     try std.testing.expectEqual(c.CFHash(@ptrCast(boolean)), boolean.hash());
     try std.testing.expectEqual(boolean.hash(), generic.hash());
     try std.testing.expect(boolean.getRetainCount() > 0);

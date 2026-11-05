@@ -1,9 +1,9 @@
 const c = @import("macos").c;
-const CFString = @import("../CFString/CFString.zig").CFString;
+const cf = @import("../root.zig");
 
 pub const CFError = opaque {
     const Self = @This();
-    const h = @import("CFType.zig").CFType.Mixin(Self);
+    const h = cf.Type.Mixin(Self);
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -14,7 +14,7 @@ pub const CFError = opaque {
         return c.CFErrorGetTypeID();
     }
 
-    pub fn domain(self: *const Self) *const CFString {
+    pub fn domain(self: *const Self) *const cf.String {
         return @ptrCast(c.CFErrorGetDomain(self.raw()).?);
     }
 
@@ -22,15 +22,15 @@ pub const CFError = opaque {
         return @intCast(c.CFErrorGetCode(self.raw()));
     }
 
-    pub fn copyDescription(self: *const Self) *const CFString {
+    pub fn copyDescription(self: *const Self) *const cf.String {
         return @ptrCast(c.CFErrorCopyDescription(self.raw()).?);
     }
 
-    pub fn copyFailureReason(self: *const Self) ?*const CFString {
+    pub fn copyFailureReason(self: *const Self) ?*const cf.String {
         return @ptrCast(c.CFErrorCopyFailureReason(self.raw()));
     }
 
-    pub fn copyRecoverySuggestion(self: *const Self) ?*const CFString {
+    pub fn copyRecoverySuggestion(self: *const Self) ?*const cf.String {
         return @ptrCast(c.CFErrorCopyRecoverySuggestion(self.raw()));
     }
 
@@ -41,7 +41,7 @@ pub const CFError = opaque {
 
 test "CFError reads an error" {
     const std = @import("std");
-    const domain_string: *const CFString = @ptrCast(c.kCFErrorDomainPOSIX.?);
+    const domain_string: *const cf.String = @ptrCast(c.kCFErrorDomainPOSIX.?);
     const created = c.CFErrorCreate(null, @ptrCast(domain_string), 42, null) orelse return error.OutOfMemory;
     const err: *CFError = @ptrCast(created);
     defer err.release();

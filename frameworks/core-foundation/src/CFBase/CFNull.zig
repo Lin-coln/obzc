@@ -1,8 +1,9 @@
 const c = @import("macos").c;
+const cf = @import("../root.zig");
 
 pub const CFNull = opaque {
     const Self = @This();
-    const h = @import("CFType.zig").CFType.Mixin(Self);
+    const h = cf.Type.Mixin(Self);
 
     pub const retain = h.retain;
     pub const release = h.release;

@@ -1,5 +1,6 @@
 const std = @import("std");
 const c = @import("macos").c;
+const cf = @import("root.zig");
 
 pub const CFDictionary = opaque {
     pub const Mixin = CFDictionaryMixin;
@@ -21,7 +22,7 @@ pub const CFDictionary = opaque {
 
 fn CFDictionaryMixin(comptime T: type) type {
     return struct {
-        const h = @import("CFBase/CFType.zig").CFType.Mixin(T);
+        const h = cf.Type.Mixin(T);
 
         pub fn createMutable() ?*T {
             const dict = c.CFDictionaryCreateMutable(null, 0, &c.kCFTypeDictionaryKeyCallBacks, &c.kCFTypeDictionaryValueCallBacks) orelse return null;
@@ -80,7 +81,7 @@ pub fn CFDictionary_WithKey(comptime K: type) type {
 }
 
 test "mutable dictionary stores a value" {
-    const Boolean = @import("CFBoolean.zig").CFBoolean;
+    const Boolean = cf.Boolean;
     const dict = CFDictionary.createMutable().?;
     defer dict.release();
 
@@ -93,7 +94,7 @@ test "mutable dictionary stores a value" {
 }
 
 test "dictionary with typed keys stores a value" {
-    const Boolean = @import("CFBoolean.zig").CFBoolean;
+    const Boolean = cf.Boolean;
     const BooleanKeys = CFDictionary.WithKey(Boolean);
     const dict = BooleanKeys.createMutable().?;
     defer dict.release();
