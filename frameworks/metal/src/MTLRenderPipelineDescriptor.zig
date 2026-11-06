@@ -18,7 +18,9 @@ pub const MTLRenderPipelineDescriptor = opaque {
     pub const setFragmentFunction = h.prop("fragmentFunction", ?*MTLFunction).setter;
     /// Borrowed attachment array, owned by this descriptor.
     pub const colorAttachments = h.prop("colorAttachments", *MTLRenderPipelineColorAttachmentDescriptorArray).getter;
-    pub const hash = h.method("hash", fn () usize);
+    pub fn hash(self: *Self) usize {
+        return h.call(self, usize, "hash", .{});
+    }
 };
 
 test "MTLRenderPipelineDescriptor: new has empty function slots" {

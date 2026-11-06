@@ -12,7 +12,9 @@ pub const MTLLibrary = opaque {
     pub const release = h.release;
 
     /// Returns an owned function, or null when the name is absent.
-    pub const newFunction = h.method("newFunctionWithName:", fn (*ns.String) ?*MTLFunction);
+    pub fn newFunction(self: *Self, name: *ns.String) ?*MTLFunction {
+        return h.call(self, ?*MTLFunction, "newFunctionWithName:", .{name});
+    }
 };
 
 test "MTLLibrary: newFunction finds a named function and returns null for a missing name" {

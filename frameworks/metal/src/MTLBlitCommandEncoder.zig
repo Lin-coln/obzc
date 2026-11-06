@@ -9,6 +9,11 @@ pub const MTLBlitCommandEncoder = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const copyFromTexture = h.method("copyFromTexture:toTexture:", fn (*MTLTexture, *MTLTexture) void);
-    pub const endEncoding = h.method("endEncoding", fn () void);
+    pub fn copyFromTexture(self: *Self, source: *MTLTexture, destination: *MTLTexture) void {
+        h.call(self, void, "copyFromTexture:toTexture:", .{ source, destination });
+    }
+
+    pub fn endEncoding(self: *Self) void {
+        h.call(self, void, "endEncoding", .{});
+    }
 };

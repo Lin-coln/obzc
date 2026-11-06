@@ -26,7 +26,9 @@ pub const NSMutableData = opaque {
     }
 
     /// The returned pointer is invalidated by mutation or release and may be null when empty.
-    pub const mutableBytes = h.method("mutableBytes", fn () ?[*]u8);
+    pub fn mutableBytes(self: *Self) ?[*]u8 {
+        return h.call(self, ?[*]u8, "mutableBytes", .{});
+    }
 };
 
 test "NSMutableData: resize, edit, and append bytes" {

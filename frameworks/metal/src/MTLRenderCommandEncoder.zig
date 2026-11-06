@@ -11,9 +11,23 @@ pub const MTLRenderCommandEncoder = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const setRenderPipelineState = h.method("setRenderPipelineState:", fn (*MTLRenderPipelineState) void);
-    pub const setVertexBytes = h.method("setVertexBytes:length:atIndex:", fn (*const anyopaque, usize, usize) void);
-    pub const setFragmentTexture = h.method("setFragmentTexture:atIndex:", fn (?*MTLTexture, usize) void);
-    pub const drawPrimitives = h.method("drawPrimitives:vertexStart:vertexCount:", fn (mtl.MTLPrimitiveType, usize, usize) void);
-    pub const endEncoding = h.method("endEncoding", fn () void);
+    pub fn setRenderPipelineState(self: *Self, state: *MTLRenderPipelineState) void {
+        h.call(self, void, "setRenderPipelineState:", .{state});
+    }
+
+    pub fn setVertexBytes(self: *Self, bytes: *const anyopaque, length: usize, index: usize) void {
+        h.call(self, void, "setVertexBytes:length:atIndex:", .{ bytes, length, index });
+    }
+
+    pub fn setFragmentTexture(self: *Self, texture: ?*MTLTexture, index: usize) void {
+        h.call(self, void, "setFragmentTexture:atIndex:", .{ texture, index });
+    }
+
+    pub fn drawPrimitives(self: *Self, primitive_type: mtl.MTLPrimitiveType, vertex_start: usize, vertex_count: usize) void {
+        h.call(self, void, "drawPrimitives:vertexStart:vertexCount:", .{ primitive_type, vertex_start, vertex_count });
+    }
+
+    pub fn endEncoding(self: *Self) void {
+        h.call(self, void, "endEncoding", .{});
+    }
 };

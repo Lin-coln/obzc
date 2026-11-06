@@ -10,7 +10,9 @@ pub const MTLFunction = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const functionType = h.method("functionType", fn () mtl.MTLFunctionType);
+    pub fn functionType(self: *Self) mtl.MTLFunctionType {
+        return h.call(self, mtl.MTLFunctionType, "functionType", .{});
+    }
 };
 
 test "MTLFunction: functionType identifies a compute function" {

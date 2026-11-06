@@ -20,7 +20,9 @@ pub fn NSDictionary(comptime Key: type, comptime Value: type) type {
         pub const count = h.prop("count", usize).getter;
 
         /// Returns a borrowed value, or null when the key is absent.
-        pub const objectForKey = h.method("objectForKey:", fn (*Key) ?*Value);
+        pub fn objectForKey(self: *Self, key: *Key) ?*Value {
+            return h.call(self, ?*Value, "objectForKey:", .{key});
+        }
     };
 }
 

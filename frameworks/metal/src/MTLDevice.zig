@@ -25,9 +25,17 @@ pub const MTLDevice = opaque {
         return @ptrCast(mtl.MTLCreateSystemDefaultDevice());
     }
 
-    pub const newCommandQueue = h.method("newCommandQueue", fn () ?*MTLCommandQueue);
-    pub const newTexture = h.method("newTextureWithDescriptor:", fn (*MTLTextureDescriptor) ?*MTLTexture);
-    pub const newTextureWithIOSurface = h.method("newTextureWithDescriptor:iosurface:plane:", fn (*MTLTextureDescriptor, ?*ios.Surface, usize) ?*MTLTexture);
+    pub fn newCommandQueue(self: *Self) ?*MTLCommandQueue {
+        return h.call(self, ?*MTLCommandQueue, "newCommandQueue", .{});
+    }
+
+    pub fn newTexture(self: *Self, descriptor: *MTLTextureDescriptor) ?*MTLTexture {
+        return h.call(self, ?*MTLTexture, "newTextureWithDescriptor:", .{descriptor});
+    }
+
+    pub fn newTextureWithIOSurface(self: *Self, descriptor: *MTLTextureDescriptor, surface: ?*ios.Surface, plane: usize) ?*MTLTexture {
+        return h.call(self, ?*MTLTexture, "newTextureWithDescriptor:iosurface:plane:", .{ descriptor, surface, plane });
+    }
 
     /// Returns an owned library. Logs the SDK error when compilation fails.
     pub fn newLibrary(self: *Self, source: *ns.String, options: ?*MTLCompileOptions) !*MTLLibrary {

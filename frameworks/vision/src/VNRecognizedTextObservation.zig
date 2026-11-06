@@ -16,7 +16,9 @@ pub const VNRecognizedTextObservation = opaque {
     pub const boundingBox = h.prop("boundingBox", cg.Rect).getter;
 
     /// Returns a borrowed array with at most the requested number of candidates.
-    pub const topCandidates = h.method("topCandidates:", fn (usize) *ns.Array(VNRecognizedText));
+    pub fn topCandidates(self: *Self, count: usize) *ns.Array(VNRecognizedText) {
+        return h.call(self, *ns.Array(VNRecognizedText), "topCandidates:", .{count});
+    }
 };
 
 test "VNRecognizedTextObservation: read a bounding box and confidence" {
