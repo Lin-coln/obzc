@@ -3,9 +3,9 @@ pub const ffi = @import("ffi/root.zig");
 pub const cast = ffi.cast;
 pub const AutoReleasePool = ffi.AutoReleasePool;
 
-pub const Metadata = @import("encode/root.zig").Metadata;
-pub const encodeType = @import("encode/root.zig").encodeType;
-pub const encodeFunction = @import("encode/root.zig").encodeFunction;
+pub const Metadata = @import("utils/encode").Metadata;
+pub const encodeType = @import("utils/encode").encodeType;
+pub const encodeFunction = @import("utils/encode").encodeFunction;
 
 pub const Block = @import("block/root.zig").Block;
 
@@ -28,5 +28,4 @@ pub fn h(comptime T: type) type {
 
 test {
     std.testing.refAllDecls(@This());
-    _ = @import("utils/root.zig");
 }

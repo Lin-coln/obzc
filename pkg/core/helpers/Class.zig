@@ -1,7 +1,7 @@
 const std = @import("std");
 const ffi = @import("../ffi/root.zig");
 const c = @import("macos").c;
-const utils = @import("../utils/root.zig");
+const utils = @import("utils");
 
 pub fn Class(comptime T: type) type {
     const class_name = comptime utils.resolveTypeName(@typeName(T));

@@ -1,5 +1,5 @@
 const std = @import("std");
-const utils = @import("../../utils/root.zig");
+const utils = @import("utils");
 
 pub fn method(comptime T: type, comptime call: anytype) type {
     const Receiver: ?type = utils.resolveReceiverType(T, call);

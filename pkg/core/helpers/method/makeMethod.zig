@@ -1,6 +1,6 @@
 const std = @import("std");
-const utils = @import("../../utils/root.zig");
-const toSpreadedFn = @import("../../utils/root.zig").toSpreadedFn;
+const utils = @import("utils");
+const toSpreadedFn = @import("utils").toSpreadedFn;
 
 pub fn makeMethod(
     comptime Receiver: ?type,

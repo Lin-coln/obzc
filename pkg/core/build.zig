@@ -6,8 +6,16 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run Objective-C tests");
 
-    const macos = b.dependency("macos", .{ .target = target, .optimize = optimize }).module("macos");
-    test_step.dependOn(addCompileErrorTests(b, target, optimize, macos));
+    const macos, const utils, const encode = blk: {
+        const opts = .{ .target = target, .optimize = optimize };
+        const utils_dep = b.dependency("utils", opts);
+        break :blk .{
+            b.dependency("macos", opts).module("macos"),
+            utils_dep.module("utils"),
+            utils_dep.module("encode"),
+        };
+    };
+    test_step.dependOn(addCompileErrorTests(b, target, optimize, macos, utils, encode));
 
     const core = blk: {
         const opts: std.Build.Module.CreateOptions = .{
@@ -16,6 +24,8 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "macos", .module = macos },
+                .{ .name = "utils", .module = utils },
+                .{ .name = "utils/encode", .module = encode },
             },
         };
 
@@ -40,6 +50,8 @@ fn addCompileErrorTests(
     target: std.Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
     macos: *std.Build.Module,
+    utils: *std.Build.Module,
+    encode: *std.Build.Module,
 ) *std.Build.Step {
     const step = b.step("test-compile-errors", "Check compile-time validation errors");
     inline for (@import("compile_test.zig").sources) |source| {
@@ -52,6 +64,8 @@ fn addCompileErrorTests(
                     .optimize = optimize,
                     .imports = &.{
                         .{ .name = "macos", .module = macos },
+                        .{ .name = "utils", .module = utils },
+                        .{ .name = "utils/encode", .module = encode },
                     },
                 }),
                 .filters = &.{case.name},

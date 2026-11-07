@@ -1,5 +1,5 @@
 const std = @import("std");
-const utils = @import("../../utils/root.zig");
+const utils = @import("utils");
 const initBlockWithContext = @import("initBlockWithContext.zig").initBlockWithContext;
 
 pub fn makeWithCallback(

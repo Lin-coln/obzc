@@ -1,6 +1,6 @@
 const std = @import("std");
 const ffi = @import("../../ffi/root.zig");
-const encodeType = @import("../../encode/root.zig").encodeType;
+const encodeType = @import("utils/encode").encodeType;
 const c = @import("macos").c;
 const Class = ffi.Class;
 

@@ -5,6 +5,7 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .macos = .{ .path = "../macos" },
+        .utils = .{ .path = "../utils" },
     },
     .paths = .{
         "build.zig",
@@ -14,7 +15,5 @@
         "helpers",
         "ffi",
         "block",
-        "encode",
-        "utils",
     },
 }

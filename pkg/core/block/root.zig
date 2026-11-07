@@ -1,8 +1,8 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const ffi = @import("../ffi/root.zig");
-const Metadata = @import("../encode/root.zig").Metadata;
-const encodeFunction = @import("../encode/root.zig").encodeFunction;
+const Metadata = @import("utils/encode").Metadata;
+const encodeFunction = @import("utils/encode").encodeFunction;
 const c = @import("macos").c;
 const z = @import("macos").z;
 

@@ -1,5 +1,5 @@
 const std = @import("std");
-const Metadata = @import("../encode/root.zig").Metadata;
+const Metadata = @import("utils/encode").Metadata;
 const c = @import("macos").c;
 
 pub const Sel = opaque {

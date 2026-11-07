@@ -1,6 +1,6 @@
 const std = @import("std");
 const Type = std.lang.Type;
-const utils = @import("../utils/root.zig");
+const utils = @import("utils");
 
 pub fn fromStruct(
     encode: anytype,

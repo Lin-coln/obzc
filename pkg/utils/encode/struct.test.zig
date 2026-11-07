@@ -16,27 +16,27 @@ const Stub = struct {
 pub const CompileTestCases = .{
     .{
         .name = "fromStruct: rejects auto-layout structs",
-        .expected_error = "cannot encode struct " ++ @typeName(Auto) ++ ":",
+        .expected_error = "cannot encode struct struct.test.Auto:",
     },
     .{
         .name = "fromUnion: rejects non-extern unions",
-        .expected_error = "cannot encode union " ++ @typeName(Plain) ++ ":",
+        .expected_error = "cannot encode union struct.test.Plain:",
     },
     .{
         .name = "fromUnion: rejects packed unions",
-        .expected_error = "cannot encode union " ++ @typeName(Packed) ++ ":",
+        .expected_error = "cannot encode union struct.test.Packed:",
     },
     .{
         .name = "fromStruct: rejects lowered field alignment",
-        .expected_error = "cannot encode struct " ++ @typeName(Lowered) ++ ":",
+        .expected_error = "cannot encode struct struct.test.Lowered:",
     },
     .{
         .name = "fromStruct: rejects raised field alignment",
-        .expected_error = "cannot encode struct " ++ @typeName(Raised) ++ ":",
+        .expected_error = "cannot encode struct struct.test.Raised:",
     },
     .{
         .name = "fromUnion: rejects custom field alignment",
-        .expected_error = "cannot encode union " ++ @typeName(AlignedUnion) ++ ":",
+        .expected_error = "cannot encode union struct.test.AlignedUnion:",
     },
 };
 

@@ -1,6 +1,6 @@
 const std = @import("std");
 const block = @import("../../block/root.zig");
-const toSpreadedFn = @import("../../utils/root.zig").toSpreadedFn;
+const toSpreadedFn = @import("utils").toSpreadedFn;
 
 /// Creates a stack block for a handler receiving `ctx` and zero to twelve block arguments.
 /// The context pointer must outlive every invocation, including heap copies.

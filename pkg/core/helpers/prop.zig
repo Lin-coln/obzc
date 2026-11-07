@@ -1,7 +1,7 @@
 const std = @import("std");
 const ffi = @import("../ffi/root.zig");
 const c = @import("macos").c;
-const utils = @import("../utils/root.zig");
+const utils = @import("utils");
 const Class = ffi.Class;
 
 pub fn prop(comptime T: type, comptime call: anytype) type {
