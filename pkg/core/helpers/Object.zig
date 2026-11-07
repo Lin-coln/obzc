@@ -1,6 +1,7 @@
 const std = @import("std");
 const ffi = @import("../ffi/root.zig");
-const c = ffi.c;
+const c = @import("macos").c;
+const z = @import("macos").z;
 
 pub fn Object(comptime T: type) type {
     return struct {
@@ -17,11 +18,11 @@ pub fn Object(comptime T: type) type {
         }
 
         pub fn retain(self: *T) *T {
-            return @ptrCast(c.objc_retain(@ptrCast(self)).?);
+            return @ptrCast(z.objc_retain(@ptrCast(self)).?);
         }
 
         pub fn release(self: *T) void {
-            c.objc_release(@ptrCast(self));
+            z.objc_release(@ptrCast(self));
         }
     };
 }
@@ -30,9 +31,9 @@ test "helpers.Object.call: forwards the supplied instance instead of binding a c
     const Wrapped = opaque {};
     const cls = ffi.Class.lookup("NSObject").?;
     const first = ffi.msg.send(cls, *Wrapped, ffi.Sel.get("new"), .{});
-    defer c.objc_release(@ptrCast(first));
+    defer z.objc_release(@ptrCast(first));
     const second = ffi.msg.send(cls, *Wrapped, ffi.Sel.get("new"), .{});
-    defer c.objc_release(@ptrCast(second));
+    defer z.objc_release(@ptrCast(second));
 
     const h = Object(Wrapped);
     try std.testing.expectEqual(first, h.call(first, *Wrapped, "self", .{}));
@@ -42,10 +43,10 @@ test "helpers.Object.call: forwards the supplied instance instead of binding a c
 test "helpers.Object.retain: returns the supplied instance with its wrapper type" {
     const Wrapped = opaque {};
     const object = ffi.msg.send(ffi.Class.lookup("NSObject").?, *Wrapped, ffi.Sel.get("new"), .{});
-    defer c.objc_release(@ptrCast(object));
+    defer z.objc_release(@ptrCast(object));
 
     const retained = Object(Wrapped).retain(object);
-    defer c.objc_release(@ptrCast(retained));
+    defer z.objc_release(@ptrCast(retained));
     try std.testing.expect(@TypeOf(retained) == *Wrapped);
     try std.testing.expectEqual(object, retained);
 }
@@ -69,9 +70,9 @@ test "helpers.Object.release: releases the supplied instance" {
     Probe.destroyed = .{ false, false };
     const first = ffi.msg.send(@as(*ffi.Class, @ptrCast(cls)), *Wrapped, ffi.Sel.get("new"), .{});
     Probe.first = first;
-    defer if (!Probe.destroyed[0]) c.objc_release(@ptrCast(first));
+    defer if (!Probe.destroyed[0]) z.objc_release(@ptrCast(first));
     const second = ffi.msg.send(@as(*ffi.Class, @ptrCast(cls)), *Wrapped, ffi.Sel.get("new"), .{});
-    defer if (!Probe.destroyed[1]) c.objc_release(@ptrCast(second));
+    defer if (!Probe.destroyed[1]) z.objc_release(@ptrCast(second));
 
     const h = Object(Wrapped);
     h.release(first);

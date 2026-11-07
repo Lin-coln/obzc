@@ -1,5 +1,5 @@
 const std = @import("std");
-const c = @import("c.zig").c;
+const c = @import("macos").c;
 
 pub const Property = opaque {
     const Self = @This();

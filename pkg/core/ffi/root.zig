@@ -1,5 +1,4 @@
 const std = @import("std");
-pub const c = @import("c.zig").c;
 pub const cast = @import("cast.zig");
 
 pub const Sel = @import("Sel.zig").Sel;

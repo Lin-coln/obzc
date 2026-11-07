@@ -1,6 +1,5 @@
 const std = @import("std");
 pub const ffi = @import("ffi/root.zig");
-pub const c = ffi.c;
 pub const cast = ffi.cast;
 pub const AutoReleasePool = ffi.AutoReleasePool;
 

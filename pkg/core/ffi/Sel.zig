@@ -1,6 +1,6 @@
 const std = @import("std");
 const Metadata = @import("../encode/root.zig").Metadata;
-const c = @import("c.zig").c;
+const c = @import("macos").c;
 
 pub const Sel = opaque {
     pub const metadata = Metadata.sel;

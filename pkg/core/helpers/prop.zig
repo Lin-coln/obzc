@@ -1,5 +1,6 @@
 const std = @import("std");
 const ffi = @import("../ffi/root.zig");
+const c = @import("macos").c;
 const utils = @import("../utils/root.zig");
 const Class = ffi.Class;
 
@@ -51,16 +52,16 @@ test "helpers.prop.get: selects a custom getter or falls back to the property na
             return 37;
         }
     };
-    const cls = ffi.c.objc_allocateClassPair(@ptrCast(Class.lookup("NSObject").?), "ObzcHelpers2PropGetProbe", 0) orelse return error.ClassAllocFailed;
-    defer ffi.c.objc_disposeClassPair(cls);
-    const custom_attributes = [_]ffi.c.objc_property_attribute_t{
+    const cls = c.objc_allocateClassPair(@ptrCast(Class.lookup("NSObject").?), "ObzcHelpers2PropGetProbe", 0) orelse return error.ClassAllocFailed;
+    defer c.objc_disposeClassPair(cls);
+    const custom_attributes = [_]c.objc_property_attribute_t{
         .{ .name = "T", .value = "q" },
         .{ .name = "G", .value = "readValue" },
     };
-    try std.testing.expect(ffi.c.class_addProperty(cls, "value", &custom_attributes, custom_attributes.len) == ffi.c.YES);
-    const ordinary_attributes = [_]ffi.c.objc_property_attribute_t{.{ .name = "T", .value = "q" }};
-    try std.testing.expect(ffi.c.class_addProperty(cls, "ordinary", &ordinary_attributes, ordinary_attributes.len) == ffi.c.YES);
-    ffi.c.objc_registerClassPair(cls);
+    try std.testing.expect(c.class_addProperty(cls, "value", &custom_attributes, custom_attributes.len) == c.YES);
+    const ordinary_attributes = [_]c.objc_property_attribute_t{.{ .name = "T", .value = "q" }};
+    try std.testing.expect(c.class_addProperty(cls, "ordinary", &ordinary_attributes, ordinary_attributes.len) == c.YES);
+    c.objc_registerClassPair(cls);
 
     var context: u8 = 0;
     const receiver: *ObzcHelpers2PropGetProbe = @ptrCast(&context);

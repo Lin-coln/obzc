@@ -4,7 +4,8 @@ const toSpreadedFn = @import("../../utils/root.zig").toSpreadedFn;
 const initBlockWithContext = @import("initBlockWithContext.zig").initBlockWithContext;
 const dispatch = std.c.dispatch;
 const ffi = @import("../../ffi/root.zig");
-const c = ffi.c;
+const c = @import("macos").c;
+const z = @import("macos").z;
 
 pub fn makeWithSync(
     comptime Receiver: ?type,
@@ -77,7 +78,7 @@ pub fn makeWithSync(
                     @panic("Objective-C completion returned nil without an error");
                 };
 
-                break :blk @as(Resolved.Payload, @ptrCast(c.objc_retain(@ptrCast(object)).?));
+                break :blk @as(Resolved.Payload, @ptrCast(z.objc_retain(@ptrCast(object)).?));
             };
 
             state.result = result;
@@ -161,12 +162,12 @@ test "helpers.makeWithSync: extracts the receiver and retains successful object 
         }
     };
     const raw = c.class_createInstance(c.objc_getClass("NSObject").?, 0).?;
-    defer c.objc_release(raw);
+    defer z.objc_release(raw);
     Helper.object = @ptrCast(raw);
     const function = makeWithSync(*Receiver, Helper.call, "fetch:", fn () anyerror!*Result).function;
     var receiver: Receiver = .{};
     const result = try function(&receiver);
-    defer c.objc_release(@ptrCast(result));
+    defer z.objc_release(@ptrCast(result));
     try std.testing.expectEqual(@as(*Result, @ptrCast(raw)), result);
     try std.testing.expectEqual(&receiver, Helper.receiver.?);
     try std.testing.expectEqualStrings("fetch:", Helper.selector);

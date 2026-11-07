@@ -6,16 +6,8 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run Objective-C tests");
 
-    const objc_abi = blk: {
-        const trans = b.addTranslateC(.{
-            .root_source_file = b.path("ffi/c.h"),
-            .target = target,
-            .optimize = optimize,
-        });
-        const mod = trans.addModule("objc-abi");
-        break :blk mod;
-    };
-    test_step.dependOn(addCompileErrorTests(b, target, optimize, objc_abi));
+    const macos = b.dependency("macos", .{ .target = target, .optimize = optimize }).module("macos");
+    test_step.dependOn(addCompileErrorTests(b, target, optimize, macos));
 
     const core = blk: {
         const opts: std.Build.Module.CreateOptions = .{
@@ -23,7 +15,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
-                .{ .name = "objc-abi", .module = objc_abi },
+                .{ .name = "macos", .module = macos },
             },
         };
 
@@ -47,7 +39,7 @@ fn addCompileErrorTests(
     b: *std.Build,
     target: std.Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
-    objc_abi: *std.Build.Module,
+    macos: *std.Build.Module,
 ) *std.Build.Step {
     const step = b.step("test-compile-errors", "Check compile-time validation errors");
     inline for (@import("compile_test.zig").sources) |source| {
@@ -59,7 +51,7 @@ fn addCompileErrorTests(
                     .target = target,
                     .optimize = optimize,
                     .imports = &.{
-                        .{ .name = "objc-abi", .module = objc_abi },
+                        .{ .name = "macos", .module = macos },
                     },
                 }),
                 .filters = &.{case.name},

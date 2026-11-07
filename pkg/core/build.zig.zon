@@ -3,7 +3,9 @@
     .version = "0.1.0",
     .fingerprint = 0xc1ef0dc54b4b67d7,
     .minimum_zig_version = "0.17.0",
-    .dependencies = .{},
+    .dependencies = .{
+        .macos = .{ .path = "../macos" },
+    },
     .paths = .{
         "build.zig",
         "build.zig.zon",

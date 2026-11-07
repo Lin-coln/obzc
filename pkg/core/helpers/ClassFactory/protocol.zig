@@ -1,6 +1,6 @@
 const std = @import("std");
 const ffi = @import("../../ffi/root.zig");
-const c = ffi.c;
+const c = @import("macos").c;
 const Class = ffi.Class;
 const Protocol = ffi.Protocol;
 

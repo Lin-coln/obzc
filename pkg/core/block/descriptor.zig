@@ -1,6 +1,7 @@
 const std = @import("std");
 const ffi = @import("../ffi/root.zig");
-const c = ffi.c;
+const c = @import("macos").c;
+const z = @import("macos").z;
 const Object = ffi.Object;
 
 pub fn isObject(comptime T: type) bool {
@@ -48,12 +49,12 @@ pub fn DescriptorWithHelpers(comptime Block: type) type {
 
         /// Called by `_Block_copy` on the new heap block after copying `src` into it bytewise.
         fn copyHelper(dst: *Block, src: *const Block) callconv(.c) void {
-            c._Block_object_assign(@ptrCast(&dst.context), src.context, c.BLOCK_FIELD_IS_OBJECT);
+            c._Block_object_assign(@ptrCast(&dst.context), src.context, z.BLOCK_FIELD_IS_OBJECT);
         }
 
         /// Called by the last `_Block_release` of a heap block before freeing it.
         fn disposeHelper(src: *const Block) callconv(.c) void {
-            c._Block_object_dispose(src.context, c.BLOCK_FIELD_IS_OBJECT);
+            c._Block_object_dispose(src.context, z.BLOCK_FIELD_IS_OBJECT);
         }
     };
 }
@@ -110,7 +111,7 @@ test "DescriptorWithHelpers: copy retains the captured object until dispose" {
     {
         const send: *const fn (c.Class, c.SEL) callconv(.c) c.id = @ptrCast(&c.objc_msgSend);
         const object: *Object = @ptrCast(send(class, c.sel_registerName("new")).?);
-        defer c.objc_release(@ptrCast(object));
+        defer z.objc_release(@ptrCast(object));
         const source: B = .{ .context = object };
         Helpers.copyHelper(&destination, &source);
         errdefer Helpers.disposeHelper(&destination);

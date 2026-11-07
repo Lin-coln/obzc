@@ -1,6 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const c = @import("c.zig").c;
+const c = @import("macos").c;
+const z = @import("macos").z;
 const Class = @import("Class.zig").Class;
 const Object = @import("Object.zig").Object;
 const Sel = @import("Sel.zig").Sel;
@@ -50,8 +51,8 @@ fn MsgSendFn(comptime Target: type, comptime Return: type, comptime Args: type) 
 }
 
 test "ffi msg: send builds C signatures for class and instance receivers" {
-    const pool = c.objc_autoreleasePoolPush();
-    defer c.objc_autoreleasePoolPop(pool);
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const number_class = Class.lookup("NSNumber").?;
     const number = send(number_class, ?*Object, Sel.get("numberWithInteger:"), .{@as(isize, -42)}).?;
     try std.testing.expectEqual(-42, send(number, isize, Sel.get("integerValue"), .{}));
@@ -101,7 +102,7 @@ test "ffi msg: normal and super calls preserve receiver and aggregate ABI" {
     const parent: *Class = @ptrCast(parent_c);
     const child: *Class = @ptrCast(child_c);
     const object = send(child, ?*Object, Sel.get("new"), .{}).?;
-    defer c.objc_release(@ptrCast(object));
+    defer z.objc_release(@ptrCast(object));
     try std.testing.expectEqual(null, send(object, ?*Object, Sel.get("identity"), .{}));
     try std.testing.expectEqual(object, sendSuper(object, parent, *Object, Sel.get("identity"), .{}));
 

@@ -2,7 +2,7 @@ const std = @import("std");
 const ffi = @import("../../ffi/root.zig");
 const Metadata = @import("../../encode/root.zig").Metadata;
 const encodeFunction = @import("../../encode/root.zig").encodeFunction;
-const c = ffi.c;
+const c = @import("macos").c;
 const Sel = ffi.Sel;
 const Class = ffi.Class;
 

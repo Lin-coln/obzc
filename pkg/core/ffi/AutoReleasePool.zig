@@ -1,21 +1,22 @@
 const std = @import("std");
-const c = @import("c.zig").c;
+const c = @import("macos").c;
+const z = @import("macos").z;
 
 pub const AutoReleasePool = opaque {
     const Self = @This();
 
     pub fn create() *Self {
-        return @ptrCast(c.objc_autoreleasePoolPush().?);
+        return @ptrCast(z.objc_autoreleasePoolPush());
     }
 
     pub fn release(self: *Self) void {
-        c.objc_autoreleasePoolPop(self);
+        z.objc_autoreleasePoolPop(self);
     }
 };
 
 test "AutoReleasePool.create: returns a pool token accepted by the runtime" {
     const pool = AutoReleasePool.create();
-    defer c.objc_autoreleasePoolPop(pool);
+    defer z.objc_autoreleasePoolPop(pool);
 }
 
 test "AutoReleasePool.release: pops the supplied pool token" {
@@ -38,8 +39,8 @@ test "AutoReleasePool.release: pops the supplied pool token" {
     c.objc_registerClassPair(cls);
 
     Probe.destroyed = false;
-    const token = c.objc_autoreleasePoolPush().?;
-    defer if (!Probe.destroyed) c.objc_autoreleasePoolPop(token);
+    const token = z.objc_autoreleasePoolPush();
+    defer if (!Probe.destroyed) z.objc_autoreleasePoolPop(token);
     const new: *const fn (c.Class, c.SEL) callconv(.c) c.id = @ptrCast(&c.objc_msgSend);
     const autorelease: *const fn (c.id, c.SEL) callconv(.c) c.id = @ptrCast(&c.objc_msgSend);
     const object = new(cls, c.sel_registerName("new")).?;

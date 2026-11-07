@@ -3,7 +3,8 @@ const builtin = @import("builtin");
 const ffi = @import("../ffi/root.zig");
 const Metadata = @import("../encode/root.zig").Metadata;
 const encodeFunction = @import("../encode/root.zig").encodeFunction;
-const c = ffi.c;
+const c = @import("macos").c;
+const z = @import("macos").z;
 
 pub fn Block(comptime Context: type, comptime Function: type) type {
     return extern struct {
@@ -50,8 +51,8 @@ fn getFlags(comptime Function: type) c_int {
     const Return = @typeInfo(Function).@"fn".return_type.?;
     // Same rule as `msgSend`: only x86_64 returns large structs through a hidden pointer argument.
     const stret = builtin.target.cpu.arch == .x86_64 and @typeInfo(Return) == .@"struct" and @sizeOf(Return) > 16;
-    return c.BLOCK_HAS_SIGNATURE |
-        (if (stret) c.BLOCK_USE_STRET else 0);
+    return z.BLOCK_HAS_SIGNATURE |
+        (if (stret) z.BLOCK_USE_STRET else 0);
 }
 
 /// Builds a C callback type with `*const BlockType` before the parameters of `Function`.
@@ -121,7 +122,7 @@ test "Block.release: releases the supplied heap block" {
     const source: B = .{
         .context = &disposed,
         .invoke = &Fixture.invoke,
-        .flags = c.BLOCK_HAS_SIGNATURE | c.BLOCK_HAS_COPY_DISPOSE,
+        .flags = z.BLOCK_HAS_SIGNATURE | z.BLOCK_HAS_COPY_DISPOSE,
         .descriptor = @ptrCast(&descriptor),
     };
     const heap: *B = @ptrCast(@alignCast(c._Block_copy(&source).?));
@@ -134,10 +135,10 @@ test "Block.release: releases the supplied heap block" {
 test "getFlags: signature and struct return convention" {
     const Small = extern struct { a: u64, b: u64 };
     const Big = extern struct { a: u64, b: u64, c: u64 };
-    try std.testing.expectEqual(@as(c_int, c.BLOCK_HAS_SIGNATURE), comptime getFlags(fn () void));
-    try std.testing.expectEqual(@as(c_int, c.BLOCK_HAS_SIGNATURE), comptime getFlags(fn () Small));
-    const expected = c.BLOCK_HAS_SIGNATURE |
-        (if (builtin.target.cpu.arch == .x86_64) c.BLOCK_USE_STRET else 0);
+    try std.testing.expectEqual(@as(c_int, z.BLOCK_HAS_SIGNATURE), comptime getFlags(fn () void));
+    try std.testing.expectEqual(@as(c_int, z.BLOCK_HAS_SIGNATURE), comptime getFlags(fn () Small));
+    const expected = z.BLOCK_HAS_SIGNATURE |
+        (if (builtin.target.cpu.arch == .x86_64) z.BLOCK_USE_STRET else 0);
     try std.testing.expectEqual(@as(c_int, expected), comptime getFlags(fn () Big));
 }
 

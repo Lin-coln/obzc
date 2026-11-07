@@ -1,5 +1,18 @@
 const c = @import("c.zig").c;
 
+// Apple Block ABI constants from libclosure's Block_private.h.
+pub const BLOCK_HAS_COPY_DISPOSE: c_int = 1 << 25;
+pub const BLOCK_USE_STRET: c_int = 1 << 29;
+pub const BLOCK_HAS_SIGNATURE: c_int = 1 << 30;
+pub const BLOCK_FIELD_IS_OBJECT: c_int = 3;
+
+// libobjc exports these functions, but public SDK headers do not declare them.
+// Signatures follow Apple's objc4 runtime/objc-internal.h.
+pub extern fn objc_retain(obj: c.id) c.id;
+pub extern fn objc_release(obj: c.id) void;
+pub extern fn objc_autoreleasePoolPush() *anyopaque;
+pub extern fn objc_autoreleasePoolPop(context: *anyopaque) void;
+
 // objc/NSObjCRuntime.h selects long/unsigned long when __LP64__ is true,
 // otherwise int/unsigned int. NS_BUILD_32_LIKE_64 can also select long,
 // but neither the SDK nor this package defines that override.
