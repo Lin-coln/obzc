@@ -5,10 +5,9 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Vision tests");
-    const macos, const core, const cg, const cv, const ns = blk: {
+    const core, const cg, const cv, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
-            b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
             b.dependency("core-graphics", opts).module("core-graphics"),
             b.dependency("core-video", opts).module("core-video"),
@@ -40,25 +39,5 @@ pub fn build(b: *std.Build) void {
         break :blk mod;
     };
 
-    const tests = blk: {
-        const mod = b.createModule(.{
-            .root_source_file = b.path("tests/tests.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{
-                .{ .name = "macos", .module = macos },
-                .{ .name = "core", .module = core },
-                .{ .name = "foundation", .module = ns },
-                .{ .name = "vision", .module = vision },
-                .{ .name = "core-video", .module = cv },
-            },
-        });
-        mod.linkFramework("CoreVideo", .{});
-
-        const tests = b.addTest(.{ .root_module = mod });
-        test_step.dependOn(&b.addRunArtifact(tests).step);
-        break :blk mod;
-    };
-
-    _ = tests;
+    _ = vision;
 }

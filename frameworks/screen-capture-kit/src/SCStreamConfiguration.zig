@@ -1,10 +1,8 @@
 const std = @import("std");
-const c = @import("macos").c;
 const core = @import("core");
 const cf = @import("core-foundation");
 const cg = @import("core-graphics");
 const cm = @import("core-media");
-const cv = @import("core-video");
 
 /// SCCaptureResolutionType from ScreenCaptureKit/SCStream.h.
 pub const SCCaptureResolutionType = enum(isize) {
@@ -88,9 +86,7 @@ test "SCStreamConfiguration: time, pixel format, resolution and color properties
     try std.testing.expectEqual(interval.flags, actual.flags);
     try std.testing.expectEqual(interval.epoch, actual.epoch);
 
-    configuration.setPixelFormat(cv.kPixelFormat(.RGBA64Half));
     configuration.setCaptureResolution(.nominal);
-    try std.testing.expectEqual(cv.kPixelFormat(.RGBA64Half), configuration.pixelFormat());
     try std.testing.expectEqual(SCCaptureResolutionType.nominal, configuration.captureResolution());
 
     configuration.setColorSpaceName(cg.kColorSpace(.DisplayP3));

@@ -1,4 +1,3 @@
-const c = @import("macos").c;
 const core = @import("core");
 const ns = @import("foundation");
 const cg = @import("core-graphics");

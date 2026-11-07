@@ -4,18 +4,14 @@
     .fingerprint = 0xcda5fc7f2bb40d2e,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
-        .macos = .{ .path = "../../pkg/macos" },
         .core = .{ .path = "../../pkg/core" },
         .foundation = .{ .path = "../foundation" },
-        .@"core-foundation" = .{ .path = "../core-foundation" },
-        .@"core-video" = .{ .path = "../core-video" },
         .@"io-surface" = .{ .path = "../io-surface" },
     },
     .paths = .{
         "build.zig",
         "build.zig.zon",
         "src",
-        "tests",
         "translate",
     },
 }

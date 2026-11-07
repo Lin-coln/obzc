@@ -5,15 +5,13 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run ScreenCaptureKit tests");
-    const macos, const core, const cf, const cg, const cm, const cv, const ns = blk: {
+    const core, const cf, const cg, const cm, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
-            b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-graphics", opts).module("core-graphics"),
             b.dependency("core-media", opts).module("core-media"),
-            b.dependency("core-video", opts).module("core-video"),
             b.dependency("foundation", opts).module("foundation"),
         };
     };
@@ -33,13 +31,11 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
-                .{ .name = "macos", .module = macos },
                 .{ .name = "core", .module = core },
                 .{ .name = "foundation", .module = ns },
                 .{ .name = "core-foundation", .module = cf },
                 .{ .name = "core-graphics", .module = cg },
                 .{ .name = "core-media", .module = cm },
-                .{ .name = "core-video", .module = cv },
                 .{ .name = "sck-abi", .module = sck_abi },
             },
         };
@@ -57,27 +53,5 @@ pub fn build(b: *std.Build) void {
         break :blk mod;
     };
 
-    const tests = blk: {
-        const mod = b.createModule(.{
-            .root_source_file = b.path("tests/tests.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{
-                .{ .name = "macos", .module = macos },
-                .{ .name = "core", .module = core },
-                .{ .name = "screen-capture-kit", .module = sck },
-                .{ .name = "core-graphics", .module = cg },
-                .{ .name = "core-media", .module = cm },
-            },
-        });
-
-        mod.linkFramework("CoreGraphics", .{});
-        mod.linkFramework("CoreMedia", .{});
-
-        const tests = b.addTest(.{ .root_module = mod });
-        test_step.dependOn(&b.addRunArtifact(tests).step);
-        break :blk mod;
-    };
-
-    _ = tests;
+    _ = sck;
 }

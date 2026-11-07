@@ -4,7 +4,6 @@
     .fingerprint = 0xac774f18ad47b0ef,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
-        .macos = .{ .path = "../../pkg/macos" },
         .core = .{ .path = "../../pkg/core" },
         .foundation = .{ .path = "../foundation" },
         .@"core-graphics" = .{ .path = "../core-graphics" },
@@ -14,6 +13,5 @@
         "build.zig",
         "build.zig.zon",
         "src",
-        "tests",
     },
 }

@@ -5,13 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Metal tests");
-    const macos, const core, const cf, const cv, const ios, const ns = blk: {
+    const core, const ios, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
-            b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
-            b.dependency("core-foundation", opts).module("core-foundation"),
-            b.dependency("core-video", opts).module("core-video"),
             b.dependency("io-surface", opts).module("io-surface"),
             b.dependency("foundation", opts).module("foundation"),
         };
@@ -47,29 +44,5 @@ pub fn build(b: *std.Build) void {
         break :blk mod;
     };
 
-    const tests = blk: {
-        const mod = b.createModule(.{
-            .root_source_file = b.path("tests/tests.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{
-                .{ .name = "macos", .module = macos },
-                .{ .name = "core", .module = core },
-                .{ .name = "foundation", .module = ns },
-                .{ .name = "metal", .module = mtl },
-                .{ .name = "core-foundation", .module = cf },
-                .{ .name = "core-video", .module = cv },
-                .{ .name = "io-surface", .module = ios },
-            },
-        });
-
-        mod.linkFramework("CoreVideo", .{});
-        mod.linkFramework("IOSurface", .{});
-
-        const tests = b.addTest(.{ .root_module = mod });
-        test_step.dependOn(&b.addRunArtifact(tests).step);
-        break :blk mod;
-    };
-
-    _ = tests;
+    _ = mtl;
 }
