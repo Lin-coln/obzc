@@ -19,6 +19,7 @@ pub fn build(b: *std.Build) !void {
         "core-graphics",
         "core-video",
         "io-surface",
+        "video-toolbox",
 
         // objc frameworks
         "screen-capture-kit",

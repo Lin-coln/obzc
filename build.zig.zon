@@ -15,6 +15,7 @@
         .@"core-graphics" = .{ .path = "frameworks/core-graphics" },
         .@"core-video" = .{ .path = "frameworks/core-video" },
         .@"io-surface" = .{ .path = "frameworks/io-surface" },
+        .@"video-toolbox" = .{ .path = "frameworks/video-toolbox" },
     },
     .paths = .{
         "build.zig",

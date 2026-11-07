@@ -1,0 +1,17 @@
+.{
+    .name = .obzc_video_toolbox,
+    .version = "0.1.0",
+    .fingerprint = 0xd3753d91f1e26d41,
+    .minimum_zig_version = "0.17.0",
+    .dependencies = .{
+        .macos = .{ .path = "../../pkg/macos" },
+        .@"core-foundation" = .{ .path = "../core-foundation" },
+        .@"core-media" = .{ .path = "../core-media" },
+        .@"core-video" = .{ .path = "../core-video" },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
