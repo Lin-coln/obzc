@@ -12,7 +12,7 @@ pub const CVMetalTextureCache = opaque {
 
     pub fn create(device: *mtl.Device, attributes: ?*const cf.Dictionary) ?*Self {
         var cache: c.CVMetalTextureCacheRef = null;
-        if (c.CVMetalTextureCacheCreate(null, @ptrCast(attributes), @ptrCast(device), null, &cache) != c.kCVReturnSuccess)
+        if (c.CVMetalTextureCacheCreate(null, @ptrCast(attributes), @ptrCast(device), null, &cache) != cv.kReturn(.Success))
             return null;
         return @ptrCast(cache);
     }
@@ -37,7 +37,7 @@ pub const CVMetalTextureCache = opaque {
             height,
             plane_index,
             &texture,
-        ) != c.kCVReturnSuccess) return null;
+        ) != cv.kReturn(.Success)) return null;
         return @ptrCast(texture);
     }
 };

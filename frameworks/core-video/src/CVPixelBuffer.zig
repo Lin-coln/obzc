@@ -8,6 +8,7 @@ pub const CVPixelBuffer = opaque {
     const h = cv.ImageBuffer.Mixin(Self);
 
     pub const create = CVPixelBufferCreate;
+    pub const createWithIOSurface = CVPixelBufferCreateWithIOSurface;
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -37,12 +38,12 @@ pub const CVPixelBuffer = opaque {
         return c.CVPixelBufferGetHeight(raw(self));
     }
 
-    pub fn lockBaseAddress(self: *Self, flags: u64) bool {
-        return c.CVPixelBufferLockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
+    pub fn lockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
+        return c.CVPixelBufferLockBaseAddress(raw(self), flags) == cv.kReturn(.Success);
     }
 
-    pub fn unlockBaseAddress(self: *Self, flags: u64) bool {
-        return c.CVPixelBufferUnlockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
+    pub fn unlockBaseAddress(self: *Self, flags: c.CVPixelBufferLockFlags) bool {
+        return c.CVPixelBufferUnlockBaseAddress(raw(self), flags) == cv.kReturn(.Success);
     }
 
     pub fn getIOSurface(self: *Self) ?*ios.Surface {
@@ -62,7 +63,17 @@ pub fn CVPixelBufferCreate(
     attrs: ?*const cf.Dictionary,
 ) ?*CVPixelBuffer {
     var buffer: c.CVPixelBufferRef = null;
-    if (c.CVPixelBufferCreate(null, width, height, format, @ptrCast(attrs), &buffer) != c.kCVReturnSuccess)
+    if (c.CVPixelBufferCreate(null, width, height, format, @ptrCast(attrs), &buffer) != cv.kReturn(.Success))
+        return null;
+    return @ptrCast(buffer);
+}
+
+pub fn CVPixelBufferCreateWithIOSurface(
+    surface: *ios.Surface,
+    attrs: ?*const cf.Dictionary,
+) ?*CVPixelBuffer {
+    var buffer: c.CVPixelBufferRef = null;
+    if (c.CVPixelBufferCreateWithIOSurface(null, @ptrCast(surface), @ptrCast(attrs), &buffer) != cv.kReturn(.Success))
         return null;
     return @ptrCast(buffer);
 }
@@ -84,16 +95,27 @@ pub inline fn kCVPixelBufferKey(value: enum {
     return @ptrCast(raw.?);
 }
 
-pub inline fn kCVPixelBufferLockFlag(value: enum { ReadOnly }) u64 {
-    return switch (value) {
-        .ReadOnly => c.kCVPixelBufferLock_ReadOnly,
-    };
-}
+pub const kCVPixelBufferLockFlags = enum {
+    ReadOnly,
+
+    const Self = @This();
+
+    pub fn create(flags: []const Self) c.CVPixelBufferLockFlags {
+        var raw: c.CVPixelBufferLockFlags = 0;
+        for (flags) |flag| {
+            raw |= switch (flag) {
+                inline else => |value| @field(c, "kCVPixelBufferLock_" ++ @tagName(value)),
+            };
+        }
+        return raw;
+    }
+};
 
 test "pixel buffer inherits image and buffer operations" {
     const std = @import("std");
     try std.testing.expectEqual(@as(u32, c.kCVPixelFormatType_32BGRA), kCVPixelFormat(.BGRA32));
-    try std.testing.expectEqual(@as(u64, c.kCVPixelBufferLock_ReadOnly), kCVPixelBufferLockFlag(.ReadOnly));
+    try std.testing.expectEqual(@as(c.CVPixelBufferLockFlags, c.kCVPixelBufferLock_ReadOnly), kCVPixelBufferLockFlags.create(&.{.ReadOnly}));
+    try std.testing.expectEqual(@as(c.CVPixelBufferLockFlags, 0), kCVPixelBufferLockFlags.create(&.{}));
     try std.testing.expect(kCVPixelBufferKey(.IOSurfaceProperties).equal(@ptrCast(c.kCVPixelBufferIOSurfacePropertiesKey.?)));
     const buffer = CVPixelBuffer.create(2, 2, kCVPixelFormat(.BGRA32), null) orelse return error.PixelBufferCreationFailed;
     defer buffer.release();
