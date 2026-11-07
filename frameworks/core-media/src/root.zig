@@ -8,6 +8,7 @@ pub const VideoFormatDescription = @import("CMVideoFormatDescription.zig").CMVid
 
 pub const kSampleAttachmentKey = @import("CMSample.zig").kCMSampleAttachmentKey;
 pub const kTime = @import("CMTime.zig").kCMTime;
+pub const kVideoCodecType = @import("CMVideoCodecType.zig").kCMVideoCodecType;
 
 test {
     std.testing.refAllDecls(@This());
