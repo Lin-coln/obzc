@@ -1,6 +1,6 @@
 const std = @import("std");
 const ffi = @import("../../ffi/root.zig");
-const Metadata = @import("utils/encode").Metadata;
+const e = @import("../../ffi/metadata.zig").e;
 const encodeFunction = @import("utils/encode").encodeFunction;
 const c = @import("macos").c;
 const Sel = ffi.Sel;
@@ -42,7 +42,7 @@ pub fn method(comptime T: type) type {
 
 test "ClassFactory.method.addMethod: binds the function to the selector" {
     const T = opaque {
-        pub const metadata = Metadata.obj;
+        pub const _encoding = e(.obj);
     };
     const Probe = struct {
         fn handle(_: *T, _: *Sel) callconv(.c) void {}

@@ -1,6 +1,7 @@
 const std = @import("std");
 const c = @import("macos").c;
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const cf = @import("core-foundation");
 const cg = @import("core-graphics");
@@ -14,7 +15,7 @@ pub const SCCaptureResolutionType = enum(z.SCCaptureResolutionType) {
 };
 
 pub const SCStreamConfiguration = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

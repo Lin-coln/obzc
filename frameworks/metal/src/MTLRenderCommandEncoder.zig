@@ -1,10 +1,11 @@
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const MTLRenderPipelineState = @import("MTLRenderPipelineState.zig").MTLRenderPipelineState;
 const MTLTexture = @import("MTLTexture.zig").MTLTexture;
 
 pub const MTLRenderCommandEncoder = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

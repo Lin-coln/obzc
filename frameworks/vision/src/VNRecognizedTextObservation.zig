@@ -1,12 +1,13 @@
 const std = @import("std");
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const VNRecognizedText = @import("VNRecognizedText.zig").VNRecognizedText;
 
 pub const VNRecognizedTextObservation = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

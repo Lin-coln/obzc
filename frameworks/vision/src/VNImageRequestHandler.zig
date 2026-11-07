@@ -1,13 +1,14 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const cv = @import("core-video");
 const VNRequest = @import("VNRequest.zig").VNRequest;
 const VNRecognizeTextRequest = @import("VNRecognizeTextRequest.zig").VNRecognizeTextRequest;
 
 pub const VNImageRequestHandler = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
     const Options = ns.Dictionary(ns.String, core.ffi.Object);

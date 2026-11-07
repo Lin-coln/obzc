@@ -1,9 +1,10 @@
 const std = @import("std");
 const z = @import("macos").z;
 const core = @import("core");
+const e = core.ffi.metadata.e;
 
 pub const NSNumber = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

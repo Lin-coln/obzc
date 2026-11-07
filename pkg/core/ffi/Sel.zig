@@ -1,9 +1,9 @@
 const std = @import("std");
-const Metadata = @import("utils/encode").Metadata;
+const e = @import("metadata.zig").e;
 const c = @import("macos").c;
 
 pub const Sel = opaque {
-    pub const metadata = Metadata.sel;
+    pub const _encoding = e(.sel);
     const Self = @This();
 
     /// Interns a selector name. Selectors have process lifetime.

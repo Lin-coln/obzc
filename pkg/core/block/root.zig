@@ -1,14 +1,14 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const ffi = @import("../ffi/root.zig");
-const Metadata = @import("utils/encode").Metadata;
+const e = @import("../ffi/metadata.zig").e;
 const encodeFunction = @import("utils/encode").encodeFunction;
 const c = @import("macos").c;
 const z = @import("macos").z;
 
 pub fn Block(comptime Context: type, comptime Function: type) type {
     return extern struct {
-        pub const metadata: Metadata = .{ .encoding = .blk };
+        pub const _encoding = e(.blk);
         const Self = @This();
         // Context is currently copied bytewise, without retaining or releasing captured objects.
         // TODO: expose context copy/dispose callbacks through DescriptorWithHelpers;

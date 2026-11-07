@@ -1,11 +1,12 @@
 const std = @import("std");
 const z = @import("macos").z;
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const cf = @import("core-foundation");
 
 pub fn NSArray(comptime T: type) type {
     return opaque {
-        pub const metadata = core.Metadata.obj;
+        pub const _encoding = e(.obj);
         const Self = @This();
         const h = core.h(Self);
 

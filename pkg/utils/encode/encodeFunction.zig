@@ -16,15 +16,14 @@ pub inline fn encodeFunction(comptime Fn: type) [:0]const u8 {
 }
 
 test "encodeFunction: encodes return and all parameters" {
-    const Metadata = @import("Metadata.zig");
     const Object = opaque {
-        pub const metadata = Metadata.obj;
+        pub const _encoding = "@";
     };
     const Sel = opaque {
-        pub const metadata = Metadata.sel;
+        pub const _encoding = ":";
     };
     const Block = extern struct {
-        pub const metadata: Metadata = .{ .encoding = .blk };
+        pub const _encoding = "@?";
         value: u8,
     };
     const cases = .{

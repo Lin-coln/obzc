@@ -1,5 +1,6 @@
 const std = @import("std");
 pub const cast = @import("cast.zig");
+pub const metadata = @import("metadata.zig");
 
 pub const Sel = @import("Sel.zig").Sel;
 pub const Protocol = @import("Protocol.zig").Protocol;

@@ -1,6 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const ns = @import("foundation");
 const SCContentFilter = @import("SCContentFilter.zig").SCContentFilter;
@@ -17,7 +18,7 @@ pub const SCStreamOutputType = enum(z.SCStreamOutputType) {
 };
 
 pub const SCStream = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

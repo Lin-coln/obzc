@@ -1,5 +1,5 @@
 const std = @import("std");
-const Metadata = @import("Metadata.zig");
+const resolveEncodingFromPointer = @import("resolveEncodingFromPointer.zig").resolveEncodingFromPointer;
 const Type = std.lang.Type;
 
 pub fn fromArray(encode: anytype, info: Type.Array) ?[]const u8 {
@@ -40,10 +40,7 @@ pub fn fromPointer(encode: anytype, info: Type.Pointer) ?[]const u8 {
         return "*";
     }
 
-    // resolve from metadata
-    if (Metadata.fromPointer(info)) |metadata| {
-        return metadata.encoding.encode();
-    }
+    if (resolveEncodingFromPointer(info)) |encoding| return encoding;
 
     // regular ptr
     const suffix: ?[]const u8 = switch (@typeInfo(info.child)) {
@@ -80,14 +77,14 @@ test "fromOptional: accepts only nullable pointer layouts" {
     try std.testing.expectEqual(null, comptime fromOptional(Stub.encode, @typeInfo(?*allowzero i32).optional));
 }
 
-test "fromPointer: handles string, metadata, function, opaque and ordinary pointers" {
+test "fromPointer: handles string, marked types, functions, opaque and ordinary pointers" {
     const Stub = struct {
         fn encode(comptime _: type) []const u8 {
             return "X";
         }
     };
     const Annotated = opaque {
-        pub const metadata: Metadata = .{ .encoding = .sel };
+        pub const _encoding = ":";
     };
     const Plain = opaque {};
 

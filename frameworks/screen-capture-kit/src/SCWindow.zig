@@ -1,12 +1,13 @@
 const c = @import("macos").c;
 const z = @import("macos").z;
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const SCRunningApplication = @import("SCRunningApplication.zig").SCRunningApplication;
 
 pub const SCWindow = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

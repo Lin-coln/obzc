@@ -1,6 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const ios = @import("io-surface");
 const z = @import("macos").z;
@@ -13,7 +14,7 @@ const MTLRenderPipelineDescriptor = @import("MTLRenderPipelineDescriptor.zig").M
 const MTLRenderPipelineState = @import("MTLRenderPipelineState.zig").MTLRenderPipelineState;
 
 pub const MTLDevice = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

@@ -1,4 +1,5 @@
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const z = @import("macos").z;
 const MTLRenderPassDescriptor = @import("MTLRenderPassDescriptor.zig").MTLRenderPassDescriptor;
@@ -6,7 +7,7 @@ const MTLRenderCommandEncoder = @import("MTLRenderCommandEncoder.zig").MTLRender
 const MTLBlitCommandEncoder = @import("MTLBlitCommandEncoder.zig").MTLBlitCommandEncoder;
 
 pub const MTLCommandBuffer = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 

@@ -1,10 +1,11 @@
 const std = @import("std");
 const core = @import("core");
+const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const MTLRenderPassColorAttachmentDescriptor = @import("MTLRenderPassColorAttachmentDescriptor.zig").MTLRenderPassColorAttachmentDescriptor;
 
 pub const MTLRenderPassColorAttachmentDescriptorArray = opaque {
-    pub const metadata = core.Metadata.obj;
+    pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
 
