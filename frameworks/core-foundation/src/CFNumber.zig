@@ -49,7 +49,7 @@ pub inline fn kCFNumberType(kind: enum {
     CFIndexType,
     NSIntegerType,
     CGFloatType,
-}) isize {
+}) c.CFNumberType {
     return switch (kind) {
         inline else => |value| @field(c, "kCFNumber" ++ @tagName(value)),
     };

@@ -44,7 +44,7 @@ test "NSString: UTF-8 text and length" {
     try std.testing.expectEqual(4, string.length());
     const readonly: *const NSString = string;
     try std.testing.expectEqual(4, readonly.length());
-    try std.testing.expectEqual(@as(usize, 4), readonly.asCFString().length());
+    try std.testing.expectEqual(4, readonly.asCFString().length());
 }
 
 test "NSString: embedded NUL and invalid UTF-8" {

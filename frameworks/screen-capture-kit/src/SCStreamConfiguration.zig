@@ -1,4 +1,5 @@
 const std = @import("std");
+const c = @import("macos").c;
 const core = @import("core");
 const cf = @import("core-foundation");
 const cg = @import("core-graphics");
@@ -32,11 +33,11 @@ pub const SCStreamConfiguration = opaque {
     pub const setCapturesAudio = h.prop("capturesAudio", bool).setter;
     pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
     pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
-    pub fn pixelFormat(self: *Self) u32 {
-        return h.call(self, u32, "pixelFormat", .{});
+    pub fn pixelFormat(self: *Self) c.OSType {
+        return h.call(self, c.OSType, "pixelFormat", .{});
     }
 
-    pub fn setPixelFormat(self: *Self, format: u32) void {
+    pub fn setPixelFormat(self: *Self, format: c.OSType) void {
         h.call(self, void, "setPixelFormat:", .{format});
     }
     pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;

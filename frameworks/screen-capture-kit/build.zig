@@ -5,9 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run ScreenCaptureKit tests");
-    const core, const cf, const cg, const cm, const ns = blk: {
+    const macos, const core, const cf, const cg, const cm, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
+            b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-graphics", opts).module("core-graphics"),
@@ -31,6 +32,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
+                .{ .name = "macos", .module = macos },
                 .{ .name = "core", .module = core },
                 .{ .name = "foundation", .module = ns },
                 .{ .name = "core-foundation", .module = cf },

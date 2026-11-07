@@ -1,6 +1,6 @@
 const c = @import("macos").c;
 
-pub inline fn kCGWindowID(value: enum { Null }) u32 {
+pub inline fn kCGWindowID(value: enum { Null }) c.CGWindowID {
     return switch (value) {
         .Null => c.kCGNullWindowID,
     };

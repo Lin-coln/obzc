@@ -15,8 +15,8 @@ pub const CFString = opaque {
         return c.CFStringGetTypeID();
     }
 
-    pub fn length(self: *const Self) usize {
-        return @intCast(c.CFStringGetLength(self.raw()));
+    pub fn length(self: *const Self) c.CFIndex {
+        return c.CFStringGetLength(self.raw());
     }
 
     fn raw(self: *const Self) c.CFStringRef {

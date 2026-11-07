@@ -4,7 +4,7 @@ pub inline fn kCFCompare(value: enum {
     LessThan,
     EqualTo,
     GreaterThan,
-}) isize {
+}) c.CFComparisonResult {
     return switch (value) {
         inline else => |item| @field(c, "kCFCompare" ++ @tagName(item)),
     };
@@ -12,7 +12,7 @@ pub inline fn kCFCompare(value: enum {
 
 test "comparison results match Core Foundation" {
     const std = @import("std");
-    try std.testing.expectEqual(@as(isize, c.kCFCompareLessThan), kCFCompare(.LessThan));
-    try std.testing.expectEqual(@as(isize, c.kCFCompareEqualTo), kCFCompare(.EqualTo));
-    try std.testing.expectEqual(@as(isize, c.kCFCompareGreaterThan), kCFCompare(.GreaterThan));
+    try std.testing.expectEqual(@as(c.CFComparisonResult, c.kCFCompareLessThan), kCFCompare(.LessThan));
+    try std.testing.expectEqual(@as(c.CFComparisonResult, c.kCFCompareEqualTo), kCFCompare(.EqualTo));
+    try std.testing.expectEqual(@as(c.CFComparisonResult, c.kCFCompareGreaterThan), kCFCompare(.GreaterThan));
 }

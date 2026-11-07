@@ -59,7 +59,7 @@ pub const CVPixelBuffer = opaque {
 pub fn CVPixelBufferCreate(
     width: usize,
     height: usize,
-    format: u32,
+    format: c.OSType,
     attrs: ?*const cf.Dictionary,
 ) ?*CVPixelBuffer {
     var buffer: c.CVPixelBufferRef = null;
@@ -78,7 +78,7 @@ pub fn CVPixelBufferCreateWithIOSurface(
     return @ptrCast(buffer);
 }
 
-pub inline fn kCVPixelFormat(value: enum { BGRA32, RGBA64Half }) u32 {
+pub inline fn kCVPixelFormat(value: enum { BGRA32, RGBA64Half }) c.OSType {
     return switch (value) {
         .BGRA32 => c.kCVPixelFormatType_32BGRA,
         .RGBA64Half => c.kCVPixelFormatType_64RGBAHalf,
@@ -113,7 +113,7 @@ pub const kCVPixelBufferLockFlags = enum {
 
 test "pixel buffer inherits image and buffer operations" {
     const std = @import("std");
-    try std.testing.expectEqual(@as(u32, c.kCVPixelFormatType_32BGRA), kCVPixelFormat(.BGRA32));
+    try std.testing.expectEqual(@as(c.OSType, c.kCVPixelFormatType_32BGRA), kCVPixelFormat(.BGRA32));
     try std.testing.expectEqual(@as(c.CVPixelBufferLockFlags, c.kCVPixelBufferLock_ReadOnly), kCVPixelBufferLockFlags.create(&.{.ReadOnly}));
     try std.testing.expectEqual(@as(c.CVPixelBufferLockFlags, 0), kCVPixelBufferLockFlags.create(&.{}));
     try std.testing.expect(kCVPixelBufferKey(.IOSurfaceProperties).equal(@ptrCast(c.kCVPixelBufferIOSurfacePropertiesKey.?)));

@@ -18,8 +18,8 @@ pub const CFError = opaque {
         return @ptrCast(c.CFErrorGetDomain(self.raw()).?);
     }
 
-    pub fn code(self: *const Self) isize {
-        return @intCast(c.CFErrorGetCode(self.raw()));
+    pub fn code(self: *const Self) c.CFIndex {
+        return c.CFErrorGetCode(self.raw());
     }
 
     pub fn copyDescription(self: *const Self) *const cf.String {
@@ -59,7 +59,7 @@ test "CFError reads an error" {
     defer err.release();
 
     try std.testing.expectEqual(CFError.getTypeID(), c.CFGetTypeID(@ptrCast(err)));
-    try std.testing.expectEqual(@as(isize, 42), err.code());
+    try std.testing.expectEqual(@as(c.CFIndex, 42), err.code());
     try std.testing.expect(err.domain().equal(domain_string));
 
     const description = err.copyDescription();
