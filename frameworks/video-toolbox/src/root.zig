@@ -1,15 +1,14 @@
 const std = @import("std");
-const c = @import("macos").c;
 
 pub const Session = @import("VTSession.zig").VTSession;
 pub const CompressionSession = @import("VTCompressionSession.zig").VTCompressionSession;
 pub const CompressionOutputCallback = @import("VTCompressionSession.zig").VTCompressionOutputCallback;
-pub const EncodeInfoFlags = c.VTEncodeInfoFlags;
+pub const kEncodeInfoFlags = @import("VTErrors.zig").kVTEncodeInfoFlags;
 
-pub const kCompressionPropertyKey = @import("VTCompressionSession.zig").kVTCompressionPropertyKey;
-pub const kVideoEncoderSpecification = @import("VTCompressionSession.zig").kVTVideoEncoderSpecification;
-pub const kProfileLevel = @import("VTCompressionSession.zig").kVTProfileLevel;
-pub const kEncodeInfo = @import("VTCompressionSession.zig").kVTEncodeInfo;
+pub const kPropertyErr = @import("VTErrors.zig").kVTPropertyErr;
+pub const kCompressionPropertyKey = @import("VTCompressionProperties.zig").kVTCompressionPropertyKey;
+pub const kVideoEncoderSpecification = @import("VTCompressionProperties.zig").kVTVideoEncoderSpecification;
+pub const kProfileLevel = @import("VTCompressionProperties.zig").kVTProfileLevel;
 
 test {
     std.testing.refAllDecls(@This());

@@ -16,6 +16,15 @@ pub const VTCompressionOutputCallback = *const fn (
 
 pub const VTCompressionSession = opaque {
     const Self = @This();
+    const h = vt.Session.Mixin(Self);
+
+    pub const retain = h.retain;
+    pub const release = h.release;
+    pub const equal = h.equal;
+    pub const getTypeID = h.getTypeID;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
+    pub const setProperty = h.setProperty;
 
     /// The returned session is owned. Invalidate it before releasing it.
     pub fn create(
@@ -42,10 +51,6 @@ pub const VTCompressionSession = opaque {
             output_callback_refcon,
             @ptrCast(session_out),
         );
-    }
-
-    pub fn setProperty(self: *Self, key: *const cf.String, value: ?*const cf.Type) c.OSStatus {
-        return vt.Session.setProperty(@ptrCast(self), key, value);
     }
 
     pub fn prepareToEncodeFrames(self: *Self) c.OSStatus {
@@ -86,30 +91,7 @@ fn rawTime(time: cm.Time) c.CMTime {
     return @as(*const c.CMTime, @ptrCast(&time)).*;
 }
 
-pub inline fn kVTCompressionPropertyKey(key: enum { RealTime, AllowFrameReordering, ProfileLevel, ExpectedFrameRate }) *const cf.String {
-    return @ptrCast(@field(c, "kVTCompressionPropertyKey_" ++ @tagName(key)).?);
-}
-
-pub inline fn kVTVideoEncoderSpecification(key: enum { RequireHardwareAcceleratedVideoEncoder }) *const cf.String {
-    return @ptrCast(@field(c, "kVTVideoEncoderSpecification_" ++ @tagName(key)).?);
-}
-
-pub inline fn kVTProfileLevel(level: enum { H264_High_AutoLevel }) *const cf.String {
-    return @ptrCast(@field(c, "kVTProfileLevel_" ++ @tagName(level)).?);
-}
-
-pub inline fn kVTEncodeInfo(flag: enum { FrameDropped }) c.VTEncodeInfoFlags {
-    return @field(c, "kVTEncodeInfo_" ++ @tagName(flag));
-}
-
-test "compression constants match the SDK" {
-    try std.testing.expectEqual(@intFromPtr(c.kVTCompressionPropertyKey_RealTime.?), @intFromPtr(kVTCompressionPropertyKey(.RealTime)));
-    try std.testing.expectEqual(@intFromPtr(c.kVTCompressionPropertyKey_AllowFrameReordering.?), @intFromPtr(kVTCompressionPropertyKey(.AllowFrameReordering)));
-    try std.testing.expectEqual(@intFromPtr(c.kVTCompressionPropertyKey_ProfileLevel.?), @intFromPtr(kVTCompressionPropertyKey(.ProfileLevel)));
-    try std.testing.expectEqual(@intFromPtr(c.kVTCompressionPropertyKey_ExpectedFrameRate.?), @intFromPtr(kVTCompressionPropertyKey(.ExpectedFrameRate)));
-    try std.testing.expectEqual(@intFromPtr(c.kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder.?), @intFromPtr(kVTVideoEncoderSpecification(.RequireHardwareAcceleratedVideoEncoder)));
-    try std.testing.expectEqual(@intFromPtr(c.kVTProfileLevel_H264_High_AutoLevel.?), @intFromPtr(kVTProfileLevel(.H264_High_AutoLevel)));
-    try std.testing.expectEqual(@as(c.VTEncodeInfoFlags, c.kVTEncodeInfo_FrameDropped), kVTEncodeInfo(.FrameDropped));
+test "compression session uses the CoreMedia time layout" {
     try std.testing.expectEqual(@sizeOf(c.CMTime), @sizeOf(cm.Time));
     try std.testing.expectEqual(@alignOf(c.CMTime), @alignOf(cm.Time));
 }
@@ -121,18 +103,26 @@ test "compression session accepts a callback and encodes a pixel buffer" {
 
     var session: ?*VTCompressionSession = null;
     const status = VTCompressionSession.create(null, 16, 16, c.kCMVideoCodecType_H264, null, null, null, Callback.onFrame, null, &session);
-    if (status != 0) return error.SkipZigTest;
+    if (status != c.noErr) return error.SkipZigTest;
     const encoder = session orelse return error.SessionCreationFailed;
     defer encoder.release();
     defer encoder.invalidate();
 
+    const retained = encoder.retain();
+    defer retained.release();
+    try std.testing.expect(retained.equal(encoder));
+    try std.testing.expectEqual(encoder.getTypeID(), retained.getTypeID());
+    const base: *vt.Session = @ptrCast(encoder);
+    try std.testing.expectEqual(encoder.getTypeID(), base.getTypeID());
+
     const realtime: *const cf.Type = @ptrCast(cf.kBoolean(.True));
-    try std.testing.expectEqual(@as(c.OSStatus, 0), encoder.setProperty(kVTCompressionPropertyKey(.RealTime), realtime));
-    try std.testing.expectEqual(@as(c.OSStatus, 0), encoder.prepareToEncodeFrames());
+    try encoder.setProperty(vt.kCompressionPropertyKey(.RealTime), realtime);
+    try base.setProperty(vt.kCompressionPropertyKey(.RealTime), realtime);
+    try std.testing.expectEqual(@as(c.OSStatus, c.noErr), encoder.prepareToEncodeFrames());
 
     const buffer = cv.PixelBuffer.create(16, 16, cv.kPixelFormat(.BGRA32), null) orelse return error.PixelBufferCreationFailed;
     defer buffer.release();
     const time = cm.Time.make(0, 30);
-    try std.testing.expectEqual(@as(c.OSStatus, 0), encoder.encodeFrame(@ptrCast(buffer), time, cm.Time.make(1, 30), null, null, null));
-    try std.testing.expectEqual(@as(c.OSStatus, 0), encoder.completeFrames(time));
+    try std.testing.expectEqual(@as(c.OSStatus, c.noErr), encoder.encodeFrame(@ptrCast(buffer), time, cm.Time.make(1, 30), null, null, null));
+    try std.testing.expectEqual(@as(c.OSStatus, c.noErr), encoder.completeFrames(time));
 }

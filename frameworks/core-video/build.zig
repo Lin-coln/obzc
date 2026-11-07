@@ -1,16 +1,17 @@
 const std = @import("std");
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run CoreVideo tests");
-    const macos, const cf, const ios = blk: {
+    const macos, const cf, const ios, const mtl = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
             b.dependency("macos", opts).module("macos"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("io-surface", opts).module("io-surface"),
+            (try b.dependencyLazy("metal", opts)).module("metal"),
         };
     };
 
@@ -23,6 +24,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "macos", .module = macos },
                 .{ .name = "core-foundation", .module = cf },
                 .{ .name = "io-surface", .module = ios },
+                .{ .name = "metal", .module = mtl },
             },
         });
         mod.linkFramework("CoreVideo", .{});

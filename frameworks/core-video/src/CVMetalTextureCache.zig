@@ -1,6 +1,7 @@
 const c = @import("macos").c;
 const cf = @import("core-foundation");
 const cv = @import("root.zig");
+const mtl = @import("metal");
 
 pub const CVMetalTextureCache = opaque {
     const Self = @This();
@@ -9,10 +10,9 @@ pub const CVMetalTextureCache = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    /// The device is an Objective-C Metal device reference.
-    pub fn create(device: *anyopaque, attributes: ?*const cf.Dictionary) ?*Self {
+    pub fn create(device: *mtl.Device, attributes: ?*const cf.Dictionary) ?*Self {
         var cache: c.CVMetalTextureCacheRef = null;
-        if (c.CVMetalTextureCacheCreate(null, @ptrCast(attributes), device, null, &cache) != c.kCVReturnSuccess)
+        if (c.CVMetalTextureCacheCreate(null, @ptrCast(attributes), @ptrCast(device), null, &cache) != c.kCVReturnSuccess)
             return null;
         return @ptrCast(cache);
     }
