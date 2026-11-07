@@ -29,6 +29,11 @@ pub const CMSampleBuffer = opaque {
         return @ptrCast(buffer);
     }
 
+    pub fn getFormatDescription(self: *Self) ?*const cm.VideoFormatDescription {
+        const format = c.CMSampleBufferGetFormatDescription(self.raw()) orelse return null;
+        return @ptrCast(format);
+    }
+
     fn raw(self: *Self) c.CMSampleBufferRef {
         return @ptrCast(self);
     }

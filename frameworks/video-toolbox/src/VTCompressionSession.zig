@@ -80,14 +80,6 @@ pub const VTCompressionSession = opaque {
     pub fn invalidate(self: *Self) void {
         c.VTCompressionSessionInvalidate(@ptrCast(self));
     }
-
-    pub fn retain(self: *Self) *Self {
-        return @ptrCast(c.CFRetain(@ptrCast(self)).?);
-    }
-
-    pub fn release(self: *Self) void {
-        c.CFRelease(@ptrCast(self));
-    }
 };
 
 fn rawTime(time: cm.Time) c.CMTime {

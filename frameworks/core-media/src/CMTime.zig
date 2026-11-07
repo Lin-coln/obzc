@@ -26,6 +26,13 @@ pub const CMTime = extern struct {
     }
 };
 
+pub inline fn kCMTime(value: enum { Invalid }) CMTime {
+    const raw: c.CMTime = switch (value) {
+        .Invalid => c.kCMTimeInvalid,
+    };
+    return @as(*const CMTime, @ptrCast(&raw)).*;
+}
+
 test "Time matches CMTime layout" {
     try std.testing.expectEqual(@sizeOf(c.CMTime), @sizeOf(CMTime));
     try std.testing.expectEqual(@alignOf(c.CMTime), @alignOf(CMTime));
@@ -39,4 +46,10 @@ test "Time matches CMTime layout" {
 test "Time.add uses CoreMedia time arithmetic" {
     const time = CMTime.make(1, 2).add(CMTime.make(500_000_000, 1_000_000_000));
     try std.testing.expectEqual(@as(i128, time.timescale), @as(i128, time.value));
+}
+
+test "kCMTime exposes CoreMedia time constants" {
+    const invalid = kCMTime(.Invalid);
+    try std.testing.expectEqual(c.kCMTimeInvalid.flags, invalid.flags);
+    try std.testing.expectEqual(c.kCMTimeInvalid.timescale, invalid.timescale);
 }

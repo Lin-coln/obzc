@@ -10,13 +10,20 @@ pub const CFNumber = opaque {
     pub const hash = h.hash;
     pub const getRetainCount = h.getRetainCount;
 
+    pub fn create(value: anytype) ?*const Self {
+        const number = c.CFNumberCreate(null, fromType(@TypeOf(value)), &value) orelse
+            return null;
+        return @ptrCast(number);
+    }
+
     pub fn getTypeID() c.CFTypeID {
         return c.CFNumberGetTypeID();
     }
 
     pub fn val(self: *const Self, comptime T: type) ?T {
         var value: T = undefined;
-        if (c.CFNumberGetValue(self.raw(), fromType(T), &value) == 0) return null;
+        if (c.CFNumberGetValue(self.raw(), fromType(T), &value) == 0)
+            return null;
         return value;
     }
 

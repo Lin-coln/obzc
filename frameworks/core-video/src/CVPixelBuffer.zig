@@ -29,6 +29,14 @@ pub const CVPixelBuffer = opaque {
         return c.CVPixelBufferGetBytesPerRow(raw(self));
     }
 
+    pub fn getWidth(self: *Self) usize {
+        return c.CVPixelBufferGetWidth(raw(self));
+    }
+
+    pub fn getHeight(self: *Self) usize {
+        return c.CVPixelBufferGetHeight(raw(self));
+    }
+
     pub fn lockBaseAddress(self: *Self, flags: u64) bool {
         return c.CVPixelBufferLockBaseAddress(raw(self), flags) == c.kCVReturnSuccess;
     }

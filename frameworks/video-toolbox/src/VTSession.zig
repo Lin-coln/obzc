@@ -2,10 +2,16 @@ const c = @import("macos").c;
 const cf = @import("core-foundation");
 
 pub const VTSession = opaque {
-    const Self = @This();
+    pub const Mixin = VTSessionMixin;
 
-    /// The property value is borrowed; VideoToolbox retains it when needed.
-    pub fn setProperty(self: *Self, key: *const cf.String, value: ?*const cf.Type) c.OSStatus {
-        return c.VTSessionSetProperty(@ptrCast(self), @ptrCast(key), @ptrCast(value));
-    }
+    const Self = @This();
+    const h = Mixin(Self);
+
+    pub const retain = h.retain;
+    pub const release = h.release;
+    pub const equal = h.equal;
+    pub const getTypeID = h.getTypeID;
+    pub const hash = h.hash;
+    pub const getRetainCount = h.getRetainCount;
+    pub const setProperty = h.setProperty;
 };
