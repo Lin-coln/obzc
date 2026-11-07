@@ -1,4 +1,5 @@
 const std = @import("std");
+const z = @import("macos").z;
 const builtin = @import("builtin");
 const core = @import("core");
 const NSString = @import("NSString.zig").NSString;
@@ -11,7 +12,7 @@ pub const NSError = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub fn init(domain_name: []const u8, error_code: isize) ?*Self {
+    pub fn init(domain_name: []const u8, error_code: z.NSInteger) ?*Self {
         const domain_string = NSString.init(domain_name) orelse return null;
         defer domain_string.release();
 
@@ -24,7 +25,7 @@ pub const NSError = opaque {
         );
     }
 
-    pub const code = h.prop("code", isize).getter;
+    pub const code = h.prop("code", z.NSInteger).getter;
     pub const domain = h.prop("domain", *NSString).getter;
     pub const localizedDescription = h.prop("localizedDescription", *NSString).getter;
 

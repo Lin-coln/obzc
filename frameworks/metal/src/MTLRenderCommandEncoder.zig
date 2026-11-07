@@ -1,5 +1,5 @@
 const core = @import("core");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 const MTLRenderPipelineState = @import("MTLRenderPipelineState.zig").MTLRenderPipelineState;
 const MTLTexture = @import("MTLTexture.zig").MTLTexture;
 
@@ -15,15 +15,15 @@ pub const MTLRenderCommandEncoder = opaque {
         h.call(self, void, "setRenderPipelineState:", .{state});
     }
 
-    pub fn setVertexBytes(self: *Self, bytes: *const anyopaque, length: usize, index: usize) void {
+    pub fn setVertexBytes(self: *Self, bytes: *const anyopaque, length: z.NSUInteger, index: z.NSUInteger) void {
         h.call(self, void, "setVertexBytes:length:atIndex:", .{ bytes, length, index });
     }
 
-    pub fn setFragmentTexture(self: *Self, texture: ?*MTLTexture, index: usize) void {
+    pub fn setFragmentTexture(self: *Self, texture: ?*MTLTexture, index: z.NSUInteger) void {
         h.call(self, void, "setFragmentTexture:atIndex:", .{ texture, index });
     }
 
-    pub fn drawPrimitives(self: *Self, primitive_type: mtl.MTLPrimitiveType, vertex_start: usize, vertex_count: usize) void {
+    pub fn drawPrimitives(self: *Self, primitive_type: z.MTLPrimitiveType, vertex_start: z.NSUInteger, vertex_count: z.NSUInteger) void {
         h.call(self, void, "drawPrimitives:vertexStart:vertexCount:", .{ primitive_type, vertex_start, vertex_count });
     }
 

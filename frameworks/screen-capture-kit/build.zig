@@ -17,15 +17,6 @@ pub fn build(b: *std.Build) void {
         };
     };
 
-    const sck_abi = blk: {
-        const trans = b.addTranslateC(.{
-            .root_source_file = b.path("translate/sck.h"),
-            .target = target,
-            .optimize = optimize,
-        });
-        break :blk trans.createModule();
-    };
-
     const sck = blk: {
         const opts: std.Build.Module.CreateOptions = .{
             .root_source_file = b.path("src/root.zig"),
@@ -38,7 +29,6 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "core-foundation", .module = cf },
                 .{ .name = "core-graphics", .module = cg },
                 .{ .name = "core-media", .module = cm },
-                .{ .name = "sck-abi", .module = sck_abi },
             },
         };
 

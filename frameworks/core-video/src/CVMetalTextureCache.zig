@@ -1,4 +1,4 @@
-const c = @import("macos").c;
+const z = @import("macos").z;
 const cf = @import("core-foundation");
 const cv = @import("root.zig");
 const mtl = @import("metal");
@@ -11,8 +11,8 @@ pub const CVMetalTextureCache = opaque {
     pub const release = h.release;
 
     pub fn create(device: *mtl.Device, attributes: ?*const cf.Dictionary) ?*Self {
-        var cache: c.CVMetalTextureCacheRef = null;
-        if (c.CVMetalTextureCacheCreate(null, @ptrCast(attributes), @ptrCast(device), null, &cache) != cv.kReturn(.Success))
+        var cache: z.CVMetalTextureCacheRef = null;
+        if (z.CVMetalTextureCacheCreate(null, @ptrCast(attributes), @ptrCast(device), null, &cache) != cv.kReturn(.Success))
             return null;
         return @ptrCast(cache);
     }
@@ -21,13 +21,13 @@ pub const CVMetalTextureCache = opaque {
         self: *Self,
         image: *cv.ImageBuffer,
         attributes: ?*const cf.Dictionary,
-        pixel_format: usize,
+        pixel_format: z.MTLPixelFormat,
         width: usize,
         height: usize,
         plane_index: usize,
     ) ?*cv.MetalTexture {
-        var texture: c.CVMetalTextureRef = null;
-        if (c.CVMetalTextureCacheCreateTextureFromImage(
+        var texture: z.CVMetalTextureRef = null;
+        if (z.CVMetalTextureCacheCreateTextureFromImage(
             null,
             @ptrCast(self),
             @ptrCast(image),

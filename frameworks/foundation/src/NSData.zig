@@ -1,4 +1,5 @@
 const std = @import("std");
+const z = @import("macos").z;
 const core = @import("core");
 
 pub const NSData = opaque {
@@ -12,16 +13,16 @@ pub const NSData = opaque {
 
     /// Copies the bytes into immutable storage owned by the data object.
     pub fn init(contents: []const u8) *Self {
-        return h.call(h.cls.alloc(), *Self, "initWithBytes:length:", .{ contents.ptr, contents.len });
+        return h.call(h.cls.alloc(), *Self, "initWithBytes:length:", .{ contents.ptr, @as(z.NSUInteger, @intCast(contents.len)) });
     }
 
-    pub const length = h.prop("length", usize).getter;
+    pub const length = h.prop("length", z.NSUInteger).getter;
 
     /// The returned slice is borrowed and remains valid while the data object is alive.
     pub fn bytes(self: *Self) []const u8 {
         const byte_count = self.length();
         if (byte_count == 0) return "";
-        return h.call(self, ?[*]const u8, "bytes", .{}).?[0..byte_count];
+        return h.call(self, ?[*]const u8, "bytes", .{}).?[0..@intCast(byte_count)];
     }
 };
 

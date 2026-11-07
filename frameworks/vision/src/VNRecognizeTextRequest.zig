@@ -1,12 +1,13 @@
 const std = @import("std");
 const core = @import("core");
+const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const VNRecognizedTextObservation = @import("VNRecognizedTextObservation.zig").VNRecognizedTextObservation;
 
-pub const VNRequestTextRecognitionLevel = enum(isize) {
-    accurate = 0,
-    fast = 1,
+pub const VNRequestTextRecognitionLevel = enum(z.VNRequestTextRecognitionLevel) {
+    accurate = z.VNRequestTextRecognitionLevelAccurate,
+    fast = z.VNRequestTextRecognitionLevelFast,
 };
 
 pub const VNRecognizeTextRequest = opaque {

@@ -1,6 +1,6 @@
 const std = @import("std");
 const core = @import("core");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 
 pub const MTLFunction = opaque {
     pub const metadata = core.Metadata.obj;
@@ -10,8 +10,8 @@ pub const MTLFunction = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub fn functionType(self: *Self) mtl.MTLFunctionType {
-        return h.call(self, mtl.MTLFunctionType, "functionType", .{});
+    pub fn functionType(self: *Self) z.MTLFunctionType {
+        return h.call(self, z.MTLFunctionType, "functionType", .{});
     }
 };
 
@@ -31,5 +31,5 @@ test "MTLFunction: functionType identifies a compute function" {
     const function = library.newFunction(name).?;
     defer function.release();
 
-    try std.testing.expectEqual(@as(mtl.MTLFunctionType, mtl.MTLFunctionTypeKernel), function.functionType());
+    try std.testing.expectEqual(@as(z.MTLFunctionType, z.MTLFunctionTypeKernel), function.functionType());
 }

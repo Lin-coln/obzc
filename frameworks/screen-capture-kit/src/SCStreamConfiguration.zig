@@ -1,15 +1,16 @@
 const std = @import("std");
 const c = @import("macos").c;
 const core = @import("core");
+const z = @import("macos").z;
 const cf = @import("core-foundation");
 const cg = @import("core-graphics");
 const cm = @import("core-media");
 
 /// SCCaptureResolutionType from ScreenCaptureKit/SCStream.h.
-pub const SCCaptureResolutionType = enum(isize) {
-    automatic = 0,
-    best = 1,
-    nominal = 2,
+pub const SCCaptureResolutionType = enum(z.SCCaptureResolutionType) {
+    automatic = z.SCCaptureResolutionAutomatic,
+    best = z.SCCaptureResolutionBest,
+    nominal = z.SCCaptureResolutionNominal,
 };
 
 pub const SCStreamConfiguration = opaque {
@@ -25,8 +26,8 @@ pub const SCStreamConfiguration = opaque {
     pub const setWidth = h.prop("width", usize).setter;
     pub const height = h.prop("height", usize).getter;
     pub const setHeight = h.prop("height", usize).setter;
-    pub const queueDepth = h.prop("queueDepth", isize).getter;
-    pub const setQueueDepth = h.prop("queueDepth", isize).setter;
+    pub const queueDepth = h.prop("queueDepth", z.NSInteger).getter;
+    pub const setQueueDepth = h.prop("queueDepth", z.NSInteger).setter;
     pub const showsCursor = h.prop("showsCursor", bool).getter;
     pub const setShowsCursor = h.prop("showsCursor", bool).setter;
     pub const capturesAudio = h.prop("capturesAudio", bool).getter;

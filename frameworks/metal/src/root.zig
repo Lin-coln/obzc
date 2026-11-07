@@ -1,5 +1,4 @@
 const std = @import("std");
-pub const c = @import("mtl-abi");
 
 pub const BlitCommandEncoder = @import("MTLBlitCommandEncoder.zig").MTLBlitCommandEncoder;
 pub const CommandBuffer = @import("MTLCommandBuffer.zig").MTLCommandBuffer;

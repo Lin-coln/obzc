@@ -1,4 +1,5 @@
 const std = @import("std");
+const z = @import("macos").z;
 const core = @import("core");
 
 pub fn NSDictionary(comptime Key: type, comptime Value: type) type {
@@ -14,10 +15,10 @@ pub fn NSDictionary(comptime Key: type, comptime Value: type) type {
         /// Copies the keys and retains the values. Keys must conform to NSCopying.
         pub fn init(objects: []const *Value, keys: []const *Key) *Self {
             std.debug.assert(objects.len == keys.len);
-            return h.call(h.cls.alloc(), *Self, "initWithObjects:forKeys:count:", .{ objects.ptr, keys.ptr, objects.len });
+            return h.call(h.cls.alloc(), *Self, "initWithObjects:forKeys:count:", .{ objects.ptr, keys.ptr, @as(z.NSUInteger, @intCast(objects.len)) });
         }
 
-        pub const count = h.prop("count", usize).getter;
+        pub const count = h.prop("count", z.NSUInteger).getter;
 
         /// Returns a borrowed value, or null when the key is absent.
         pub fn objectForKey(self: *Self, key: *Key) ?*Value {
@@ -50,9 +51,9 @@ test "NSDictionary: init and objectForKey preserve key-value pairs" {
         defer first_key.release();
         const second_key = NSString.init("second dictionary key").?;
         defer second_key.release();
-        const first_value = NSNumber.init(isize, 42);
+        const first_value = NSNumber.init(z.NSInteger, 42);
         defer first_value.release();
-        const second_value = NSNumber.init(isize, 7);
+        const second_value = NSNumber.init(z.NSInteger, 7);
         defer second_value.release();
 
         break :initialized NSDictionary(NSString, NSNumber).init(&.{ first_value, second_value }, &.{ first_key, second_key });
@@ -67,7 +68,7 @@ test "NSDictionary: init and objectForKey preserve key-value pairs" {
     defer missing_key.release();
 
     try std.testing.expectEqual(2, dictionary.count());
-    try std.testing.expectEqual(42, dictionary.objectForKey(first_key).?.as(isize));
-    try std.testing.expectEqual(7, dictionary.objectForKey(second_key).?.as(isize));
+    try std.testing.expectEqual(42, dictionary.objectForKey(first_key).?.as(z.NSInteger));
+    try std.testing.expectEqual(7, dictionary.objectForKey(second_key).?.as(z.NSInteger));
     try std.testing.expect(dictionary.objectForKey(missing_key) == null);
 }

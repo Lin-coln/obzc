@@ -1,6 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const core = @import("core");
+const z = @import("macos").z;
 const ns = @import("foundation");
 const SCContentFilter = @import("SCContentFilter.zig").SCContentFilter;
 const SCStreamConfiguration = @import("SCStreamConfiguration.zig").SCStreamConfiguration;
@@ -9,10 +10,10 @@ const SCStreamOutput = @import("SCStreamOutput.zig").SCStreamOutput;
 const dispatch = std.c.dispatch;
 
 /// SCStreamOutputType from ScreenCaptureKit/SCStream.h.
-pub const SCStreamOutputType = enum(isize) {
-    screen = 0,
-    audio = 1,
-    microphone = 2,
+pub const SCStreamOutputType = enum(z.SCStreamOutputType) {
+    screen = z.SCStreamOutputTypeScreen,
+    audio = z.SCStreamOutputTypeAudio,
+    microphone = z.SCStreamOutputTypeMicrophone,
 };
 
 pub const SCStream = opaque {

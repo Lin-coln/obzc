@@ -1,5 +1,6 @@
 const std = @import("std");
 const core = @import("core");
+const z = @import("macos").z;
 const MTLRenderPassColorAttachmentDescriptor = @import("MTLRenderPassColorAttachmentDescriptor.zig").MTLRenderPassColorAttachmentDescriptor;
 
 pub const MTLRenderPassColorAttachmentDescriptorArray = opaque {
@@ -11,13 +12,12 @@ pub const MTLRenderPassColorAttachmentDescriptorArray = opaque {
     pub const release = h.release;
 
     /// Returns a borrowed attachment descriptor. The index must be in 0...7.
-    pub fn objectAtIndexedSubscript(self: *Self, index: usize) *MTLRenderPassColorAttachmentDescriptor {
+    pub fn objectAtIndexedSubscript(self: *Self, index: z.NSUInteger) *MTLRenderPassColorAttachmentDescriptor {
         return h.call(self, *MTLRenderPassColorAttachmentDescriptor, "objectAtIndexedSubscript:", .{index});
     }
 };
 
 test "MTLRenderPassColorAttachmentDescriptorArray: indexed attachments keep independent values" {
-    const mtl = @import("mtl-abi");
     const MTLRenderPassDescriptor = @import("MTLRenderPassDescriptor.zig").MTLRenderPassDescriptor;
     const descriptor = MTLRenderPassDescriptor.new();
     defer descriptor.release();
@@ -25,8 +25,8 @@ test "MTLRenderPassColorAttachmentDescriptorArray: indexed attachments keep inde
     const first = colors.objectAtIndexedSubscript(0);
     const second = colors.objectAtIndexedSubscript(1);
 
-    first.setLoadAction(mtl.MTLLoadActionClear);
-    second.setLoadAction(mtl.MTLLoadActionLoad);
-    try std.testing.expectEqual(@as(mtl.MTLLoadAction, mtl.MTLLoadActionClear), colors.objectAtIndexedSubscript(0).loadAction());
-    try std.testing.expectEqual(@as(mtl.MTLLoadAction, mtl.MTLLoadActionLoad), colors.objectAtIndexedSubscript(1).loadAction());
+    first.setLoadAction(z.MTLLoadActionClear);
+    second.setLoadAction(z.MTLLoadActionLoad);
+    try std.testing.expectEqual(@as(z.MTLLoadAction, z.MTLLoadActionClear), colors.objectAtIndexedSubscript(0).loadAction());
+    try std.testing.expectEqual(@as(z.MTLLoadAction, z.MTLLoadActionLoad), colors.objectAtIndexedSubscript(1).loadAction());
 }

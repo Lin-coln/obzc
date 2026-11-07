@@ -1,4 +1,4 @@
-const c = @import("macos").c;
+const z = @import("macos").z;
 const cf = @import("core-foundation");
 const mtl = @import("metal");
 
@@ -11,6 +11,6 @@ pub const CVMetalTexture = opaque {
 
     /// The Metal texture is borrowed from this CVMetalTexture.
     pub fn getTexture(self: *Self) ?*mtl.Texture {
-        return @ptrCast(c.CVMetalTextureGetTexture(@ptrCast(self)) orelse return null);
+        return @ptrCast(z.CVMetalTextureGetTexture(@ptrCast(self)) orelse return null);
     }
 };

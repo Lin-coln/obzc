@@ -4,5 +4,3 @@
 #include <CoreVideo/CoreVideo.h>
 #include <IOSurface/IOSurface.h>
 #include <VideoToolbox/VideoToolbox.h>
-
-#include "objc-gated-core-video.h"

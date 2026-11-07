@@ -1,4 +1,5 @@
 const std = @import("std");
+const z = @import("macos").z;
 const core = @import("core");
 const cf = @import("core-foundation");
 
@@ -17,13 +18,13 @@ pub fn NSArray(comptime T: type) type {
 
         pub fn init(objects: []const *T) *Self {
             const allocated: *Self = h.cls.alloc();
-            return h.call(allocated, ?*Self, "initWithObjects:count:", .{ objects.ptr, objects.len }).?;
+            return h.call(allocated, ?*Self, "initWithObjects:count:", .{ objects.ptr, @as(z.NSUInteger, @intCast(objects.len)) }).?;
         }
 
-        pub const count = h.prop("count", usize).getter;
+        pub const count = h.prop("count", z.NSUInteger).getter;
 
         /// The returned object is borrowed from the array.
-        pub fn objectAtIndex(self: *Self, index: usize) *T {
+        pub fn objectAtIndex(self: *Self, index: z.NSUInteger) *T {
             return h.call(self, *T, "objectAtIndex:", .{index});
         }
     };

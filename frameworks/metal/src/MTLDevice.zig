@@ -3,7 +3,7 @@ const builtin = @import("builtin");
 const core = @import("core");
 const ns = @import("foundation");
 const ios = @import("io-surface");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 const MTLCommandQueue = @import("MTLCommandQueue.zig").MTLCommandQueue;
 const MTLTextureDescriptor = @import("MTLTextureDescriptor.zig").MTLTextureDescriptor;
 const MTLTexture = @import("MTLTexture.zig").MTLTexture;
@@ -22,7 +22,7 @@ pub const MTLDevice = opaque {
 
     /// Returns an owned default device, or null if Metal is unavailable.
     pub fn createSystemDefaultDevice() ?*Self {
-        return @ptrCast(mtl.MTLCreateSystemDefaultDevice());
+        return @ptrCast(z.MTLCreateSystemDefaultDevice());
     }
 
     pub fn newCommandQueue(self: *Self) ?*MTLCommandQueue {
@@ -33,7 +33,7 @@ pub const MTLDevice = opaque {
         return h.call(self, ?*MTLTexture, "newTextureWithDescriptor:", .{descriptor});
     }
 
-    pub fn newTextureWithIOSurface(self: *Self, descriptor: *MTLTextureDescriptor, surface: ?*ios.Surface, plane: usize) ?*MTLTexture {
+    pub fn newTextureWithIOSurface(self: *Self, descriptor: *MTLTextureDescriptor, surface: ?*ios.Surface, plane: z.NSUInteger) ?*MTLTexture {
         return h.call(self, ?*MTLTexture, "newTextureWithDescriptor:iosurface:plane:", .{ descriptor, surface, plane });
     }
 
@@ -98,7 +98,7 @@ test "MTLDevice: newRenderPipelineState reports incompatible shader interfaces" 
     defer descriptor.release();
     descriptor.setVertexFunction(vertex);
     descriptor.setFragmentFunction(fragment);
-    descriptor.colorAttachments().objectAtIndexedSubscript(0).setPixelFormat(mtl.MTLPixelFormatBGRA8Unorm);
+    descriptor.colorAttachments().objectAtIndexedSubscript(0).setPixelFormat(z.MTLPixelFormatBGRA8Unorm);
 
     try std.testing.expectError(error.NewRenderPipelineStateFailed, device.newRenderPipelineState(descriptor));
 }

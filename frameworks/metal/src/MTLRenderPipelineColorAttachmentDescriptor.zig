@@ -1,6 +1,6 @@
 const std = @import("std");
 const core = @import("core");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 
 pub const MTLRenderPipelineColorAttachmentDescriptor = opaque {
     pub const metadata = core.Metadata.obj;
@@ -11,16 +11,16 @@ pub const MTLRenderPipelineColorAttachmentDescriptor = opaque {
     pub const release = h.release;
     pub const new = h.cls.new;
 
-    pub const pixelFormat = h.prop("pixelFormat", mtl.MTLPixelFormat).getter;
-    pub const setPixelFormat = h.prop("pixelFormat", mtl.MTLPixelFormat).setter;
+    pub const pixelFormat = h.prop("pixelFormat", z.MTLPixelFormat).getter;
+    pub const setPixelFormat = h.prop("pixelFormat", z.MTLPixelFormat).setter;
 };
 
 test "MTLRenderPipelineColorAttachmentDescriptor: pixelFormat can be changed" {
     const descriptor = MTLRenderPipelineColorAttachmentDescriptor.new();
     defer descriptor.release();
 
-    descriptor.setPixelFormat(mtl.MTLPixelFormatBGRA8Unorm);
-    try std.testing.expectEqual(@as(mtl.MTLPixelFormat, mtl.MTLPixelFormatBGRA8Unorm), descriptor.pixelFormat());
-    descriptor.setPixelFormat(mtl.MTLPixelFormatRGBA16Float);
-    try std.testing.expectEqual(@as(mtl.MTLPixelFormat, mtl.MTLPixelFormatRGBA16Float), descriptor.pixelFormat());
+    descriptor.setPixelFormat(z.MTLPixelFormatBGRA8Unorm);
+    try std.testing.expectEqual(@as(z.MTLPixelFormat, z.MTLPixelFormatBGRA8Unorm), descriptor.pixelFormat());
+    descriptor.setPixelFormat(z.MTLPixelFormatRGBA16Float);
+    try std.testing.expectEqual(@as(z.MTLPixelFormat, z.MTLPixelFormatRGBA16Float), descriptor.pixelFormat());
 }

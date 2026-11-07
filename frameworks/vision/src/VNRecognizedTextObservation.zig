@@ -1,5 +1,6 @@
 const std = @import("std");
 const core = @import("core");
+const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const VNRecognizedText = @import("VNRecognizedText.zig").VNRecognizedText;
@@ -16,7 +17,7 @@ pub const VNRecognizedTextObservation = opaque {
     pub const boundingBox = h.prop("boundingBox", cg.Rect).getter;
 
     /// Returns a borrowed array with at most the requested number of candidates.
-    pub fn topCandidates(self: *Self, count: usize) *ns.Array(VNRecognizedText) {
+    pub fn topCandidates(self: *Self, count: z.NSUInteger) *ns.Array(VNRecognizedText) {
         return h.call(self, *ns.Array(VNRecognizedText), "topCandidates:", .{count});
     }
 };

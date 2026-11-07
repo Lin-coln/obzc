@@ -1,5 +1,6 @@
 const std = @import("std");
 const core = @import("core");
+const z = @import("macos").z;
 const MTLFunction = @import("MTLFunction.zig").MTLFunction;
 const MTLRenderPipelineColorAttachmentDescriptorArray = @import("MTLRenderPipelineColorAttachmentDescriptorArray.zig").MTLRenderPipelineColorAttachmentDescriptorArray;
 
@@ -18,8 +19,8 @@ pub const MTLRenderPipelineDescriptor = opaque {
     pub const setFragmentFunction = h.prop("fragmentFunction", ?*MTLFunction).setter;
     /// Borrowed attachment array, owned by this descriptor.
     pub const colorAttachments = h.prop("colorAttachments", *MTLRenderPipelineColorAttachmentDescriptorArray).getter;
-    pub fn hash(self: *Self) usize {
-        return h.call(self, usize, "hash", .{});
+    pub fn hash(self: *Self) z.NSUInteger {
+        return h.call(self, z.NSUInteger, "hash", .{});
     }
 };
 

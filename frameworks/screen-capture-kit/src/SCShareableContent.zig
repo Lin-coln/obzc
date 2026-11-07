@@ -1,5 +1,6 @@
 const std = @import("std");
 const core = @import("core");
+const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const SCWindow = @import("SCWindow.zig").SCWindow;
@@ -38,7 +39,7 @@ test "SCShareableContent: getShareableContent invokes a Zig completion" {
 
         ready: std.Io.Semaphore = .{},
         received_content: bool = false,
-        error_code: ?isize = null,
+        error_code: ?z.NSInteger = null,
 
         fn complete(state: *Self, content: ?*SCShareableContent, err: ?*ns.Error) void {
             state.received_content = content != null;

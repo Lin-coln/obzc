@@ -3,11 +3,11 @@ const NSNumber = @import("NSNumber.zig").NSNumber;
 pub const CompileTestCases = .{
     .{
         .name = "NSNumber.init: rejects unsupported value types",
-        .expected_error = "NSNumber.init supports only isize, f64, and bool",
+        .expected_error = "NSNumber.init supports only NSInteger, f64, and bool",
     },
     .{
         .name = "NSNumber.as: rejects unsupported result types",
-        .expected_error = "NSNumber.as supports only isize, f64, and bool",
+        .expected_error = "NSNumber.as supports only NSInteger, f64, and bool",
     },
 };
 

@@ -1,4 +1,5 @@
 const std = @import("std");
+const z = @import("macos").z;
 const core = @import("core");
 const cf = @import("core-foundation");
 
@@ -6,7 +7,6 @@ pub const NSString = opaque {
     pub const metadata = core.Metadata.obj;
     const Self = @This();
     const h = core.h(Self);
-    const utf8_encoding: usize = 4; // NSUTF8StringEncoding in Foundation/NSString.h.
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -20,18 +20,18 @@ pub const NSString = opaque {
 
     pub fn init(utf8: []const u8) ?*Self {
         const allocated: *Self = h.cls.alloc();
-        return h.call(allocated, ?*Self, "initWithBytes:length:encoding:", .{ utf8.ptr, utf8.len, utf8_encoding });
+        return h.call(allocated, ?*Self, "initWithBytes:length:encoding:", .{ utf8.ptr, @as(z.NSUInteger, @intCast(utf8.len)), z.NSUTF8StringEncoding });
     }
 
     /// Number of UTF-16 code units, which may differ from the UTF-8 byte count.
-    pub const length = h.prop("length", usize).getter;
+    pub const length = h.prop("length", z.NSUInteger).getter;
 
     /// Borrows UTF-8 bytes, including embedded NULs. Copy before leaving the current
     /// autorelease pool or releasing the string; the buffer may have a shorter lifetime.
     pub fn utf8String(self: *Self) []const u8 {
         if (self.length() == 0) return "";
-        const byte_count = h.call(self, usize, "lengthOfBytesUsingEncoding:", .{utf8_encoding});
-        return h.call(self, ?[*]const u8, "UTF8String", .{}).?[0..byte_count];
+        const byte_count = h.call(self, z.NSUInteger, "lengthOfBytesUsingEncoding:", .{z.NSUTF8StringEncoding});
+        return h.call(self, ?[*]const u8, "UTF8String", .{}).?[0..@intCast(byte_count)];
     }
 };
 

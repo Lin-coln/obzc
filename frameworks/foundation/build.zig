@@ -5,14 +5,15 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Foundation tests");
-    const core, const cf = blk: {
+    const macos, const core, const cf = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
+            b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
             b.dependency("core-foundation", opts).module("core-foundation"),
         };
     };
-    test_step.dependOn(addCompileErrorTests(b, target, optimize, core));
+    test_step.dependOn(addCompileErrorTests(b, target, optimize, macos, core));
 
     const ns = blk: {
         const mod = b.addModule("foundation", .{
@@ -20,6 +21,7 @@ pub fn build(b: *std.Build) void {
             .target = target,
             .optimize = optimize,
             .imports = &.{
+                .{ .name = "macos", .module = macos },
                 .{ .name = "core", .module = core },
                 .{ .name = "core-foundation", .module = cf },
             },
@@ -39,6 +41,7 @@ fn addCompileErrorTests(
     b: *std.Build,
     target: std.Build.ResolvedTarget,
     optimize: std.builtin.OptimizeMode,
+    macos: *std.Build.Module,
     core: *std.Build.Module,
 ) *std.Build.Step {
     const step = b.step("test-compile-errors", "Check compile-time validation errors");
@@ -51,6 +54,7 @@ fn addCompileErrorTests(
                     .target = target,
                     .optimize = optimize,
                     .imports = &.{
+                        .{ .name = "macos", .module = macos },
                         .{ .name = "core", .module = core },
                     },
                 }),

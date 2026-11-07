@@ -1,6 +1,6 @@
 const std = @import("std");
 const core = @import("core");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 const MTLTexture = @import("MTLTexture.zig").MTLTexture;
 
 pub const MTLRenderPassColorAttachmentDescriptor = opaque {
@@ -14,24 +14,24 @@ pub const MTLRenderPassColorAttachmentDescriptor = opaque {
 
     pub const texture = h.prop("texture", ?*MTLTexture).getter;
     pub const setTexture = h.prop("texture", ?*MTLTexture).setter;
-    pub const loadAction = h.prop("loadAction", mtl.MTLLoadAction).getter;
-    pub const setLoadAction = h.prop("loadAction", mtl.MTLLoadAction).setter;
-    pub const storeAction = h.prop("storeAction", mtl.MTLStoreAction).getter;
-    pub const setStoreAction = h.prop("storeAction", mtl.MTLStoreAction).setter;
-    pub const clearColor = h.prop("clearColor", mtl.MTLClearColor).getter;
-    pub const setClearColor = h.prop("clearColor", mtl.MTLClearColor).setter;
+    pub const loadAction = h.prop("loadAction", z.MTLLoadAction).getter;
+    pub const setLoadAction = h.prop("loadAction", z.MTLLoadAction).setter;
+    pub const storeAction = h.prop("storeAction", z.MTLStoreAction).getter;
+    pub const setStoreAction = h.prop("storeAction", z.MTLStoreAction).setter;
+    pub const clearColor = h.prop("clearColor", z.MTLClearColor).getter;
+    pub const setClearColor = h.prop("clearColor", z.MTLClearColor).setter;
 };
 
 test "MTLRenderPassColorAttachmentDescriptor: clear color struct and attachment actions" {
     const color = MTLRenderPassColorAttachmentDescriptor.new();
     defer color.release();
     try std.testing.expect(color.texture() == null);
-    color.setLoadAction(mtl.MTLLoadActionClear);
-    color.setStoreAction(mtl.MTLStoreActionStore);
+    color.setLoadAction(z.MTLLoadActionClear);
+    color.setStoreAction(z.MTLStoreActionStore);
     color.setClearColor(.{ .red = 0.25, .green = 0.5, .blue = 0.75, .alpha = 1 });
 
-    try std.testing.expectEqual(@as(mtl.MTLLoadAction, mtl.MTLLoadActionClear), color.loadAction());
-    try std.testing.expectEqual(@as(mtl.MTLStoreAction, mtl.MTLStoreActionStore), color.storeAction());
+    try std.testing.expectEqual(@as(z.MTLLoadAction, z.MTLLoadActionClear), color.loadAction());
+    try std.testing.expectEqual(@as(z.MTLStoreAction, z.MTLStoreActionStore), color.storeAction());
     const clear = color.clearColor();
     try std.testing.expectEqual(0.25, clear.red);
     try std.testing.expectEqual(0.5, clear.green);
@@ -46,7 +46,7 @@ test "MTLRenderPassColorAttachmentDescriptor: texture can be assigned and cleare
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const descriptor = MTLTextureDescriptor.texture2DDescriptor(mtl.MTLPixelFormatBGRA8Unorm, 8, 4, false);
+    const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 8, 4, false);
     const texture = device.newTexture(descriptor).?;
     defer texture.release();
     const color = MTLRenderPassColorAttachmentDescriptor.new();

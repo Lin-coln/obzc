@@ -1,6 +1,6 @@
 const std = @import("std");
 const core = @import("core");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 const MTLDevice = @import("MTLDevice.zig").MTLDevice;
 
 pub const MTLTexture = opaque {
@@ -11,16 +11,16 @@ pub const MTLTexture = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub fn width(self: *Self) usize {
-        return h.call(self, usize, "width", .{});
+    pub fn width(self: *Self) z.NSUInteger {
+        return h.call(self, z.NSUInteger, "width", .{});
     }
 
-    pub fn height(self: *Self) usize {
-        return h.call(self, usize, "height", .{});
+    pub fn height(self: *Self) z.NSUInteger {
+        return h.call(self, z.NSUInteger, "height", .{});
     }
 
-    pub fn pixelFormat(self: *Self) mtl.MTLPixelFormat {
-        return h.call(self, mtl.MTLPixelFormat, "pixelFormat", .{});
+    pub fn pixelFormat(self: *Self) z.MTLPixelFormat {
+        return h.call(self, z.MTLPixelFormat, "pixelFormat", .{});
     }
     /// Borrowed device that created this texture.
     pub fn device(self: *Self) *MTLDevice {
@@ -34,12 +34,12 @@ test "MTLTexture: dimensions, format, and device describe the created resource" 
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
-    const descriptor = MTLTextureDescriptor.texture2DDescriptor(mtl.MTLPixelFormatBGRA8Unorm, 8, 4, false);
+    const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 8, 4, false);
     const texture = device.newTexture(descriptor).?;
     defer texture.release();
 
     try std.testing.expectEqual(8, texture.width());
     try std.testing.expectEqual(4, texture.height());
-    try std.testing.expectEqual(@as(mtl.MTLPixelFormat, mtl.MTLPixelFormatBGRA8Unorm), texture.pixelFormat());
+    try std.testing.expectEqual(@as(z.MTLPixelFormat, z.MTLPixelFormatBGRA8Unorm), texture.pixelFormat());
     try std.testing.expectEqual(device, texture.device());
 }

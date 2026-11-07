@@ -1,4 +1,5 @@
 const std = @import("std");
+const z = @import("macos").z;
 const core = @import("core");
 
 pub const NSMutableData = opaque {
@@ -10,19 +11,19 @@ pub const NSMutableData = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const length = h.prop("length", usize).getter;
-    pub const setLength = h.prop("length", usize).setter;
+    pub const length = h.prop("length", z.NSUInteger).getter;
+    pub const setLength = h.prop("length", z.NSUInteger).setter;
 
     pub fn appendBytes(self: *Self, appended_bytes: []const u8) void {
         if (appended_bytes.len == 0) return;
-        h.call(self, void, "appendBytes:length:", .{ appended_bytes.ptr, appended_bytes.len });
+        h.call(self, void, "appendBytes:length:", .{ appended_bytes.ptr, @as(z.NSUInteger, @intCast(appended_bytes.len)) });
     }
 
     /// The returned slice is invalidated by mutation or release.
     pub fn bytes(self: *Self) []const u8 {
         const byte_count = self.length();
         if (byte_count == 0) return "";
-        return h.call(self, ?[*]const u8, "bytes", .{}).?[0..byte_count];
+        return h.call(self, ?[*]const u8, "bytes", .{}).?[0..@intCast(byte_count)];
     }
 
     /// The returned pointer is invalidated by mutation or release and may be null when empty.

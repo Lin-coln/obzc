@@ -1,6 +1,6 @@
 const core = @import("core");
 const ns = @import("foundation");
-const mtl = @import("mtl-abi");
+const z = @import("macos").z;
 const MTLRenderPassDescriptor = @import("MTLRenderPassDescriptor.zig").MTLRenderPassDescriptor;
 const MTLRenderCommandEncoder = @import("MTLRenderCommandEncoder.zig").MTLRenderCommandEncoder;
 const MTLBlitCommandEncoder = @import("MTLBlitCommandEncoder.zig").MTLBlitCommandEncoder;
@@ -30,8 +30,8 @@ pub const MTLCommandBuffer = opaque {
         h.call(self, void, "waitUntilCompleted", .{});
     }
 
-    pub fn status(self: *Self) mtl.MTLCommandBufferStatus {
-        return h.call(self, mtl.MTLCommandBufferStatus, "status", .{});
+    pub fn status(self: *Self) z.MTLCommandBufferStatus {
+        return h.call(self, z.MTLCommandBufferStatus, "status", .{});
     }
     /// Borrowed error describing a failed command buffer.
     pub fn @"error"(self: *Self) ?*ns.Error {
