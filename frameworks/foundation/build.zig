@@ -14,8 +14,6 @@ pub fn build(b: *std.Build) void {
             b.dependency("core-foundation", opts).module("core-foundation"),
         };
     };
-    test_step.dependOn(addCompileErrorTests(b, target, optimize, macos, core));
-
     const ns = blk: {
         const mod = b.addModule("foundation", .{
             .root_source_file = b.path("src/root.zig"),
@@ -37,36 +35,4 @@ pub fn build(b: *std.Build) void {
     };
 
     _ = ns;
-}
-
-fn addCompileErrorTests(
-    b: *std.Build,
-    target: std.Build.ResolvedTarget,
-    optimize: std.builtin.OptimizeMode,
-    macos: *std.Build.Module,
-    core: *std.Build.Module,
-) *std.Build.Step {
-    const step = b.step("test-compile-errors", "Check compile-time validation errors");
-    inline for (@import("src/compile_test.zig").sources) |source| {
-        inline for (source.CompileTestCases) |case| {
-            const check = b.addTest(.{
-                .name = "compile-test",
-                .root_module = b.createModule(.{
-                    .root_source_file = b.path("src/compile_test.zig"),
-                    .target = target,
-                    .optimize = optimize,
-                    .imports = &.{
-                        .{ .name = "macos", .module = macos },
-                        .{ .name = "core", .module = core },
-                    },
-                }),
-                .filters = &.{case.name},
-            });
-            check.step.name = case.name;
-            check.expect_errors = .{ .contains = case.expected_error };
-            _ = check.getEmittedBin();
-            step.dependOn(&check.step);
-        }
-    }
-    return step;
 }

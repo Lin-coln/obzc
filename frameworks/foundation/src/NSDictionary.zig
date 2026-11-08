@@ -126,8 +126,8 @@ test "NSDictionary: init and objectForKey preserve key-value pairs" {
     try std.testing.expectEqual(2, dictionary.count());
     try std.testing.expect(dictionary.equal(dictionary));
     try std.testing.expect(dictionary.isKindOfClass(dictionary.class()));
-    try std.testing.expectEqual(42, dictionary.objectForKey(first_key).?.as(z.NSInteger));
-    try std.testing.expectEqual(7, dictionary.objectForKey(second_key).?.as(z.NSInteger));
+    try std.testing.expectEqual(42, dictionary.objectForKey(first_key).?.val(z.NSInteger));
+    try std.testing.expectEqual(7, dictionary.objectForKey(second_key).?.val(z.NSInteger));
     try std.testing.expect(dictionary.objectForKey(missing_key) == null);
 
     const untyped: *NSDictionary = @ptrCast(dictionary);
