@@ -1,6 +1,6 @@
 const std = @import("std");
 const c = @import("macos").c;
-const msg = @import("msg.zig");
+const call = @import("call.zig").call;
 
 pub const Class = opaque {
     pub const _encoding = "#";
@@ -19,6 +19,6 @@ pub const Class = opaque {
     }
 
     pub inline fn _call(self: *Self, comptime Return: type, name: [:0]const u8, args: anytype) Return {
-        return msg.call(self, Return, name, args);
+        return call(self, Return, name, args);
     }
 };

@@ -4,7 +4,7 @@ const z = @import("macos").z;
 const utils = @import("utils");
 const Sel = @import("metadata.zig").Sel;
 const Class = @import("Class.zig").Class;
-const msg = @import("msg.zig");
+const call = @import("call.zig").call;
 const prop = @import("prop.zig");
 
 pub fn NSObjectPrototype(comptime T: type) type {
@@ -18,7 +18,7 @@ pub fn NSObjectPrototype(comptime T: type) type {
         }
 
         pub inline fn _call(self: *const T, comptime Return: type, name: [:0]const u8, args: anytype) Return {
-            return msg.call(self, Return, name, args);
+            return call(self, Return, name, args);
         }
 
         pub fn _p(comptime name: [:0]const u8, comptime P: type) type {

@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("macos").c;
 const Class = @import("Class.zig").Class;
-const call = @import("msg.zig").call;
+const call = @import("call.zig").call;
 
 pub inline fn get(receiver: anytype, comptime P: type, name: [:0]const u8) P {
     const cls = call(receiver, *Class, "class", .{});
