@@ -1,4 +1,5 @@
 const std = @import("std");
+pub const Object = @import("NSObject.zig").NSObject;
 pub const Error = @import("NSError.zig").NSError;
 pub const String = @import("NSString.zig").NSString;
 pub const Array = @import("NSArray.zig").NSArray;
