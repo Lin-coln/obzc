@@ -1,5 +1,9 @@
 const std = @import("std");
 pub const Request = @import("VNRequest.zig").VNRequest;
+pub const ImageBasedRequest = @import("VNImageBasedRequest.zig").VNImageBasedRequest;
+pub const Observation = @import("VNObservation.zig").VNObservation;
+pub const DetectedObjectObservation = @import("VNDetectedObjectObservation.zig").VNDetectedObjectObservation;
+pub const RectangleObservation = @import("VNRectangleObservation.zig").VNRectangleObservation;
 pub const RecognizeTextRequest = @import("VNRecognizeTextRequest.zig").VNRecognizeTextRequest;
 pub const RequestTextRecognitionLevel = @import("VNRecognizeTextRequest.zig").VNRequestTextRecognitionLevel;
 pub const ImageRequestHandler = @import("VNImageRequestHandler.zig").VNImageRequestHandler;

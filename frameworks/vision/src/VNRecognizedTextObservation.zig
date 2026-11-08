@@ -1,40 +1,43 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
+const vn = @import("root.zig");
 const VNRecognizedText = @import("VNRecognizedText.zig").VNRecognizedText;
 
 pub const VNRecognizedTextObservation = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = vn.RectangleObservation.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const confidence = h.prop("confidence", f32).getter;
-    pub const boundingBox = h.prop("boundingBox", cg.Rect).getter;
+    pub const confidence = h.confidence;
+    pub const boundingBox = h.boundingBox;
+    pub const observationWithBoundingBox = h.observationWithBoundingBox;
 
     /// Returns a borrowed array with at most the requested number of candidates.
     pub fn topCandidates(self: *Self, count: z.NSUInteger) *ns.Array.With(VNRecognizedText) {
-        return h.call(self, *ns.Array.With(VNRecognizedText), "topCandidates:", .{count});
+        return h._call(self, *ns.Array.With(VNRecognizedText), "topCandidates:", .{count});
     }
 };
 
 test "VNRecognizedTextObservation: read a bounding box and confidence" {
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const bounds: cg.Rect = .{
         .origin = .{ .x = 0.125, .y = 0.25 },
         .size = .{ .width = 0.5, .height = 0.5 },
     };
-    const observation = core.h(VNRecognizedTextObservation).cls.call(
-        *VNRecognizedTextObservation,
-        "observationWithBoundingBox:",
-        .{bounds},
-    );
+    const observation = VNRecognizedTextObservation.observationWithBoundingBox(bounds);
+
+    try std.testing.expect(observation.isKindOfClass(observation.class()));
 
     const actual = observation.boundingBox();
     try std.testing.expectEqual(bounds.origin.x, actual.origin.x);

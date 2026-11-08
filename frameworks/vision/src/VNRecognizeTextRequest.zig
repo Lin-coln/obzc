@@ -1,9 +1,8 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
+const vn = @import("root.zig");
 const VNRecognizedTextObservation = @import("VNRecognizedTextObservation.zig").VNRecognizedTextObservation;
 
 pub const VNRequestTextRecognitionLevel = enum(z.VNRequestTextRecognitionLevel) {
@@ -12,34 +11,45 @@ pub const VNRequestTextRecognitionLevel = enum(z.VNRequestTextRecognitionLevel) 
 };
 
 pub const VNRecognizeTextRequest = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = vn.ImageBasedRequest.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
-    pub const new = h.cls.new;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const recognitionLevel = h.prop("recognitionLevel", VNRequestTextRecognitionLevel).getter;
-    pub const setRecognitionLevel = h.prop("recognitionLevel", VNRequestTextRecognitionLevel).setter;
-    pub const recognitionLanguages = h.prop("recognitionLanguages", *ns.Array.With(ns.String)).getter;
-    pub const setRecognitionLanguages = h.prop("recognitionLanguages", *ns.Array.With(ns.String)).setter;
-    pub const usesLanguageCorrection = h.prop("usesLanguageCorrection", bool).getter;
-    pub const setUsesLanguageCorrection = h.prop("usesLanguageCorrection", bool).setter;
-    pub const minimumTextHeight = h.prop("minimumTextHeight", f32).getter;
-    pub const setMinimumTextHeight = h.prop("minimumTextHeight", f32).setter;
-    pub const regionOfInterest = h.prop("regionOfInterest", cg.Rect).getter;
-    pub const setRegionOfInterest = h.prop("regionOfInterest", cg.Rect).setter;
+    pub fn new() *Self {
+        return h._cls(null).new(Self);
+    }
+
+    pub const recognitionLevel = h._p("recognitionLevel", VNRequestTextRecognitionLevel).getter;
+    pub const setRecognitionLevel = h._p("recognitionLevel", VNRequestTextRecognitionLevel).setter;
+    pub const recognitionLanguages = h._p("recognitionLanguages", *ns.Array.With(ns.String)).getter;
+    pub const setRecognitionLanguages = h._p("recognitionLanguages", *ns.Array.With(ns.String)).setter;
+    pub const usesLanguageCorrection = h._p("usesLanguageCorrection", bool).getter;
+    pub const setUsesLanguageCorrection = h._p("usesLanguageCorrection", bool).setter;
+    pub const minimumTextHeight = h._p("minimumTextHeight", f32).getter;
+    pub const setMinimumTextHeight = h._p("minimumTextHeight", f32).setter;
+    pub const regionOfInterest = h.regionOfInterest;
+    pub const setRegionOfInterest = h.setRegionOfInterest;
 
     /// Results are borrowed and remain null until the request has produced results.
-    pub const results = h.prop("results", ?*ns.Array.With(VNRecognizedTextObservation)).getter;
+    pub const results = h._p("results", ?*ns.Array.With(VNRecognizedTextObservation)).getter;
 };
 
 test "VNRecognizeTextRequest: configure recognition and region of interest" {
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const request = VNRecognizeTextRequest.new();
     defer request.release();
+
+    try std.testing.expect(request.equal(request));
+    try std.testing.expect(request.isKindOfClass(request.class()));
 
     request.setRecognitionLevel(.fast);
     request.setUsesLanguageCorrection(false);
