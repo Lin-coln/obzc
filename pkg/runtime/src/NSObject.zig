@@ -23,6 +23,9 @@ pub fn NSObjectPrototype(comptime T: type) type {
         pub inline fn _callWithCallback(self: *const T, comptime Return: type, name: [:0]const u8, ctx: anytype, args: anytype, comptime cb: anytype) Return {
             return @import("call.zig").callWithCallback(self, Return, name, ctx, args, cb);
         }
+        pub inline fn _callSync(self: *const T, comptime Return: type, name: [:0]const u8, ctx: anytype, args: anytype, comptime cb: anytype) Return {
+            return @import("call.zig").callSync(self, Return, name, ctx, args, cb);
+        }
 
         pub fn _p(comptime name: [:0]const u8, comptime P: type) type {
             return struct {

@@ -71,8 +71,7 @@ pub const MTLCommandBufferStatusCompleted: MTLCommandBufferStatus = 4;
 pub const MTLCommandBufferStatusError: MTLCommandBufferStatus = 5;
 
 // Metal/MTLDevice.h: the result is an owned Objective-C object pointer.
-pub const ObjCObject = opaque {};
-pub extern fn MTLCreateSystemDefaultDevice() ?*ObjCObject;
+pub extern fn MTLCreateSystemDefaultDevice() c.id;
 
 // ScreenCaptureKit/SCStream.h.
 pub const SCStreamOutputType = NSInteger;
@@ -85,7 +84,7 @@ pub const SCCaptureResolutionAutomatic: SCCaptureResolutionType = 0;
 pub const SCCaptureResolutionBest: SCCaptureResolutionType = 1;
 pub const SCCaptureResolutionNominal: SCCaptureResolutionType = 2;
 
-pub const SCStreamFrameInfo = ?*ObjCObject;
+pub const SCStreamFrameInfo = c.id;
 pub extern var SCStreamFrameInfoContentRect: SCStreamFrameInfo;
 pub extern var SCStreamFrameInfoContentScale: SCStreamFrameInfo;
 pub extern var SCStreamFrameInfoScaleFactor: SCStreamFrameInfo;
@@ -104,7 +103,7 @@ pub const CVMetalTextureCacheRef = ?*CVMetalTextureCache;
 pub extern fn CVMetalTextureCacheCreate(
     allocator: c.CFAllocatorRef,
     cache_attributes: c.CFDictionaryRef,
-    metal_device: *ObjCObject,
+    metal_device: *c.struct_objc_object,
     texture_attributes: c.CFDictionaryRef,
     cache_out: *CVMetalTextureCacheRef,
 ) c.CVReturn;
@@ -121,4 +120,4 @@ pub extern fn CVMetalTextureCacheCreateTextureFromImage(
     texture_out: *CVMetalTextureRef,
 ) c.CVReturn;
 
-pub extern fn CVMetalTextureGetTexture(image: CVMetalTextureRef) ?*ObjCObject;
+pub extern fn CVMetalTextureGetTexture(image: CVMetalTextureRef) c.id;
