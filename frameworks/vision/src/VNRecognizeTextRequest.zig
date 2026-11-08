@@ -68,5 +68,5 @@ test "VNRecognizeTextRequest: configure recognition and region of interest" {
 
     const actual_languages = request.recognitionLanguages();
     try std.testing.expectEqual(1, actual_languages.count());
-    try std.testing.expectEqualStrings("en-US", actual_languages.objectAtIndex(0).utf8String());
+    try std.testing.expectEqualStrings("en-US", actual_languages.at(0).utf8String());
 }

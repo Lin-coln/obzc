@@ -18,7 +18,7 @@ pub const NSDictionary = opaque {
     pub const isKindOfClass = h.isKindOfClass;
     pub const respondsToSelector = h.respondsToSelector;
     pub const count = h.count;
-    pub const objectForKey = h.objectForKey;
+    pub const get = h.get;
 
     pub fn new() *Self {
         return h._cls(null).new(Self);
@@ -47,7 +47,7 @@ fn NSDictionaryMixin(comptime T: type) type {
         }
 
         /// Returns a borrowed value, or null when the key is absent.
-        pub fn objectForKey(self: *T, key: *ns.Object) ?*ns.Object {
+        pub fn get(self: *T, key: *ns.Object) ?*ns.Object {
             return _call(self, ?*ns.Object, "objectForKey:", .{key});
         }
     };
@@ -80,7 +80,7 @@ pub fn NSDictionary_With(comptime Key: type, comptime Value: type) type {
         }
 
         /// Returns a borrowed value, or null when the key is absent.
-        pub fn objectForKey(self: *Self, key: *Key) ?*Value {
+        pub fn get(self: *Self, key: *Key) ?*Value {
             return h._call(self, ?*Value, "objectForKey:", .{key});
         }
     };
@@ -93,15 +93,15 @@ test "NSDictionary: new and init create empty dictionaries" {
     defer key.release();
 
     try std.testing.expectEqual(0, dictionary.count());
-    try std.testing.expect(dictionary.objectForKey(key) == null);
+    try std.testing.expect(dictionary.get(key) == null);
 
     const initialized = NSDictionary.With(ns.String, ns.String).init(&.{}, &.{});
     defer initialized.release();
     try std.testing.expectEqual(0, initialized.count());
-    try std.testing.expect(initialized.objectForKey(key) == null);
+    try std.testing.expect(initialized.get(key) == null);
 }
 
-test "NSDictionary: init and objectForKey preserve key-value pairs" {
+test "NSDictionary: init and get preserve key-value pairs" {
     const dictionary = initialized: {
         const first_key = ns.String.init("first dictionary key").?;
         defer first_key.release();
@@ -126,11 +126,11 @@ test "NSDictionary: init and objectForKey preserve key-value pairs" {
     try std.testing.expectEqual(2, dictionary.count());
     try std.testing.expect(dictionary.equal(dictionary));
     try std.testing.expect(dictionary.isKindOfClass(dictionary.class()));
-    try std.testing.expectEqual(42, dictionary.objectForKey(first_key).?.val(z.NSInteger));
-    try std.testing.expectEqual(7, dictionary.objectForKey(second_key).?.val(z.NSInteger));
-    try std.testing.expect(dictionary.objectForKey(missing_key) == null);
+    try std.testing.expectEqual(42, dictionary.get(first_key).?.val(z.NSInteger));
+    try std.testing.expectEqual(7, dictionary.get(second_key).?.val(z.NSInteger));
+    try std.testing.expect(dictionary.get(missing_key) == null);
 
     const untyped: *NSDictionary = @ptrCast(dictionary);
     try std.testing.expectEqual(2, untyped.count());
-    try std.testing.expectEqual(@intFromPtr(dictionary.objectForKey(first_key).?), @intFromPtr(untyped.objectForKey(@ptrCast(first_key)).?));
+    try std.testing.expectEqual(@intFromPtr(dictionary.get(first_key).?), @intFromPtr(untyped.get(@ptrCast(first_key)).?));
 }

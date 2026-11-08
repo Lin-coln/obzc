@@ -19,7 +19,7 @@ pub const NSArray = opaque {
     pub const isKindOfClass = h.isKindOfClass;
     pub const respondsToSelector = h.respondsToSelector;
     pub const count = h.count;
-    pub const objectAtIndex = h.objectAtIndex;
+    pub const at = h.at;
 
     pub fn asCFArray(self: *const Self) *const cf.Array {
         return @ptrCast(self);
@@ -48,7 +48,7 @@ fn NSArrayMixin(comptime T: type) type {
         }
 
         /// The returned object is borrowed from the array.
-        pub fn objectAtIndex(self: *T, index: z.NSUInteger) *ns.Object {
+        pub fn at(self: *T, index: z.NSUInteger) *ns.Object {
             return _call(self, *ns.Object, "objectAtIndex:", .{index});
         }
     };
@@ -79,7 +79,7 @@ pub fn NSArray_With(comptime T: type) type {
         }
 
         /// The returned object is borrowed from the array.
-        pub fn objectAtIndex(self: *Self, index: z.NSUInteger) *T {
+        pub fn at(self: *Self, index: z.NSUInteger) *T {
             return h._call(self, *T, "objectAtIndex:", .{index});
         }
     };
@@ -99,8 +99,8 @@ test "NSArray: create and read objects" {
     try std.testing.expectEqual(@as(z.NSUInteger, 2), ns.Object.Mixin(NSArray.With(ns.String))._p("count", z.NSUInteger).getter(array));
     try std.testing.expect(array.equal(array));
     try std.testing.expect(array.isKindOfClass(array.class()));
-    try std.testing.expectEqualStrings("first", array.objectAtIndex(0).utf8String());
-    try std.testing.expectEqualStrings("second", array.objectAtIndex(1).utf8String());
+    try std.testing.expectEqualStrings("first", array.at(0).utf8String());
+    try std.testing.expectEqualStrings("second", array.at(1).utf8String());
 
     const cf_array = array.asCFArray();
     try std.testing.expectEqual(2, cf_array.count());
@@ -108,7 +108,7 @@ test "NSArray: create and read objects" {
 
     const untyped: *NSArray = @ptrCast(array);
     try std.testing.expectEqual(2, untyped.count());
-    try std.testing.expectEqual(@intFromPtr(first), @intFromPtr(untyped.objectAtIndex(0)));
+    try std.testing.expectEqual(@intFromPtr(first), @intFromPtr(untyped.at(0)));
 }
 
 test "NSArray: initialize an empty array" {
