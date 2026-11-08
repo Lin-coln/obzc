@@ -33,7 +33,7 @@ pub const Class = opaque {
         return @import("call.zig").callSync(self, Return, name, args);
     }
 
-    pub fn allocateClassPair(self: *Self, class_name: [:0]const u8) *ClassPair {
+    pub fn allocateClassPair(self: *Self, class_name: [:0]const u8) !*ClassPair {
         const allocated = c.objc_allocateClassPair(self, class_name, 0) orelse
             return error.AllocateClassFailed;
         return @ptrCast(allocated);
@@ -71,6 +71,9 @@ pub const ClassPair = opaque {
         return error.AddIvarFailed;
     }
 
+    /// Handler parameter and return types must have correct Objective-C encodings.
+    /// Do not use `c.id`, `c.SEL`, or `c.Class`: the encoder treats them as
+    /// ordinary opaque pointers. Use marked object types, `*Sel`, and `*Class`.
     pub fn addMethod(self: *Self, comptime name: [:0]const u8, comptime handler: anytype) !void {
         const Fn = @TypeOf(handler);
         const imp: c.IMP = @ptrCast(&handler);
@@ -85,6 +88,8 @@ pub const ClassPair = opaque {
         return error.AddMethodFailed;
     }
 
+    /// Handler types follow the same encoding rules as `addMethod`.
+    /// In particular, use `*Class` and `*Sel` for `self` and `_cmd`.
     pub fn addStaticMethod(self: *Self, comptime name: [:0]const u8, comptime handler: anytype) !void {
         const metaclass: c.Class = c.object_getClass(@ptrCast(self)) orelse
             return error.MetaClassNotFound;

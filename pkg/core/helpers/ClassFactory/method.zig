@@ -8,6 +8,8 @@ pub fn method(comptime T: type) type {
     _ = T;
 
     return struct {
+        /// Handler types follow the same encoding rules as `addMethod`.
+        /// In particular, use `*ffi.Class` and `*ffi.Sel` for `self` and `_cmd`.
         pub fn addStaticMethod(
             cls: *ffi.Class,
             comptime name: [:0]const u8,
@@ -18,6 +20,9 @@ pub fn method(comptime T: type) type {
             try addMethod(metaclass, name, handler);
         }
 
+        /// Handler parameter and return types must have correct Objective-C encodings.
+        /// Do not use `c.id`, `c.SEL`, or `c.Class`: the encoder treats them as
+        /// ordinary opaque pointers. Use marked object types and `*ffi.Sel`.
         pub fn addMethod(
             cls: *ffi.Class,
             comptime name: [:0]const u8,
