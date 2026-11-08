@@ -194,7 +194,7 @@ test "callSync maps completion errors and retains object results" {
             block.invoke(block, if (fail == 0) null else @ptrCast(self.?));
         }
         fn finishObject(self: c.id, _: c.SEL, fail: i32, block: *const ObjectBlock) callconv(.c) void {
-            const object: *c.struct_objc_object = self.?;
+            const object: *c.objc_object = self.?;
             block.invoke(block, if (fail == 0) object else null, if (fail == 0) null else object);
         }
         fn finishAsync(_: c.id, _: c.SEL, block: *const VoidBlock) callconv(.c) void {
@@ -219,10 +219,10 @@ test "callSync maps completion errors and retains object results" {
     defer z.objc_release(object);
     try callSync(object, anyerror!void, "finishVoid:completion:", .{@as(i32, 0)});
     try std.testing.expectError(error.ObjectiveCError, callSync(object, anyerror!void, "finishVoid:completion:", .{@as(i32, 1)}));
-    const result = try callSync(object, anyerror!*c.struct_objc_object, "finishObject:completion:", .{@as(i32, 0)});
+    const result = try callSync(object, anyerror!*c.objc_object, "finishObject:completion:", .{@as(i32, 0)});
     defer z.objc_release(@ptrCast(result));
     try std.testing.expectEqual(object, result);
-    try std.testing.expectError(error.ObjectiveCError, callSync(object, anyerror!*c.struct_objc_object, "finishObject:completion:", .{@as(i32, 1)}));
+    try std.testing.expectError(error.ObjectiveCError, callSync(object, anyerror!*c.objc_object, "finishObject:completion:", .{@as(i32, 1)}));
     try callSync(object, anyerror!void, "finishAsync:", .{});
     Methods.thread.?.join();
 }

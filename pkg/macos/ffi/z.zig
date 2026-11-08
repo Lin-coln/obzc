@@ -103,7 +103,7 @@ pub const CVMetalTextureCacheRef = ?*CVMetalTextureCache;
 pub extern fn CVMetalTextureCacheCreate(
     allocator: c.CFAllocatorRef,
     cache_attributes: c.CFDictionaryRef,
-    metal_device: *c.struct_objc_object,
+    metal_device: *c.objc_object,
     texture_attributes: c.CFDictionaryRef,
     cache_out: *CVMetalTextureCacheRef,
 ) c.CVReturn;
