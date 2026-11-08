@@ -20,7 +20,7 @@ pub const NSError = opaque {
         const domain_string = ns.String.init(domain_name) orelse return null;
         defer domain_string.release();
 
-        const allocated = h._cls()._call(*Self, "alloc", .{});
+        const allocated = h._cls(null).alloc(Self);
         return h._call(
             allocated,
             ?*Self,

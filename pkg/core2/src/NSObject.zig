@@ -8,12 +8,12 @@ const msg = @import("msg.zig");
 const prop = @import("prop.zig");
 
 pub fn NSObjectPrototype(comptime T: type) type {
-    const class_name = comptime utils.resolveTypeName(@typeName(T));
     return struct {
         // mixin helpers
         pub const _encoding = "@";
 
-        pub inline fn _cls() *Class {
+        pub inline fn _cls(comptime Clazz: ?type) *Class {
+            const class_name = comptime utils.resolveTypeName(@typeName(Clazz orelse T));
             return Class.lookup(class_name).?;
         }
 
@@ -24,7 +24,7 @@ pub fn NSObjectPrototype(comptime T: type) type {
         pub fn _p(comptime name: [:0]const u8, comptime P: type) type {
             return struct {
                 pub fn getter(self: *const T) P {
-                    return prop.get(self, P, name, class_name);
+                    return prop.get(self, P, name);
                 }
                 pub fn setter(self: *T, value: P) void {
                     prop.set(self, P, name, value);

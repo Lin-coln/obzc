@@ -21,7 +21,7 @@ pub const NSDictionary = opaque {
     pub const objectForKey = h.objectForKey;
 
     pub fn new() *Self {
-        return h._cls()._call(*Self, "new", .{});
+        return h._cls(null).new(Self);
     }
 };
 
@@ -69,14 +69,13 @@ pub fn NSDictionary_With(comptime Key: type, comptime Value: type) type {
         pub const count = h.count;
 
         pub fn new() *Self {
-            return @ptrCast(NSDictionary.new());
+            return h._cls(NSDictionary).new(Self);
         }
 
         /// Copies the keys and retains the values. Keys must conform to NSCopying.
         pub fn init(objects: []const *Value, keys: []const *Key) *Self {
             std.debug.assert(objects.len == keys.len);
-            const base = ns.Object.Mixin(NSDictionary);
-            const allocated = base._cls()._call(*Self, "alloc", .{});
+            const allocated = h._cls(NSDictionary).alloc(Self);
             return h._call(allocated, *Self, "initWithObjects:forKeys:count:", .{ objects.ptr, keys.ptr, @as(z.NSUInteger, @intCast(objects.len)) });
         }
 

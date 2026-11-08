@@ -7,7 +7,6 @@ pub const Dictionary = @import("NSDictionary.zig").NSDictionary;
 pub const Value = @import("NSValue.zig").NSValue;
 pub const Number = @import("NSNumber.zig").NSNumber;
 pub const Data = @import("NSData.zig").NSData;
-pub const MutableData = @import("NSMutableData.zig").NSMutableData;
 
 test {
     std.testing.refAllDecls(@This());

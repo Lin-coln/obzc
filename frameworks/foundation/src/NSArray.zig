@@ -74,8 +74,7 @@ pub fn NSArray_With(comptime T: type) type {
         }
 
         pub fn init(objects: []const *T) *Self {
-            const base = ns.Object.Mixin(NSArray);
-            const allocated = base._cls()._call(*Self, "alloc", .{});
+            const allocated = h._cls(NSArray).alloc(Self);
             return h._call(allocated, ?*Self, "initWithObjects:count:", .{ objects.ptr, @as(z.NSUInteger, @intCast(objects.len)) }).?;
         }
 
@@ -97,6 +96,7 @@ test "NSArray: create and read objects" {
     defer array.release();
 
     try std.testing.expectEqual(2, array.count());
+    try std.testing.expectEqual(@as(z.NSUInteger, 2), ns.Object.Mixin(NSArray.With(ns.String))._p("count", z.NSUInteger).getter(array));
     try std.testing.expect(array.equal(array));
     try std.testing.expect(array.isKindOfClass(array.class()));
     try std.testing.expectEqualStrings("first", array.objectAtIndex(0).utf8String());

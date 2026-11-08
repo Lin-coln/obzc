@@ -17,7 +17,7 @@ pub const VNImageRequestHandler = opaque {
     pub const release = h.release;
 
     /// Retains the image source, which must not be modified while the handler is alive.
-    pub fn initWithData(data: *ns.Data, options: *Options) *Self {
+    pub fn initWithData(data: *const ns.Data, options: *Options) *Self {
         return h.call(h.cls.alloc(), *Self, "initWithData:options:", .{ data, options });
     }
 

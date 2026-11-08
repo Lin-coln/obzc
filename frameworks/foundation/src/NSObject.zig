@@ -17,11 +17,11 @@ pub const NSObject = opaque {
     pub const respondsToSelector = h.respondsToSelector;
 
     pub fn alloc() *Self {
-        return h._cls()._call(*Self, "alloc", .{});
+        return h._cls(null).alloc(Self);
     }
 
     pub fn new() *Self {
-        return h._cls()._call(*Self, "new", .{});
+        return h._cls(null).new(Self);
     }
 
     pub fn init(self: *Self) ?*Self {

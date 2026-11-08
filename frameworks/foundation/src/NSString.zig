@@ -50,11 +50,11 @@ fn NSStringMixin(comptime T: type) type {
 
         /// Returns an autoreleased string. Use it within an autorelease pool.
         pub fn stringWithUTF8String(utf8: [*:0]const u8) ?*T {
-            return _cls()._call(?*T, "stringWithUTF8String:", .{utf8});
+            return _cls(null)._call(?*T, "stringWithUTF8String:", .{utf8});
         }
 
         pub fn init(utf8: []const u8) ?*T {
-            const allocated = _cls()._call(*T, "alloc", .{});
+            const allocated = _cls(null).alloc(T);
             return _call(allocated, ?*T, "initWithBytes:length:encoding:", .{ utf8.ptr, @as(z.NSUInteger, @intCast(utf8.len)), z.NSUTF8StringEncoding });
         }
 

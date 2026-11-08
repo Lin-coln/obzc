@@ -1,16 +1,10 @@
 const std = @import("std");
 const c = @import("macos").c;
-const utils = @import("utils");
 const Class = @import("Class.zig").Class;
 const call = @import("msg.zig").call;
 
-pub inline fn get(
-    receiver: anytype,
-    comptime P: type,
-    name: [:0]const u8,
-    comptime class_name: [:0]const u8,
-) P {
-    const cls = Class.lookup(class_name).?;
+pub inline fn get(receiver: anytype, comptime P: type, name: [:0]const u8) P {
+    const cls = call(receiver, *Class, "class", .{});
     const getter = if (getPropertyFromClass(cls, name)) |metadata| metadata.copyAttributeValue("G") else null;
     defer if (getter) |custom| std.c.free(custom.ptr);
 
