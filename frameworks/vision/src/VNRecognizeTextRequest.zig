@@ -22,8 +22,8 @@ pub const VNRecognizeTextRequest = opaque {
 
     pub const recognitionLevel = h.prop("recognitionLevel", VNRequestTextRecognitionLevel).getter;
     pub const setRecognitionLevel = h.prop("recognitionLevel", VNRequestTextRecognitionLevel).setter;
-    pub const recognitionLanguages = h.prop("recognitionLanguages", *ns.Array(ns.String)).getter;
-    pub const setRecognitionLanguages = h.prop("recognitionLanguages", *ns.Array(ns.String)).setter;
+    pub const recognitionLanguages = h.prop("recognitionLanguages", *ns.Array.With(ns.String)).getter;
+    pub const setRecognitionLanguages = h.prop("recognitionLanguages", *ns.Array.With(ns.String)).setter;
     pub const usesLanguageCorrection = h.prop("usesLanguageCorrection", bool).getter;
     pub const setUsesLanguageCorrection = h.prop("usesLanguageCorrection", bool).setter;
     pub const minimumTextHeight = h.prop("minimumTextHeight", f32).getter;
@@ -32,7 +32,7 @@ pub const VNRecognizeTextRequest = opaque {
     pub const setRegionOfInterest = h.prop("regionOfInterest", cg.Rect).setter;
 
     /// Results are borrowed and remain null until the request has produced results.
-    pub const results = h.prop("results", ?*ns.Array(VNRecognizedTextObservation)).getter;
+    pub const results = h.prop("results", ?*ns.Array.With(VNRecognizedTextObservation)).getter;
 };
 
 test "VNRecognizeTextRequest: configure recognition and region of interest" {
@@ -62,7 +62,7 @@ test "VNRecognizeTextRequest: configure recognition and region of interest" {
 
     const language = ns.String.init("en-US").?;
     defer language.release();
-    const languages = ns.Array(ns.String).init(&.{language});
+    const languages = ns.Array.With(ns.String).init(&.{language});
     defer languages.release();
     request.setRecognitionLanguages(languages);
 

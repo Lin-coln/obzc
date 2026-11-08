@@ -27,7 +27,7 @@ pub const VNImageRequestHandler = opaque {
     }
 
     /// Runs the requests synchronously, logging the SDK error on failure.
-    pub fn performRequests(self: *Self, requests: *ns.Array(VNRequest)) !void {
+    pub fn performRequests(self: *Self, requests: *ns.Array.With(VNRequest)) !void {
         var err: ?*ns.Error = null;
         const succeeded = h.call(self, bool, "performRequests:error:", .{ requests, &err });
         if (succeeded) return;
@@ -49,7 +49,7 @@ test "VNImageRequestHandler: invalid image data fails without producing results"
     defer handler.release();
     const request = VNRecognizeTextRequest.new();
     defer request.release();
-    const requests = ns.Array(VNRequest).init(&.{@ptrCast(request)});
+    const requests = ns.Array.With(VNRequest).init(&.{@ptrCast(request)});
     defer requests.release();
 
     try std.testing.expectError(error.PerformRequestsFailed, handler.performRequests(requests));

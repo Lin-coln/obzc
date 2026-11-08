@@ -14,7 +14,7 @@ pub const SCShareableContent = opaque {
     pub const retain = h.retain;
     pub const release = h.release;
 
-    pub const windows = h.prop("windows", *ns.Array(SCWindow)).getter;
+    pub const windows = h.prop("windows", *ns.Array.With(SCWindow)).getter;
 
     /// The context pointer must remain valid until the completion handler returns.
     pub const getShareableContent = h.cls.m.withCallback(
