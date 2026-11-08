@@ -25,7 +25,7 @@ pub const NSError = opaque {
             allocated,
             ?*Self,
             "initWithDomain:code:userInfo:",
-            .{ domain_string, error_code, @as(?*ns.Dictionary(ns.String, ns.Object), null) },
+            .{ domain_string, error_code, @as(?*ns.Dictionary.With(ns.String, ns.Object), null) },
         );
     }
 

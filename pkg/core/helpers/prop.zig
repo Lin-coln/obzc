@@ -2,7 +2,6 @@ const std = @import("std");
 const ffi = @import("../ffi/root.zig");
 const c = @import("macos").c;
 const utils = @import("utils");
-const Class = ffi.Class;
 
 pub fn prop(comptime T: type, comptime call: anytype) type {
     const class_name = comptime utils.resolveTypeName(@typeName(T));
@@ -20,7 +19,7 @@ pub fn prop(comptime T: type, comptime call: anytype) type {
         }
 
         pub fn get(self: *const T, comptime P: type, name: [:0]const u8) P {
-            const cls = Class.lookup(class_name).?;
+            const cls = ffi.Class.lookup(class_name).?;
             const getter = if (cls.getProperty(name)) |metadata| metadata.copyAttributeValue("G") else null;
             defer if (getter) |custom| std.c.free(custom.ptr);
             const selector = getter orelse name;
@@ -52,7 +51,7 @@ test "helpers.prop.get: selects a custom getter or falls back to the property na
             return 37;
         }
     };
-    const cls = c.objc_allocateClassPair(@ptrCast(Class.lookup("NSObject").?), "ObzcHelpers2PropGetProbe", 0) orelse return error.ClassAllocFailed;
+    const cls = c.objc_allocateClassPair(@ptrCast(ffi.Class.lookup("NSObject").?), "ObzcHelpers2PropGetProbe", 0) orelse return error.ClassAllocFailed;
     defer c.objc_disposeClassPair(cls);
     const custom_attributes = [_]c.objc_property_attribute_t{
         .{ .name = "T", .value = "q" },

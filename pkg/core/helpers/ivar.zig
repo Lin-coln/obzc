@@ -2,7 +2,6 @@ const std = @import("std");
 const ffi = @import("../ffi/root.zig");
 const utils = @import("utils");
 const c = @import("macos").c;
-const Class = ffi.Class;
 
 pub fn ivar(comptime T: type) type {
     // const class_name = comptime utils.resolveTypeName(@typeName(T));

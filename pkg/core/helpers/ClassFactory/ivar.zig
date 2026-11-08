@@ -2,14 +2,13 @@ const std = @import("std");
 const ffi = @import("../../ffi/root.zig");
 const encodeType = @import("utils/encode").encodeType;
 const c = @import("macos").c;
-const Class = ffi.Class;
 
 pub fn ivar(comptime T: type) type {
     _ = T;
 
     return struct {
         pub fn addIvar(
-            cls: *Class,
+            cls: *ffi.Class,
             comptime name: [:0]const u8,
             comptime Type: type,
         ) !void {
@@ -30,7 +29,7 @@ test "ClassFactory.ivar.addIvar: derives size and alignment from the value type 
     const Payload = extern struct { first: u64, second: u64 };
     const raw = c.objc_allocateClassPair(c.objc_getClass("NSObject").?, "ObzcFactoryIvarProbe", 0).?;
     defer c.objc_disposeClassPair(raw);
-    const cls: *Class = @ptrCast(raw);
+    const cls: *ffi.Class = @ptrCast(raw);
     const ivars = ivar(opaque {});
     const base_size = c.class_getInstanceSize(raw);
     try ivars.addIvar(cls, "_prefix", u8);

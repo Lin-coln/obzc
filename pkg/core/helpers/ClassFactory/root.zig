@@ -2,7 +2,6 @@ const std = @import("std");
 const ffi = @import("../../ffi/root.zig");
 const utils = @import("utils");
 const c = @import("macos").c;
-const Class = ffi.Class;
 
 pub fn ClassFactory(comptime T: type) type {
     const class_name = comptime utils.resolveTypeName(@typeName(T));
@@ -11,9 +10,9 @@ pub fn ClassFactory(comptime T: type) type {
     const i = @import("ivar.zig").ivar(T);
     const ptc = @import("protocol.zig").protocol(T);
     return struct {
-        pub fn allocate(super: ?[:0]const u8) !*Class {
-            const super_class: ?*Class = if (super) |name|
-                Class.lookup(name) orelse return error.SuperClassNotFound
+        pub fn allocate(super: ?[:0]const u8) !*ffi.Class {
+            const super_class: ?*ffi.Class = if (super) |name|
+                ffi.Class.lookup(name) orelse return error.SuperClassNotFound
             else
                 null;
 

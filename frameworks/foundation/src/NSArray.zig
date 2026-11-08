@@ -87,14 +87,13 @@ pub fn NSArray_With(comptime T: type) type {
 }
 
 test "NSArray: create and read objects" {
-    const NSString = ns.String;
-    const first = NSString.init("first").?;
+    const first = ns.String.init("first").?;
     defer first.release();
-    const second = NSString.init("second").?;
+    const second = ns.String.init("second").?;
     defer second.release();
 
-    const objects = [_]*NSString{ first, second };
-    const array = NSArray.With(NSString).init(&objects);
+    const objects = [_]*ns.String{ first, second };
+    const array = NSArray.With(ns.String).init(&objects);
     defer array.release();
 
     try std.testing.expectEqual(2, array.count());

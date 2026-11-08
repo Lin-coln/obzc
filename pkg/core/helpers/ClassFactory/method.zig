@@ -3,15 +3,13 @@ const ffi = @import("../../ffi/root.zig");
 const e = @import("../../ffi/metadata.zig").e;
 const encodeFunction = @import("utils/encode").encodeFunction;
 const c = @import("macos").c;
-const Sel = ffi.Sel;
-const Class = ffi.Class;
 
 pub fn method(comptime T: type) type {
     _ = T;
 
     return struct {
         pub fn addStaticMethod(
-            cls: *Class,
+            cls: *ffi.Class,
             comptime name: [:0]const u8,
             comptime handler: anytype,
         ) !void {
@@ -21,7 +19,7 @@ pub fn method(comptime T: type) type {
         }
 
         pub fn addMethod(
-            cls: *Class,
+            cls: *ffi.Class,
             comptime name: [:0]const u8,
             comptime handler: anytype,
         ) !void {
@@ -30,7 +28,7 @@ pub fn method(comptime T: type) type {
 
             const done = c.class_addMethod(
                 @ptrCast(cls),
-                @ptrCast(Sel.get(name)),
+                @ptrCast(ffi.Sel.get(name)),
                 imp,
                 comptime encodeFunction(Fn),
             );
@@ -45,12 +43,12 @@ test "ClassFactory.method.addMethod: binds the function to the selector" {
         pub const _encoding = e(.obj);
     };
     const Probe = struct {
-        fn handle(_: *T, _: *Sel) callconv(.c) void {}
+        fn handle(_: *T, _: *ffi.Sel) callconv(.c) void {}
     };
     const raw = c.objc_allocateClassPair(c.objc_getClass("NSObject").?, "ObzcFactoryMethodProbe", 0).?;
     defer c.objc_disposeClassPair(raw);
     c.objc_registerClassPair(raw);
-    const cls: *Class = @ptrCast(raw);
+    const cls: *ffi.Class = @ptrCast(raw);
     const methods = method(T);
     try methods.addMethod(cls, "first", Probe.handle);
     const metadata = c.class_getInstanceMethod(raw, c.sel_registerName("first")).?;
@@ -62,12 +60,12 @@ test "ClassFactory.method.addMethod: binds the function to the selector" {
 test "ClassFactory.method.addStaticMethod: targets the metaclass and propagates duplicate errors" {
     const T = opaque {};
     const Probe = struct {
-        fn handle(_: *Class, _: *Sel) callconv(.c) void {}
+        fn handle(_: *ffi.Class, _: *ffi.Sel) callconv(.c) void {}
     };
     const raw = c.objc_allocateClassPair(c.objc_getClass("NSObject").?, "ObzcFactoryStaticMethodProbe", 0).?;
     defer c.objc_disposeClassPair(raw);
     c.objc_registerClassPair(raw);
-    const cls: *Class = @ptrCast(raw);
+    const cls: *ffi.Class = @ptrCast(raw);
     const methods = method(T);
     try methods.addStaticMethod(cls, "factoryProbe", Probe.handle);
     const selector = c.sel_registerName("factoryProbe");

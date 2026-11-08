@@ -1,75 +1,137 @@
 const std = @import("std");
 const z = @import("macos").z;
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("root.zig");
 
-pub fn NSDictionary(comptime Key: type, comptime Value: type) type {
-    return opaque {
-        pub const _encoding = e(.obj);
-        const Self = @This();
-        const h = core.h(Self);
+pub const NSDictionary = opaque {
+    pub const Mixin = NSDictionaryMixin;
+    pub const With = NSDictionary_With;
+
+    const Self = @This();
+    const h = Mixin(Self);
+
+    pub const _encoding = h._encoding;
+    pub const retain = h.retain;
+    pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
+    pub const count = h.count;
+    pub const objectForKey = h.objectForKey;
+
+    pub fn new() *Self {
+        return h._cls()._call(*Self, "new", .{});
+    }
+};
+
+fn NSDictionaryMixin(comptime T: type) type {
+    return struct {
+        const h = ns.Object.Mixin(T);
+
+        pub const _encoding = h._encoding;
+        pub const _cls = h._cls;
+        pub const _call = h._call;
+        pub const _p = h._p;
 
         pub const retain = h.retain;
         pub const release = h.release;
-        pub const new = h.cls.new;
+        pub const equal = h.equal;
+        pub const hash = h.hash;
+        pub const class = h.class;
+        pub const isKindOfClass = h.isKindOfClass;
+        pub const respondsToSelector = h.respondToSelector;
+
+        pub fn count(self: *const T) z.NSUInteger {
+            return _call(self, z.NSUInteger, "count", .{});
+        }
+
+        /// Returns a borrowed value, or null when the key is absent.
+        pub fn objectForKey(self: *T, key: *ns.Object) ?*ns.Object {
+            return _call(self, ?*ns.Object, "objectForKey:", .{key});
+        }
+    };
+}
+
+pub fn NSDictionary_With(comptime Key: type, comptime Value: type) type {
+    return opaque {
+        const Self = @This();
+        const h = NSDictionaryMixin(Self);
+
+        pub const _encoding = h._encoding;
+        pub const retain = h.retain;
+        pub const release = h.release;
+        pub const equal = h.equal;
+        pub const hash = h.hash;
+        pub const class = h.class;
+        pub const isKindOfClass = h.isKindOfClass;
+        pub const respondsToSelector = h.respondToSelector;
+        pub const count = h.count;
+
+        pub fn new() *Self {
+            return @ptrCast(NSDictionary.new());
+        }
 
         /// Copies the keys and retains the values. Keys must conform to NSCopying.
         pub fn init(objects: []const *Value, keys: []const *Key) *Self {
             std.debug.assert(objects.len == keys.len);
-            return h.call(h.cls.alloc(), *Self, "initWithObjects:forKeys:count:", .{ objects.ptr, keys.ptr, @as(z.NSUInteger, @intCast(objects.len)) });
+            const base = ns.Object.Mixin(NSDictionary);
+            const allocated = base._cls()._call(*Self, "alloc", .{});
+            return h._call(allocated, *Self, "initWithObjects:forKeys:count:", .{ objects.ptr, keys.ptr, @as(z.NSUInteger, @intCast(objects.len)) });
         }
-
-        pub const count = h.prop("count", z.NSUInteger).getter;
 
         /// Returns a borrowed value, or null when the key is absent.
         pub fn objectForKey(self: *Self, key: *Key) ?*Value {
-            return h.call(self, ?*Value, "objectForKey:", .{key});
+            return h._call(self, ?*Value, "objectForKey:", .{key});
         }
     };
 }
 
 test "NSDictionary: new and init create empty dictionaries" {
-    const NSString = @import("NSString.zig").NSString;
-    const dictionary = NSDictionary(NSString, NSString).new();
+    const dictionary = NSDictionary.With(ns.String, ns.String).new();
     defer dictionary.release();
-    const key = NSString.init("missing").?;
+    const key = ns.String.init("missing").?;
     defer key.release();
 
     try std.testing.expectEqual(0, dictionary.count());
     try std.testing.expect(dictionary.objectForKey(key) == null);
 
-    const initialized = NSDictionary(NSString, NSString).init(&.{}, &.{});
+    const initialized = NSDictionary.With(ns.String, ns.String).init(&.{}, &.{});
     defer initialized.release();
     try std.testing.expectEqual(0, initialized.count());
     try std.testing.expect(initialized.objectForKey(key) == null);
 }
 
 test "NSDictionary: init and objectForKey preserve key-value pairs" {
-    const NSString = @import("NSString.zig").NSString;
-    const NSNumber = @import("NSNumber.zig").NSNumber;
     const dictionary = initialized: {
-        const first_key = NSString.init("first dictionary key").?;
+        const first_key = ns.String.init("first dictionary key").?;
         defer first_key.release();
-        const second_key = NSString.init("second dictionary key").?;
+        const second_key = ns.String.init("second dictionary key").?;
         defer second_key.release();
-        const first_value = NSNumber.init(z.NSInteger, 42);
+        const first_value = ns.Number.init(z.NSInteger, 42);
         defer first_value.release();
-        const second_value = NSNumber.init(z.NSInteger, 7);
+        const second_value = ns.Number.init(z.NSInteger, 7);
         defer second_value.release();
 
-        break :initialized NSDictionary(NSString, NSNumber).init(&.{ first_value, second_value }, &.{ first_key, second_key });
+        break :initialized NSDictionary.With(ns.String, ns.Number).init(&.{ first_value, second_value }, &.{ first_key, second_key });
     };
     defer dictionary.release();
 
-    const first_key = NSString.init("first dictionary key").?;
+    const first_key = ns.String.init("first dictionary key").?;
     defer first_key.release();
-    const second_key = NSString.init("second dictionary key").?;
+    const second_key = ns.String.init("second dictionary key").?;
     defer second_key.release();
-    const missing_key = NSString.init("missing").?;
+    const missing_key = ns.String.init("missing").?;
     defer missing_key.release();
 
     try std.testing.expectEqual(2, dictionary.count());
+    try std.testing.expect(dictionary.equal(dictionary));
+    try std.testing.expect(dictionary.isKindOfClass(dictionary.class()));
     try std.testing.expectEqual(42, dictionary.objectForKey(first_key).?.as(z.NSInteger));
     try std.testing.expectEqual(7, dictionary.objectForKey(second_key).?.as(z.NSInteger));
     try std.testing.expect(dictionary.objectForKey(missing_key) == null);
+
+    const untyped: *NSDictionary = @ptrCast(dictionary);
+    try std.testing.expectEqual(2, untyped.count());
+    try std.testing.expectEqual(@intFromPtr(dictionary.objectForKey(first_key).?), @intFromPtr(untyped.objectForKey(@ptrCast(first_key)).?));
 }

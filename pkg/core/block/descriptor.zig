@@ -2,10 +2,9 @@ const std = @import("std");
 const ffi = @import("../ffi/root.zig");
 const c = @import("macos").c;
 const z = @import("macos").z;
-const Object = ffi.Object;
 
 pub fn isObject(comptime T: type) bool {
-    return T == *Object or T == ?*Object;
+    return T == *ffi.Object or T == ?*ffi.Object;
 }
 
 /// Descriptor for a block with a signature and no copy/dispose helpers.
@@ -69,14 +68,14 @@ test "Descriptor.init: reserved, block size and signature" {
 }
 
 test "isObject: direct runtime object pointers" {
-    try std.testing.expect(isObject(*Object));
-    try std.testing.expect(isObject(?*Object));
+    try std.testing.expect(isObject(*ffi.Object));
+    try std.testing.expect(isObject(?*ffi.Object));
     try std.testing.expect(!isObject(*ffi.Class));
-    try std.testing.expect(!isObject(extern struct { object: *Object }));
+    try std.testing.expect(!isObject(extern struct { object: *ffi.Object }));
 }
 
 test "DescriptorWithHelpers.init: reserved, block size and signature" {
-    const B = extern struct { context: *Object };
+    const B = extern struct { context: *ffi.Object };
     const signature: [:0]const u8 = "v@?";
     const descriptor = DescriptorWithHelpers(B).init(signature);
     try std.testing.expectEqual(@as(c_ulong, 0), descriptor.reserved);
@@ -88,7 +87,7 @@ test "DescriptorWithHelpers.init: reserved, block size and signature" {
 
 test "DescriptorWithHelpers: copy retains the captured object until dispose" {
     // Exercise this descriptor independently: Block does not select it yet.
-    const B = extern struct { context: *Object };
+    const B = extern struct { context: *ffi.Object };
     const Probe = struct {
         var deallocated = false;
 
@@ -110,7 +109,7 @@ test "DescriptorWithHelpers: copy retains the captured object until dispose" {
     var destination: B = undefined;
     {
         const send: *const fn (c.Class, c.SEL) callconv(.c) c.id = @ptrCast(&c.objc_msgSend);
-        const object: *Object = @ptrCast(send(class, c.sel_registerName("new")).?);
+        const object: *ffi.Object = @ptrCast(send(class, c.sel_registerName("new")).?);
         defer z.objc_release(@ptrCast(object));
         const source: B = .{ .context = object };
         Helpers.copyHelper(&destination, &source);
@@ -125,7 +124,7 @@ test "DescriptorWithHelpers: copy retains the captured object until dispose" {
 }
 
 test "DescriptorWithHelpers: null object captures need no ownership" {
-    const B = extern struct { context: ?*Object };
+    const B = extern struct { context: ?*ffi.Object };
     const Helpers = DescriptorWithHelpers(B);
     const source: B = .{ .context = null };
     var destination: B = undefined;

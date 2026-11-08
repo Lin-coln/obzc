@@ -81,12 +81,11 @@ pub fn CFDictionary_WithKey(comptime K: type) type {
 }
 
 test "mutable dictionary stores a value" {
-    const Boolean = cf.Boolean;
     const dict = CFDictionary.createMutable().?;
     defer dict.release();
 
-    const key: *const Boolean = @ptrCast(c.kCFBooleanTrue.?);
-    const stored: *const Boolean = @ptrCast(c.kCFBooleanFalse.?);
+    const key: *const cf.Boolean = @ptrCast(c.kCFBooleanTrue.?);
+    const stored: *const cf.Boolean = @ptrCast(c.kCFBooleanFalse.?);
     dict.set(key, stored);
     const read_only: *const CFDictionary = dict;
     const value = read_only.get(key).?;
@@ -94,13 +93,12 @@ test "mutable dictionary stores a value" {
 }
 
 test "dictionary with typed keys stores a value" {
-    const Boolean = cf.Boolean;
-    const BooleanKeys = CFDictionary.WithKey(Boolean);
+    const BooleanKeys = CFDictionary.WithKey(cf.Boolean);
     const dict = BooleanKeys.createMutable().?;
     defer dict.release();
 
-    const key: *const Boolean = @ptrCast(c.kCFBooleanTrue.?);
-    const stored: *const Boolean = @ptrCast(c.kCFBooleanFalse.?);
+    const key: *const cf.Boolean = @ptrCast(c.kCFBooleanTrue.?);
+    const stored: *const cf.Boolean = @ptrCast(c.kCFBooleanFalse.?);
     dict.set(key, stored);
-    try std.testing.expect(!dict.get(key, Boolean).?.val());
+    try std.testing.expect(!dict.get(key, cf.Boolean).?.val());
 }
