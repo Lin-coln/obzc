@@ -1,27 +1,32 @@
+const z = @import("macos").z;
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const MTLFunction = @import("MTLFunction.zig").MTLFunction;
 
 pub const MTLLibrary = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     /// Returns an owned function, or null when the name is absent.
     pub fn newFunction(self: *Self, name: *ns.String) ?*MTLFunction {
-        return h.call(self, ?*MTLFunction, "newFunctionWithName:", .{name});
+        return h._call(self, ?*MTLFunction, "newFunctionWithName:", .{name});
     }
 };
 
 test "MTLLibrary: newFunction finds a named function and returns null for a missing name" {
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init("kernel void available() {}").?;

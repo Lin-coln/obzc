@@ -1,38 +1,32 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const z = @import("macos").z;
+const mtl = @import("root.zig");
 const MTLDevice = @import("MTLDevice.zig").MTLDevice;
 
 pub const MTLTexture = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = mtl.Resource.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub fn width(self: *Self) z.NSUInteger {
-        return h.call(self, z.NSUInteger, "width", .{});
-    }
-
-    pub fn height(self: *Self) z.NSUInteger {
-        return h.call(self, z.NSUInteger, "height", .{});
-    }
-
-    pub fn pixelFormat(self: *Self) z.MTLPixelFormat {
-        return h.call(self, z.MTLPixelFormat, "pixelFormat", .{});
-    }
-    /// Borrowed device that created this texture.
-    pub fn device(self: *Self) *MTLDevice {
-        return h.call(self, *MTLDevice, "device", .{});
-    }
+    pub const width = h._p("width", z.NSUInteger).getter;
+    pub const height = h._p("height", z.NSUInteger).getter;
+    pub const pixelFormat = h._p("pixelFormat", z.MTLPixelFormat).getter;
+    pub const device = h.device;
 };
 
 test "MTLTexture: dimensions, format, and device describe the created resource" {
     const MTLTextureDescriptor = @import("MTLTextureDescriptor.zig").MTLTextureDescriptor;
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 8, 4, false);

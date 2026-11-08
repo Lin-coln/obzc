@@ -1,28 +1,33 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 const z = @import("macos").z;
 const MTLFunction = @import("MTLFunction.zig").MTLFunction;
 const MTLRenderPipelineColorAttachmentDescriptorArray = @import("MTLRenderPipelineColorAttachmentDescriptorArray.zig").MTLRenderPipelineColorAttachmentDescriptorArray;
 
 pub const MTLRenderPipelineDescriptor = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
-    pub const new = h.cls.new;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const vertexFunction = h.prop("vertexFunction", ?*MTLFunction).getter;
-    pub const setVertexFunction = h.prop("vertexFunction", ?*MTLFunction).setter;
-    pub const fragmentFunction = h.prop("fragmentFunction", ?*MTLFunction).getter;
-    pub const setFragmentFunction = h.prop("fragmentFunction", ?*MTLFunction).setter;
-    /// Borrowed attachment array, owned by this descriptor.
-    pub const colorAttachments = h.prop("colorAttachments", *MTLRenderPipelineColorAttachmentDescriptorArray).getter;
-    pub fn hash(self: *Self) z.NSUInteger {
-        return h.call(self, z.NSUInteger, "hash", .{});
+    pub fn new() *Self {
+        return h._cls(null).new(Self);
     }
+
+    pub const vertexFunction = h._p("vertexFunction", ?*MTLFunction).getter;
+    pub const setVertexFunction = h._p("vertexFunction", ?*MTLFunction).setter;
+    pub const fragmentFunction = h._p("fragmentFunction", ?*MTLFunction).getter;
+    pub const setFragmentFunction = h._p("fragmentFunction", ?*MTLFunction).setter;
+    /// Borrowed attachment array, owned by this descriptor.
+    pub const colorAttachments = h._p("colorAttachments", *MTLRenderPipelineColorAttachmentDescriptorArray).getter;
 };
 
 test "MTLRenderPipelineDescriptor: new has empty function slots" {
@@ -34,10 +39,9 @@ test "MTLRenderPipelineDescriptor: new has empty function slots" {
 }
 
 test "MTLRenderPipelineDescriptor: function slots store and clear functions independently" {
-    const ns = @import("foundation");
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init(

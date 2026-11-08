@@ -1,19 +1,27 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 const z = @import("macos").z;
 
 pub const MTLRenderPipelineColorAttachmentDescriptor = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
-    pub const new = h.cls.new;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const pixelFormat = h.prop("pixelFormat", z.MTLPixelFormat).getter;
-    pub const setPixelFormat = h.prop("pixelFormat", z.MTLPixelFormat).setter;
+    pub fn new() *Self {
+        return h._cls(null).new(Self);
+    }
+
+    pub const pixelFormat = h._p("pixelFormat", z.MTLPixelFormat).getter;
+    pub const setPixelFormat = h._p("pixelFormat", z.MTLPixelFormat).setter;
 };
 
 test "MTLRenderPipelineColorAttachmentDescriptor: pixelFormat can be changed" {

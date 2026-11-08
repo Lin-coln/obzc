@@ -1,20 +1,25 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 const z = @import("macos").z;
 const MTLRenderPassColorAttachmentDescriptor = @import("MTLRenderPassColorAttachmentDescriptor.zig").MTLRenderPassColorAttachmentDescriptor;
 
 pub const MTLRenderPassColorAttachmentDescriptorArray = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     /// Returns a borrowed attachment descriptor. The index must be in 0...7.
     pub fn objectAtIndexedSubscript(self: *Self, index: z.NSUInteger) *MTLRenderPassColorAttachmentDescriptor {
-        return h.call(self, *MTLRenderPassColorAttachmentDescriptor, "objectAtIndexedSubscript:", .{index});
+        return h._call(self, *MTLRenderPassColorAttachmentDescriptor, "objectAtIndexedSubscript:", .{index});
     }
 };
 

@@ -1,7 +1,5 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const ios = @import("io-surface");
 const z = @import("macos").z;
@@ -14,12 +12,18 @@ const MTLRenderPipelineDescriptor = @import("MTLRenderPipelineDescriptor.zig").M
 const MTLRenderPipelineState = @import("MTLRenderPipelineState.zig").MTLRenderPipelineState;
 
 pub const MTLDevice = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     /// Returns an owned default device, or null if Metal is unavailable.
     pub fn createSystemDefaultDevice() ?*Self {
@@ -27,21 +31,21 @@ pub const MTLDevice = opaque {
     }
 
     pub fn newCommandQueue(self: *Self) ?*MTLCommandQueue {
-        return h.call(self, ?*MTLCommandQueue, "newCommandQueue", .{});
+        return h._call(self, ?*MTLCommandQueue, "newCommandQueue", .{});
     }
 
     pub fn newTexture(self: *Self, descriptor: *MTLTextureDescriptor) ?*MTLTexture {
-        return h.call(self, ?*MTLTexture, "newTextureWithDescriptor:", .{descriptor});
+        return h._call(self, ?*MTLTexture, "newTextureWithDescriptor:", .{descriptor});
     }
 
     pub fn newTextureWithIOSurface(self: *Self, descriptor: *MTLTextureDescriptor, surface: ?*ios.Surface, plane: z.NSUInteger) ?*MTLTexture {
-        return h.call(self, ?*MTLTexture, "newTextureWithDescriptor:iosurface:plane:", .{ descriptor, surface, plane });
+        return h._call(self, ?*MTLTexture, "newTextureWithDescriptor:iosurface:plane:", .{ descriptor, surface, plane });
     }
 
     /// Returns an owned library. Logs the SDK error when compilation fails.
     pub fn newLibrary(self: *Self, source: *ns.String, options: ?*MTLCompileOptions) !*MTLLibrary {
         var err: ?*ns.Error = null;
-        const library = h.call(self, ?*MTLLibrary, "newLibraryWithSource:options:error:", .{ source, options, &err });
+        const library = h._call(self, ?*MTLLibrary, "newLibraryWithSource:options:error:", .{ source, options, &err });
         if (library) |value| return value;
 
         if (err) |ns_error| ns_error.log() else if (!builtin.is_test)
@@ -52,7 +56,7 @@ pub const MTLDevice = opaque {
     /// Returns an owned pipeline state. Logs the SDK error when creation fails.
     pub fn newRenderPipelineState(self: *Self, descriptor: *MTLRenderPipelineDescriptor) !*MTLRenderPipelineState {
         var err: ?*ns.Error = null;
-        const pipeline = h.call(self, ?*MTLRenderPipelineState, "newRenderPipelineStateWithDescriptor:error:", .{ descriptor, &err });
+        const pipeline = h._call(self, ?*MTLRenderPipelineState, "newRenderPipelineStateWithDescriptor:error:", .{ descriptor, &err });
         if (pipeline) |value| return value;
 
         if (err) |ns_error| ns_error.log() else if (!builtin.is_test)
@@ -62,8 +66,8 @@ pub const MTLDevice = opaque {
 };
 
 test "MTLDevice: newLibrary rejects invalid shader source" {
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init("this is not a Metal shader").?;
@@ -72,8 +76,8 @@ test "MTLDevice: newLibrary rejects invalid shader source" {
 }
 
 test "MTLDevice: newRenderPipelineState reports incompatible shader interfaces" {
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init(

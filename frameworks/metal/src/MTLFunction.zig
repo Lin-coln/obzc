@@ -1,26 +1,28 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 const z = @import("macos").z;
 
 pub const MTLFunction = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub fn functionType(self: *Self) z.MTLFunctionType {
-        return h.call(self, z.MTLFunctionType, "functionType", .{});
-    }
+    pub const functionType = h._p("functionType", z.MTLFunctionType).getter;
 };
 
 test "MTLFunction: functionType identifies a compute function" {
-    const ns = @import("foundation");
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init("kernel void compute() {}").?;

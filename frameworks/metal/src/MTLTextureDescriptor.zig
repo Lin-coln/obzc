@@ -1,20 +1,28 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 const z = @import("macos").z;
 
 pub const MTLTextureDescriptor = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
-    pub const new = h.cls.new;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
+
+    pub fn new() *Self {
+        return h._cls(null).new(Self);
+    }
 
     /// Returns an autoreleased descriptor; retain it to keep it beyond the current pool.
     pub fn texture2DDescriptor(pixel_format: z.MTLPixelFormat, width_value: z.NSUInteger, height_value: z.NSUInteger, mipmapped: bool) *Self {
-        return h.cls.call(*Self, "texture2DDescriptorWithPixelFormat:width:height:mipmapped:", .{
+        return h._cls(null)._call(*Self, "texture2DDescriptorWithPixelFormat:width:height:mipmapped:", .{
             pixel_format,
             width_value,
             height_value,
@@ -22,22 +30,22 @@ pub const MTLTextureDescriptor = opaque {
         });
     }
 
-    pub const pixelFormat = h.prop("pixelFormat", z.MTLPixelFormat).getter;
-    pub const setPixelFormat = h.prop("pixelFormat", z.MTLPixelFormat).setter;
-    pub const width = h.prop("width", z.NSUInteger).getter;
-    pub const setWidth = h.prop("width", z.NSUInteger).setter;
-    pub const height = h.prop("height", z.NSUInteger).getter;
-    pub const setHeight = h.prop("height", z.NSUInteger).setter;
-    pub const mipmapLevelCount = h.prop("mipmapLevelCount", z.NSUInteger).getter;
-    pub const usage = h.prop("usage", z.MTLTextureUsage).getter;
-    pub const setUsage = h.prop("usage", z.MTLTextureUsage).setter;
-    pub const storageMode = h.prop("storageMode", z.MTLStorageMode).getter;
-    pub const setStorageMode = h.prop("storageMode", z.MTLStorageMode).setter;
+    pub const pixelFormat = h._p("pixelFormat", z.MTLPixelFormat).getter;
+    pub const setPixelFormat = h._p("pixelFormat", z.MTLPixelFormat).setter;
+    pub const width = h._p("width", z.NSUInteger).getter;
+    pub const setWidth = h._p("width", z.NSUInteger).setter;
+    pub const height = h._p("height", z.NSUInteger).getter;
+    pub const setHeight = h._p("height", z.NSUInteger).setter;
+    pub const mipmapLevelCount = h._p("mipmapLevelCount", z.NSUInteger).getter;
+    pub const usage = h._p("usage", z.MTLTextureUsage).getter;
+    pub const setUsage = h._p("usage", z.MTLTextureUsage).setter;
+    pub const storageMode = h._p("storageMode", z.MTLStorageMode).getter;
+    pub const setStorageMode = h._p("storageMode", z.MTLStorageMode).setter;
 };
 
 test "MTLTextureDescriptor: configure texture dimensions and storage" {
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 32, 16, false);
     descriptor.setUsage(z.MTLTextureUsageShaderRead | z.MTLTextureUsageRenderTarget);
     descriptor.setStorageMode(z.MTLStorageModePrivate);

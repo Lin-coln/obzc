@@ -5,7 +5,6 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .macos = .{ .path = "../../pkg/macos" },
-        .core = .{ .path = "../../pkg/core" },
         .foundation = .{ .path = "../foundation" },
         .@"io-surface" = .{ .path = "../io-surface" },
     },

@@ -1,6 +1,9 @@
 const std = @import("std");
 
 pub const BlitCommandEncoder = @import("MTLBlitCommandEncoder.zig").MTLBlitCommandEncoder;
+pub const CommandEncoder = @import("MTLCommandEncoder.zig").MTLCommandEncoder;
+pub const Allocation = @import("MTLAllocation.zig").MTLAllocation;
+pub const Resource = @import("MTLResource.zig").MTLResource;
 pub const CommandBuffer = @import("MTLCommandBuffer.zig").MTLCommandBuffer;
 pub const CommandQueue = @import("MTLCommandQueue.zig").MTLCommandQueue;
 pub const CompileOptions = @import("MTLCompileOptions.zig").MTLCompileOptions;
@@ -9,6 +12,7 @@ pub const Function = @import("MTLFunction.zig").MTLFunction;
 pub const Library = @import("MTLLibrary.zig").MTLLibrary;
 pub const RenderCommandEncoder = @import("MTLRenderCommandEncoder.zig").MTLRenderCommandEncoder;
 pub const RenderPassColorAttachmentDescriptor = @import("MTLRenderPassColorAttachmentDescriptor.zig").MTLRenderPassColorAttachmentDescriptor;
+pub const RenderPassAttachmentDescriptor = @import("MTLRenderPassAttachmentDescriptor.zig").MTLRenderPassAttachmentDescriptor;
 pub const RenderPassColorAttachmentDescriptorArray = @import("MTLRenderPassColorAttachmentDescriptorArray.zig").MTLRenderPassColorAttachmentDescriptorArray;
 pub const RenderPassDescriptor = @import("MTLRenderPassDescriptor.zig").MTLRenderPassDescriptor;
 pub const RenderPipelineColorAttachmentDescriptor = @import("MTLRenderPipelineColorAttachmentDescriptor.zig").MTLRenderPipelineColorAttachmentDescriptor;

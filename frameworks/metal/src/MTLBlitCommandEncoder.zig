@@ -1,20 +1,23 @@
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const mtl = @import("root.zig");
 const MTLTexture = @import("MTLTexture.zig").MTLTexture;
 
 pub const MTLBlitCommandEncoder = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = mtl.CommandEncoder.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     pub fn copyFromTexture(self: *Self, source: *MTLTexture, destination: *MTLTexture) void {
-        h.call(self, void, "copyFromTexture:toTexture:", .{ source, destination });
+        h._call(self, void, "copyFromTexture:toTexture:", .{ source, destination });
     }
 
-    pub fn endEncoding(self: *Self) void {
-        h.call(self, void, "endEncoding", .{});
-    }
+    pub const endEncoding = h.endEncoding;
 };

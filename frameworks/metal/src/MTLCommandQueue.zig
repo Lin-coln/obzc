@@ -1,17 +1,22 @@
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 const MTLCommandBuffer = @import("MTLCommandBuffer.zig").MTLCommandBuffer;
 
 pub const MTLCommandQueue = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     /// Returns an autoreleased command buffer, or null on allocation failure.
     pub fn commandBuffer(self: *Self) ?*MTLCommandBuffer {
-        return h.call(self, ?*MTLCommandBuffer, "commandBuffer", .{});
+        return h._call(self, ?*MTLCommandBuffer, "commandBuffer", .{});
     }
 };

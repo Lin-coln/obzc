@@ -1,26 +1,33 @@
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const z = @import("macos").z;
-const MTLTexture = @import("MTLTexture.zig").MTLTexture;
+const mtl = @import("root.zig");
 
 pub const MTLRenderPassColorAttachmentDescriptor = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = mtl.RenderPassAttachmentDescriptor.Mixin(Self);
+
+    pub const _encoding = h._encoding;
 
     pub const retain = h.retain;
     pub const release = h.release;
-    pub const new = h.cls.new;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const texture = h.prop("texture", ?*MTLTexture).getter;
-    pub const setTexture = h.prop("texture", ?*MTLTexture).setter;
-    pub const loadAction = h.prop("loadAction", z.MTLLoadAction).getter;
-    pub const setLoadAction = h.prop("loadAction", z.MTLLoadAction).setter;
-    pub const storeAction = h.prop("storeAction", z.MTLStoreAction).getter;
-    pub const setStoreAction = h.prop("storeAction", z.MTLStoreAction).setter;
-    pub const clearColor = h.prop("clearColor", z.MTLClearColor).getter;
-    pub const setClearColor = h.prop("clearColor", z.MTLClearColor).setter;
+    pub fn new() *Self {
+        return h._cls(null).new(Self);
+    }
+
+    pub const texture = h.texture;
+    pub const setTexture = h.setTexture;
+    pub const loadAction = h.loadAction;
+    pub const setLoadAction = h.setLoadAction;
+    pub const storeAction = h.storeAction;
+    pub const setStoreAction = h.setStoreAction;
+    pub const clearColor = h._p("clearColor", z.MTLClearColor).getter;
+    pub const setClearColor = h._p("clearColor", z.MTLClearColor).setter;
 };
 
 test "MTLRenderPassColorAttachmentDescriptor: clear color struct and attachment actions" {
@@ -43,8 +50,8 @@ test "MTLRenderPassColorAttachmentDescriptor: clear color struct and attachment 
 test "MTLRenderPassColorAttachmentDescriptor: texture can be assigned and cleared" {
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
     const MTLTextureDescriptor = @import("MTLTextureDescriptor.zig").MTLTextureDescriptor;
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 8, 4, false);
