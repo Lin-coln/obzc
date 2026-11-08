@@ -1,0 +1,62 @@
+const std = @import("std");
+const builtin = @import("builtin");
+const c = @import("macos").c;
+const z = @import("macos").z;
+const Sel = @import("metadata.zig").Sel;
+const cast = @import("metadata.zig").cast;
+
+pub fn call(receiver: anytype, comptime Return: type, name: [:0]const u8, args: anytype) Return {
+    const fields = @typeInfo(@TypeOf(args)).@"struct".field_types;
+    comptime var types: [fields.len]type = undefined;
+    inline for (fields, 0..) |Field, i| types[i] = cast.type.z2c(Field);
+
+    var c_args: @Tuple(&types) = undefined;
+    inline for (args, 0..) |value, i| c_args[i] = cast.z2c(value);
+
+    const result = send(receiver, cast.type.z2c(Return), Sel.get(name), c_args);
+    return if (Return == bool) cast.c2z(result) else result;
+}
+
+/// Sends `sel` to `target` by calling objc_msgSend cast to `fn (@TypeOf(target), SEL, args...) Return`.
+/// `Return` and the types of `args` must match the method's declaration exactly; mismatches are not caught at compile time.
+pub fn send(target: anytype, comptime Return: type, sel: *Sel, args: anytype) Return {
+    // See objc/message.h: x86_64 needs objc_msgSend_stret for structs returned in memory
+    // and objc_msgSend_fpret for long double; arm64 uses objc_msgSend for everything.
+    const entry = comptime switch (builtin.target.cpu.arch) {
+        .aarch64 => &c.objc_msgSend,
+        .x86_64 => if (@typeInfo(Return) == .@"struct" and @sizeOf(Return) > 16)
+            &c.objc_msgSend_stret
+        else if (Return == c_longdouble)
+            &c.objc_msgSend_fpret
+        else
+            &c.objc_msgSend,
+        else => @compileError("unsupported architecture for objc_msgSend"),
+    };
+    const f: *const MsgSendFn(@TypeOf(target), Return, @TypeOf(args)) = @ptrCast(entry);
+    return @call(.auto, f, .{ target, sel } ++ args);
+}
+
+// /// Like `send`, but starts the method lookup at `superclass` instead of `target`'s class.
+// pub fn sendSuper(target: anytype, superclass: *Class, comptime Return: type, sel: *Sel, args: anytype) Return {
+//     // There is no objc_msgSendSuper_fpret: the receiver of a super send is never nil.
+//     const entry = comptime switch (builtin.target.cpu.arch) {
+//         .aarch64 => &c.objc_msgSendSuper,
+//         .x86_64 => if (@typeInfo(Return) == .@"struct" and @sizeOf(Return) > 16)
+//             &c.objc_msgSendSuper_stret
+//         else
+//             &c.objc_msgSendSuper,
+//         else => @compileError("unsupported architecture for objc_msgSendSuper"),
+//     };
+//     var super: c.struct_objc_super = .{ .receiver = @ptrCast(target), .super_class = @ptrCast(superclass) };
+//     const f: *const MsgSendFn(*c.struct_objc_super, Return, @TypeOf(args)) = @ptrCast(entry);
+//     return @call(.auto, f, .{ &super, sel } ++ args);
+// }
+
+fn MsgSendFn(comptime Target: type, comptime Return: type, comptime Args: type) type {
+    const field_types = @typeInfo(Args).@"struct".field_types;
+    var param_types: [field_types.len + 2]type = undefined;
+    param_types[0] = Target;
+    param_types[1] = *Sel;
+    for (field_types, 0..) |T, i| param_types[i + 2] = T;
+    return @Fn(&param_types, &@splat(.{}), Return, .{ .@"callconv" = .c });
+}
