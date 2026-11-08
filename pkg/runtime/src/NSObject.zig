@@ -4,7 +4,6 @@ const z = @import("macos").z;
 const utils = @import("utils");
 const Sel = @import("metadata.zig").Sel;
 const Class = @import("Class.zig").Class;
-const prop = @import("prop.zig");
 
 pub fn NSObjectPrototype(comptime T: type) type {
     return struct {
@@ -30,10 +29,21 @@ pub fn NSObjectPrototype(comptime T: type) type {
         pub fn _p(comptime name: [:0]const u8, comptime P: type) type {
             return struct {
                 pub fn getter(self: *const T) P {
-                    return prop.get(self, P, name);
+                    return @import("prop.zig").get(self, P, name);
                 }
                 pub fn setter(self: *T, value: P) void {
-                    prop.set(self, P, name, value);
+                    @import("prop.zig").set(self, P, name, value);
+                }
+            };
+        }
+
+        pub fn _ivar(comptime name: [:0]const u8, comptime P: type) type {
+            return struct {
+                pub fn getter(self: *const T) P {
+                    return @import("ivar.zig").get(self, P, name);
+                }
+                pub fn setter(self: *T, value: P) void {
+                    @import("ivar.zig").set(self, P, name, value);
                 }
             };
         }
