@@ -6,11 +6,13 @@ pub fn build(b: *std.Build) void {
 
     const test_step = b.step("test", "Run runtime tests");
 
-    const macos, const utils = blk: {
+    const macos, const utils, const encode = blk: {
         const opts = .{ .target = target, .optimize = optimize };
+        const utils = b.dependency("utils", opts);
         break :blk .{
             b.dependency("macos", opts).module("macos"),
-            b.dependency("utils", opts).module("utils"),
+            utils.module("utils"),
+            utils.module("encode"),
         };
     };
 
@@ -22,6 +24,7 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "macos", .module = macos },
                 .{ .name = "utils", .module = utils },
+                .{ .name = "utils/encode", .module = encode },
             },
         });
         mod.linkSystemLibrary("objc", .{});
