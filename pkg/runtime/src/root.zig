@@ -1,5 +1,9 @@
 pub const AutoReleasePool = @import("AutoReleasePool.zig").AutoReleasePool;
 
+pub const Sel = @import("metadata.zig").Sel;
+
+pub const ClassPair = @import("Class.zig").ClassPair;
+
 pub const Block = @import("block/root.zig").Block;
 
 pub const NSObjectPrototype = @import("NSObject.zig").NSObjectPrototype;
