@@ -1,34 +1,37 @@
 const std = @import("std");
 const z = @import("macos").z;
 const builtin = @import("builtin");
-const core = @import("core");
-const e = core.ffi.metadata.e;
-const NSString = @import("NSString.zig").NSString;
+const ns = @import("root.zig");
 
 pub const NSError = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     pub fn init(domain_name: []const u8, error_code: z.NSInteger) ?*Self {
-        const domain_string = NSString.init(domain_name) orelse return null;
+        const domain_string = ns.String.init(domain_name) orelse return null;
         defer domain_string.release();
 
-        const allocated: *Self = h.cls.alloc();
-        return h.call(
+        const allocated = h._cls()._call(*Self, "alloc", .{});
+        return h._call(
             allocated,
             ?*Self,
             "initWithDomain:code:userInfo:",
-            .{ domain_string, error_code, @as(?*core.ffi.Object, null) },
+            .{ domain_string, error_code, @as(?*ns.Dictionary(ns.String, ns.Object), null) },
         );
     }
 
-    pub const code = h.prop("code", z.NSInteger).getter;
-    pub const domain = h.prop("domain", *NSString).getter;
-    pub const localizedDescription = h.prop("localizedDescription", *NSString).getter;
+    pub const code = h._p("code", z.NSInteger).getter;
+    pub const domain = h._p("domain", *ns.String).getter;
+    pub const localizedDescription = h._p("localizedDescription", *ns.String).getter;
 
     pub fn log(self: *Self) void {
         if (builtin.is_test) return;
@@ -42,13 +45,15 @@ pub const NSError = opaque {
 };
 
 test "NSError: create and read Objective-C properties" {
-    const pool = core.AutoReleasePool.create();
-    defer pool.release();
+    const pool = z.objc_autoreleasePoolPush();
+    defer z.objc_autoreleasePoolPop(pool);
 
     const err = NSError.init("ObjcZigTestDomain", 42).?;
     defer err.release();
 
     try std.testing.expectEqual(42, err.code());
+    try std.testing.expect(err.equal(err));
+    try std.testing.expect(err.isKindOfClass(err.class()));
 
     try std.testing.expectEqualStrings("ObjcZigTestDomain", err.domain().utf8String());
 
