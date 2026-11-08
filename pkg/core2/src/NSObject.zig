@@ -6,38 +6,21 @@ const msg = @import("msg.zig");
 const Sel = @import("metadata.zig").Sel;
 const Class = @import("Class.zig").Class;
 
-/// The Objective-C root class declared in objc/NSObject.h.
-pub const NSObject = opaque {
-    pub const Mixin = NSObjectMixin;
-
-    const Self = @This();
-
-    const h = Mixin(Self);
-    pub const _encoding = h._encoding;
-    pub const retain = h.retain;
-    pub const release = h.release;
-    pub const equal = h.equal;
-    pub const hash = h.hash;
-    pub const class = h.class;
-    pub const isKindOfClass = h.isKindOfClass;
-    pub const respondsToSelector = h.respondsToSelector;
-
-    pub fn alloc() *Self {
-        return h._cls()._call(*Self, "alloc", .{});
-    }
-
-    pub fn new() *Self {
-        return h._cls()._call(*Self, "alloc", .{});
-    }
-
-    pub fn init(self: *Self) ?*Self {
-        return h._call(self, ?*Self, "init", .{});
-    }
-};
-
-fn NSObjectMixin(comptime T: type) type {
+pub fn NSObjectPrototype(comptime T: type) type {
     const class_name = comptime utils.resolveTypeName(@typeName(T));
     return struct {
+        // mixin helpers
+        pub const _encoding = "@";
+
+        pub inline fn _call(self: *const T, comptime Return: type, name: [:0]const u8, args: anytype) Return {
+            return msg.call(self, Return, name, args);
+        }
+
+        pub inline fn _cls() *Class {
+            return Class.lookup(class_name).?;
+        }
+
+        // methods
         pub fn retain(self: *T) *T {
             return @ptrCast(z.objc_retain(@ptrCast(self)).?);
         }
@@ -64,17 +47,6 @@ fn NSObjectMixin(comptime T: type) type {
 
         pub fn respondsToSelector(self: *const T, sel: *Sel) bool {
             return self._call(bool, "respondsToSelector:", .{sel});
-        }
-
-        // mixin helpers
-        pub const _encoding = "@";
-
-        pub inline fn _call(self: *const T, comptime Return: type, name: [:0]const u8, args: anytype) Return {
-            return msg.call(self, Return, name, args);
-        }
-
-        pub inline fn _cls() *Class {
-            return Class.lookup(class_name).?;
         }
     };
 }

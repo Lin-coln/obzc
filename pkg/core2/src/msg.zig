@@ -14,7 +14,7 @@ pub fn call(receiver: anytype, comptime Return: type, name: [:0]const u8, args: 
     inline for (args, 0..) |value, i| c_args[i] = cast.z2c(value);
 
     const result = send(receiver, cast.type.z2c(Return), Sel.get(name), c_args);
-    return if (Return == bool) cast.c2z(result) else result;
+    return cast.c2z(result);
 }
 
 /// Sends `sel` to `target` by calling objc_msgSend cast to `fn (@TypeOf(target), SEL, args...) Return`.
