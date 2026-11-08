@@ -6,9 +6,8 @@ pub fn build(b: *std.Build) !void {
 
     // pkg/* and frameworks/*
     inline for (.{
-        // core
+        // platform and runtime
         "macos",
-        "core",
         "runtime",
 
         // foundation
