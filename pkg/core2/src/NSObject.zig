@@ -42,23 +42,23 @@ pub fn NSObjectPrototype(comptime T: type) type {
         }
 
         pub fn equal(self: *const T, other: ?*const T) bool {
-            return self._call(bool, "isEqual:", .{other});
+            return _call(self, bool, "isEqual:", .{other});
         }
 
         pub fn hash(self: *const T) z.NSUInteger {
-            return self._call(z.NSUInteger, "hash", .{});
+            return _call(self, z.NSUInteger, "hash", .{});
         }
 
         pub fn class(self: *const T) *Class {
-            return self._call(*Class, "class", .{});
+            return _call(self, *Class, "class", .{});
         }
 
         pub fn isKindOfClass(self: *const T, cls: *Class) bool {
-            return self._call(bool, "isKindOfClass:", .{cls});
+            return _call(self, bool, "isKindOfClass:", .{cls});
         }
 
         pub fn respondsToSelector(self: *const T, sel: *Sel) bool {
-            return self._call(bool, "respondsToSelector:", .{sel});
+            return _call(self, bool, "respondsToSelector:", .{sel});
         }
     };
 }
