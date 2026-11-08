@@ -1,4 +1,4 @@
-const core2 = @import("core2");
+const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
 const builtin = @import("builtin");
 const ns = @import("foundation");
@@ -67,7 +67,7 @@ pub const MTLDevice = opaque {
 };
 
 test "MTLDevice: newLibrary rejects invalid shader source" {
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
@@ -77,7 +77,7 @@ test "MTLDevice: newLibrary rejects invalid shader source" {
 }
 
 test "MTLDevice: newRenderPipelineState reports incompatible shader interfaces" {
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();

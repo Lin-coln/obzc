@@ -1,4 +1,4 @@
-const core2 = @import("core2");
+const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
 const z = @import("macos").z;
 const ns = @import("foundation");
@@ -30,7 +30,7 @@ pub const VNRecognizedTextObservation = opaque {
 };
 
 test "VNRecognizedTextObservation: read a bounding box and confidence" {
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
     const bounds: cg.Rect = .{
         .origin = .{ .x = 0.125, .y = 0.25 },

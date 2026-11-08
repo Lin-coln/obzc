@@ -5,12 +5,12 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Foundation tests");
-    const macos, const core, const core2, const cf = blk: {
+    const macos, const core, const rt, const cf = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
             b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
-            b.dependency("core2", opts).module("core2"),
+            b.dependency("runtime", opts).module("runtime"),
             b.dependency("core-foundation", opts).module("core-foundation"),
         };
     };
@@ -22,7 +22,7 @@ pub fn build(b: *std.Build) void {
             .imports = &.{
                 .{ .name = "macos", .module = macos },
                 .{ .name = "core", .module = core },
-                .{ .name = "core2", .module = core2 },
+                .{ .name = "runtime", .module = rt },
                 .{ .name = "core-foundation", .module = cf },
             },
         });

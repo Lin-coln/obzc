@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const test_step = b.step("test", "Run core2 tests");
+    const test_step = b.step("test", "Run runtime tests");
 
     const macos, const utils = blk: {
         const opts = .{ .target = target, .optimize = optimize };
@@ -14,8 +14,8 @@ pub fn build(b: *std.Build) void {
         };
     };
 
-    const core2 = blk: {
-        const mod = b.addModule("core2", .{
+    const rt = blk: {
+        const mod = b.addModule("runtime", .{
             .root_source_file = b.path("src/root.zig"),
             .target = target,
             .optimize = optimize,
@@ -33,5 +33,5 @@ pub fn build(b: *std.Build) void {
         break :blk mod;
     };
 
-    _ = core2;
+    _ = rt;
 }

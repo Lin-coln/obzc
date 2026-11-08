@@ -1,4 +1,4 @@
-const core2 = @import("core2");
+const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
 const builtin = @import("builtin");
 const ns = @import("foundation");
@@ -45,7 +45,7 @@ pub const VNImageRequestHandler = opaque {
 };
 
 test "VNImageRequestHandler: invalid image data fails without producing results" {
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
     const data = ns.Data.init("not an image");
     defer data.release();

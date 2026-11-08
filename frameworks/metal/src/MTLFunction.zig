@@ -1,4 +1,4 @@
-const core2 = @import("core2");
+const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
 const ns = @import("foundation");
 const z = @import("macos").z;
@@ -22,7 +22,7 @@ pub const MTLFunction = opaque {
 
 test "MTLFunction: functionType identifies a compute function" {
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();

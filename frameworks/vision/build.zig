@@ -5,11 +5,11 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run Vision tests");
-    const macos, const core2, const cg, const cv, const ns = blk: {
+    const macos, const rt, const cg, const cv, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
             b.dependency("macos", opts).module("macos"),
-            b.dependency("core2", opts).module("core2"),
+            b.dependency("runtime", opts).module("runtime"),
             b.dependency("core-graphics", opts).module("core-graphics"),
             b.dependency("core-video", opts).module("core-video"),
             b.dependency("foundation", opts).module("foundation"),
@@ -33,7 +33,7 @@ pub fn build(b: *std.Build) void {
         mod.linkFramework("Vision", .{ .needed = true });
 
         const test_mod = b.createModule(opts);
-        test_mod.addImport("core2", core2);
+        test_mod.addImport("runtime", rt);
         test_mod.linkFramework("Vision", .{ .needed = true });
 
         const tests = b.addTest(.{ .root_module = test_mod });

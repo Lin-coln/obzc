@@ -9,7 +9,7 @@ pub fn build(b: *std.Build) !void {
         // core
         "macos",
         "core",
-        "core2",
+        "runtime",
 
         // foundation
         "foundation",

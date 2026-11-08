@@ -1,4 +1,4 @@
-const core2 = @import("core2");
+const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
 const z = @import("macos").z;
 const mtl = @import("root.zig");
@@ -51,7 +51,7 @@ test "MTLRenderPassColorAttachmentDescriptor: clear color struct and attachment 
 test "MTLRenderPassColorAttachmentDescriptor: texture can be assigned and cleared" {
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
     const MTLTextureDescriptor = @import("MTLTextureDescriptor.zig").MTLTextureDescriptor;
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();

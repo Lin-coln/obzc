@@ -1,4 +1,4 @@
-const core2 = @import("core2");
+const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
 const z = @import("macos").z;
 const cf = @import("core-foundation");
@@ -51,7 +51,7 @@ pub const NSError = opaque {
 };
 
 test "NSError: create and read Objective-C properties" {
-    const pool = core2.AutoReleasePool.create();
+    const pool = AutoReleasePool.create();
     defer pool.release();
 
     const err = NSError.init("ObjcZigTestDomain", 42).?;

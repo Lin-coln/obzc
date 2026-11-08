@@ -1,8 +1,8 @@
-const NSObjectPrototype = @import("core2").NSObjectPrototype;
+const rt = @import("runtime");
 
 /// The Objective-C root class declared in Foundation/NSObject.h.
 pub const NSObject = opaque {
-    pub const Mixin = NSObjectPrototype;
+    pub const Mixin = rt.NSObjectPrototype;
 
     const Self = @This();
 
