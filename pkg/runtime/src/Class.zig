@@ -34,7 +34,7 @@ pub const Class = opaque {
     }
 
     pub fn allocateClassPair(self: *Self, class_name: [:0]const u8) !*ClassPair {
-        const allocated = c.objc_allocateClassPair(self, class_name, 0) orelse
+        const allocated = c.objc_allocateClassPair(@ptrCast(self), class_name, 0) orelse
             return error.AllocateClassFailed;
         return @ptrCast(allocated);
     }
