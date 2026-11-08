@@ -39,7 +39,7 @@ pub fn NSObjectPrototype(comptime T: type) type {
 
         pub fn _ivar(comptime name: [:0]const u8, comptime P: type) type {
             return struct {
-                pub fn getter(self: *const T) P {
+                pub fn getter(self: *T) P {
                     return @import("ivar.zig").get(self, P, name);
                 }
                 pub fn setter(self: *T, value: P) void {
