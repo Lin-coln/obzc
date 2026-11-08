@@ -11,7 +11,7 @@ pub const VNImageRequestHandler = opaque {
     pub const _encoding = e(.obj);
     const Self = @This();
     const h = core.h(Self);
-    const Options = ns.Dictionary.With(ns.String, core.ffi.Object);
+    const Options = ns.Dictionary.WithKey(ns.String);
 
     pub const retain = h.retain;
     pub const release = h.release;
@@ -43,7 +43,7 @@ test "VNImageRequestHandler: invalid image data fails without producing results"
     defer pool.release();
     const data = ns.Data.init("not an image");
     defer data.release();
-    const options = ns.Dictionary.With(ns.String, core.ffi.Object).new();
+    const options = ns.Dictionary.WithKey(ns.String).new();
     defer options.release();
     const handler = VNImageRequestHandler.initWithData(data, options);
     defer handler.release();

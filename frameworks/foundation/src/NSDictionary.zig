@@ -1,10 +1,11 @@
 const std = @import("std");
 const z = @import("macos").z;
+const cf = @import("core-foundation");
 const ns = @import("root.zig");
 
 pub const NSDictionary = opaque {
     pub const Mixin = NSDictionaryMixin;
-    pub const With = NSDictionary_With;
+    pub const WithKey = NSDictionary_WithKey;
 
     const Self = @This();
     const h = Mixin(Self);
@@ -19,6 +20,10 @@ pub const NSDictionary = opaque {
     pub const respondsToSelector = h.respondsToSelector;
     pub const count = h.count;
     pub const get = h.get;
+
+    pub fn asCFDictionary(self: *const Self) *const cf.Dictionary {
+        return @ptrCast(self);
+    }
 
     pub fn new() *Self {
         return h._cls(null).new(Self);
@@ -53,7 +58,7 @@ fn NSDictionaryMixin(comptime T: type) type {
     };
 }
 
-pub fn NSDictionary_With(comptime Key: type, comptime Value: type) type {
+pub fn NSDictionary_WithKey(comptime Key: type) type {
     return opaque {
         const Self = @This();
         const h = NSDictionaryMixin(Self);
@@ -68,37 +73,41 @@ pub fn NSDictionary_With(comptime Key: type, comptime Value: type) type {
         pub const respondsToSelector = h.respondToSelector;
         pub const count = h.count;
 
+        pub fn asCFDictionary(self: *const Self) *const cf.Dictionary.WithKey(Key) {
+            return @ptrCast(self);
+        }
+
         pub fn new() *Self {
             return h._cls(NSDictionary).new(Self);
         }
 
         /// Copies the keys and retains the values. Keys must conform to NSCopying.
-        pub fn init(objects: []const *Value, keys: []const *Key) *Self {
+        pub fn init(comptime Value: type, objects: []const *Value, keys: []const *Key) *Self {
             std.debug.assert(objects.len == keys.len);
             const allocated = h._cls(NSDictionary).alloc(Self);
             return h._call(allocated, *Self, "initWithObjects:forKeys:count:", .{ objects.ptr, keys.ptr, @as(z.NSUInteger, @intCast(objects.len)) });
         }
 
         /// Returns a borrowed value, or null when the key is absent.
-        pub fn get(self: *Self, key: *Key) ?*Value {
+        pub fn get(self: *Self, key: *Key, comptime Value: type) ?*Value {
             return h._call(self, ?*Value, "objectForKey:", .{key});
         }
     };
 }
 
 test "NSDictionary: new and init create empty dictionaries" {
-    const dictionary = NSDictionary.With(ns.String, ns.String).new();
+    const dictionary = NSDictionary.WithKey(ns.String).new();
     defer dictionary.release();
     const key = ns.String.init("missing").?;
     defer key.release();
 
     try std.testing.expectEqual(0, dictionary.count());
-    try std.testing.expect(dictionary.get(key) == null);
+    try std.testing.expect(dictionary.get(key, ns.String) == null);
 
-    const initialized = NSDictionary.With(ns.String, ns.String).init(&.{}, &.{});
+    const initialized = NSDictionary.WithKey(ns.String).init(ns.String, &.{}, &.{});
     defer initialized.release();
     try std.testing.expectEqual(0, initialized.count());
-    try std.testing.expect(initialized.get(key) == null);
+    try std.testing.expect(initialized.get(key, ns.String) == null);
 }
 
 test "NSDictionary: init and get preserve key-value pairs" {
@@ -112,7 +121,7 @@ test "NSDictionary: init and get preserve key-value pairs" {
         const second_value = ns.Number.init(z.NSInteger, 7);
         defer second_value.release();
 
-        break :initialized NSDictionary.With(ns.String, ns.Number).init(&.{ first_value, second_value }, &.{ first_key, second_key });
+        break :initialized NSDictionary.WithKey(ns.String).init(ns.Number, &.{ first_value, second_value }, &.{ first_key, second_key });
     };
     defer dictionary.release();
 
@@ -126,11 +135,14 @@ test "NSDictionary: init and get preserve key-value pairs" {
     try std.testing.expectEqual(2, dictionary.count());
     try std.testing.expect(dictionary.equal(dictionary));
     try std.testing.expect(dictionary.isKindOfClass(dictionary.class()));
-    try std.testing.expectEqual(42, dictionary.get(first_key).?.val(z.NSInteger));
-    try std.testing.expectEqual(7, dictionary.get(second_key).?.val(z.NSInteger));
-    try std.testing.expect(dictionary.get(missing_key) == null);
+    try std.testing.expectEqual(42, dictionary.get(first_key, ns.Number).?.val(z.NSInteger));
+    try std.testing.expectEqual(7, dictionary.get(second_key, ns.Number).?.val(z.NSInteger));
+    try std.testing.expect(dictionary.get(missing_key, ns.Number) == null);
+
+    const cf_dictionary = dictionary.asCFDictionary();
+    try std.testing.expectEqual(@intFromPtr(dictionary.get(first_key, ns.Number).?), @intFromPtr(cf_dictionary.get(@ptrCast(first_key), cf.Number).?));
 
     const untyped: *NSDictionary = @ptrCast(dictionary);
     try std.testing.expectEqual(2, untyped.count());
-    try std.testing.expectEqual(@intFromPtr(dictionary.get(first_key).?), @intFromPtr(untyped.get(@ptrCast(first_key)).?));
+    try std.testing.expectEqual(@intFromPtr(dictionary.get(first_key, ns.Number).?), @intFromPtr(untyped.get(@ptrCast(first_key)).?));
 }

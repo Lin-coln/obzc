@@ -1,6 +1,7 @@
 const std = @import("std");
 const c = @import("macos").c;
 const z = @import("macos").z;
+const cf = @import("core-foundation");
 const ns = @import("root.zig");
 
 pub const NSData = opaque {
@@ -25,6 +26,7 @@ pub const NSData = opaque {
     pub const setLength = h.setLength;
     pub const appendBytes = h.appendBytes;
     pub const mutableBytes = h.mutableBytes;
+    pub const asCFData = h.asCFData;
 };
 
 fn NSDataMixin(comptime T: type) type {
@@ -49,6 +51,10 @@ fn NSDataMixin(comptime T: type) type {
         pub const class = h.class;
         pub const isKindOfClass = h.isKindOfClass;
         pub const respondsToSelector = h.respondsToSelector;
+
+        pub fn asCFData(self: *const T) *const cf.Data {
+            return @ptrCast(self);
+        }
 
         pub fn new() *const T {
             return _cls(null).new(T);
@@ -97,6 +103,7 @@ test "NSData: new and init support empty data" {
     try std.testing.expect(@TypeOf(created) == *const NSData);
     try std.testing.expect(@TypeOf(initialized) == *const NSData);
     try std.testing.expectEqual(0, created.length());
+    try std.testing.expectEqual(0, created.asCFData().length());
     try std.testing.expectEqualSlices(u8, "", created.bytes());
     try std.testing.expectEqual(0, initialized.length());
     try std.testing.expectEqualSlices(u8, "", initialized.bytes());
@@ -109,6 +116,7 @@ test "NSData: init copies bytes including embedded NUL" {
     source[0] = 'x';
 
     try std.testing.expectEqual(3, data.length());
+    try std.testing.expectEqual(3, data.asCFData().length());
     try std.testing.expectEqualSlices(u8, "a\x00b", data.bytes());
     try std.testing.expect(data.equal(data));
     try std.testing.expect(data.isKindOfClass(data.class()));

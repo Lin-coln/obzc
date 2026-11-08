@@ -1,5 +1,6 @@
 const std = @import("std");
 const z = @import("macos").z;
+const cf = @import("core-foundation");
 const builtin = @import("builtin");
 const ns = @import("root.zig");
 
@@ -16,6 +17,10 @@ pub const NSError = opaque {
     pub const isKindOfClass = h.isKindOfClass;
     pub const respondsToSelector = h.respondsToSelector;
 
+    pub fn asCFError(self: *const Self) *const cf.Error {
+        return @ptrCast(self);
+    }
+
     pub fn init(domain_name: []const u8, error_code: z.NSInteger) ?*Self {
         const domain_string = ns.String.init(domain_name) orelse return null;
         defer domain_string.release();
@@ -25,7 +30,7 @@ pub const NSError = opaque {
             allocated,
             ?*Self,
             "initWithDomain:code:userInfo:",
-            .{ domain_string, error_code, @as(?*ns.Dictionary.With(ns.String, ns.Object), null) },
+            .{ domain_string, error_code, @as(?*ns.Dictionary.WithKey(ns.String), null) },
         );
     }
 
@@ -52,6 +57,7 @@ test "NSError: create and read Objective-C properties" {
     defer err.release();
 
     try std.testing.expectEqual(42, err.code());
+    try std.testing.expectEqual(42, err.asCFError().code());
     try std.testing.expect(err.equal(err));
     try std.testing.expect(err.isKindOfClass(err.class()));
 
