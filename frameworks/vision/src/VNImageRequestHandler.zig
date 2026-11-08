@@ -1,6 +1,6 @@
+const core2 = @import("core2");
 const std = @import("std");
 const builtin = @import("builtin");
-const z = @import("macos").z;
 const ns = @import("foundation");
 const cv = @import("core-video");
 const VNRequest = @import("VNRequest.zig").VNRequest;
@@ -45,8 +45,8 @@ pub const VNImageRequestHandler = opaque {
 };
 
 test "VNImageRequestHandler: invalid image data fails without producing results" {
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const data = ns.Data.init("not an image");
     defer data.release();
     const options = ns.Dictionary.WithKey(ns.String).new();

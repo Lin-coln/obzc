@@ -5,11 +5,12 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run ScreenCaptureKit tests");
-    const macos, const core, const cf, const cg, const cm, const ns = blk: {
+    const macos, const core, const core2, const cf, const cg, const cm, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
             b.dependency("macos", opts).module("macos"),
             b.dependency("core", opts).module("core"),
+            b.dependency("core2", opts).module("core2"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-graphics", opts).module("core-graphics"),
             b.dependency("core-media", opts).module("core-media"),
@@ -36,6 +37,7 @@ pub fn build(b: *std.Build) void {
         mod.linkFramework("ScreenCaptureKit", .{ .needed = true });
 
         const test_mod = b.createModule(opts);
+        test_mod.addImport("core2", core2);
         test_mod.linkFramework("ScreenCaptureKit", .{ .needed = true });
         test_mod.linkFramework("CoreGraphics", .{});
         test_mod.linkFramework("CoreMedia", .{});

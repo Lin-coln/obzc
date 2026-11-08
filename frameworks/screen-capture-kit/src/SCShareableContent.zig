@@ -1,3 +1,4 @@
+const core2 = @import("core2");
 const std = @import("std");
 const core = @import("core");
 const e = core.ffi.metadata.e;
@@ -32,7 +33,7 @@ pub const SCShareableContent = opaque {
 test "SCShareableContent: getShareableContent invokes a Zig completion" {
     // Preflight checks Screen Recording permission without requesting it.
     if (!cg.preflightScreenCaptureAccess()) return error.SkipZigTest;
-    const pool = core.AutoReleasePool.create();
+    const pool = core2.AutoReleasePool.create();
     defer pool.release();
 
     const State = struct {

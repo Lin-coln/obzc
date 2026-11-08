@@ -16,7 +16,7 @@ pub fn build(b: *std.Build) void {
 
     const core2 = blk: {
         const mod = b.addModule("core2", .{
-            .root_source_file = b.path("src/NSObject.zig"),
+            .root_source_file = b.path("src/root.zig"),
             .target = target,
             .optimize = optimize,
             .imports = &.{

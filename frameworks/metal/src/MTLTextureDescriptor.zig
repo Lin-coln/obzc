@@ -1,3 +1,4 @@
+const core2 = @import("core2");
 const std = @import("std");
 const ns = @import("foundation");
 const z = @import("macos").z;
@@ -44,8 +45,8 @@ pub const MTLTextureDescriptor = opaque {
 };
 
 test "MTLTextureDescriptor: configure texture dimensions and storage" {
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 32, 16, false);
     descriptor.setUsage(z.MTLTextureUsageShaderRead | z.MTLTextureUsageRenderTarget);
     descriptor.setStorageMode(z.MTLStorageModePrivate);

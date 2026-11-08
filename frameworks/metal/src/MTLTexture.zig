@@ -1,3 +1,4 @@
+const core2 = @import("core2");
 const std = @import("std");
 const z = @import("macos").z;
 const mtl = @import("root.zig");
@@ -25,8 +26,8 @@ pub const MTLTexture = opaque {
 
 test "MTLTexture: dimensions, format, and device describe the created resource" {
     const MTLTextureDescriptor = @import("MTLTextureDescriptor.zig").MTLTextureDescriptor;
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const descriptor = MTLTextureDescriptor.texture2DDescriptor(z.MTLPixelFormatBGRA8Unorm, 8, 4, false);

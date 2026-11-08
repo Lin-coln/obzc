@@ -1,4 +1,4 @@
-const z = @import("macos").z;
+const core2 = @import("core2");
 const std = @import("std");
 const ns = @import("foundation");
 const MTLFunction = @import("MTLFunction.zig").MTLFunction;
@@ -25,8 +25,8 @@ pub const MTLLibrary = opaque {
 
 test "MTLLibrary: newFunction finds a named function and returns null for a missing name" {
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init("kernel void available() {}").?;

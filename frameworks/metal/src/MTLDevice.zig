@@ -1,3 +1,4 @@
+const core2 = @import("core2");
 const std = @import("std");
 const builtin = @import("builtin");
 const ns = @import("foundation");
@@ -66,8 +67,8 @@ pub const MTLDevice = opaque {
 };
 
 test "MTLDevice: newLibrary rejects invalid shader source" {
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init("this is not a Metal shader").?;
@@ -76,8 +77,8 @@ test "MTLDevice: newLibrary rejects invalid shader source" {
 }
 
 test "MTLDevice: newRenderPipelineState reports incompatible shader interfaces" {
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init(

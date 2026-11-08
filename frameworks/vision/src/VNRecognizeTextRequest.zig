@@ -1,3 +1,4 @@
+const core2 = @import("core2");
 const std = @import("std");
 const z = @import("macos").z;
 const ns = @import("foundation");
@@ -43,8 +44,8 @@ pub const VNRecognizeTextRequest = opaque {
 };
 
 test "VNRecognizeTextRequest: configure recognition and region of interest" {
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const request = VNRecognizeTextRequest.new();
     defer request.release();
 

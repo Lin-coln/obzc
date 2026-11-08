@@ -1,6 +1,6 @@
+const core2 = @import("core2");
 const std = @import("std");
 const ns = @import("foundation");
-const z = @import("macos").z;
 const MTLFunction = @import("MTLFunction.zig").MTLFunction;
 const MTLRenderPipelineColorAttachmentDescriptorArray = @import("MTLRenderPipelineColorAttachmentDescriptorArray.zig").MTLRenderPipelineColorAttachmentDescriptorArray;
 
@@ -40,8 +40,8 @@ test "MTLRenderPipelineDescriptor: new has empty function slots" {
 
 test "MTLRenderPipelineDescriptor: function slots store and clear functions independently" {
     const MTLDevice = @import("MTLDevice.zig").MTLDevice;
-    const pool = z.objc_autoreleasePoolPush();
-    defer z.objc_autoreleasePoolPop(pool);
+    const pool = core2.AutoReleasePool.create();
+    defer pool.release();
     const device = MTLDevice.createSystemDefaultDevice() orelse return error.SkipZigTest;
     defer device.release();
     const source = ns.String.init(
