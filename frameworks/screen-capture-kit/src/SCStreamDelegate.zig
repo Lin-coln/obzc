@@ -1,12 +1,16 @@
-const core = @import("core");
-const e = core.ffi.metadata.e;
+const ns = @import("foundation");
 
 /// An Objective-C object conforming to the SCStreamDelegate protocol.
 pub const SCStreamDelegate = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 };

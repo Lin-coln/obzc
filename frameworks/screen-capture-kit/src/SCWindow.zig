@@ -1,25 +1,28 @@
 const c = @import("macos").c;
 const z = @import("macos").z;
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const SCRunningApplication = @import("SCRunningApplication.zig").SCRunningApplication;
 
 pub const SCWindow = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     pub fn windowID(self: *Self) c.CGWindowID {
-        return h.call(self, c.CGWindowID, "windowID", .{});
+        return h._call(self, c.CGWindowID, "windowID", .{});
     }
 
-    pub const frame = h.prop("frame", cg.Rect).getter;
-    pub const windowLayer = h.prop("windowLayer", z.NSInteger).getter;
-    pub const owningApplication = h.prop("owningApplication", ?*SCRunningApplication).getter;
-    pub const title = h.prop("title", ?*ns.String).getter;
+    pub const frame = h._p("frame", cg.Rect).getter;
+    pub const windowLayer = h._p("windowLayer", z.NSInteger).getter;
+    pub const owningApplication = h._p("owningApplication", ?*SCRunningApplication).getter;
+    pub const title = h._p("title", ?*ns.String).getter;
 };

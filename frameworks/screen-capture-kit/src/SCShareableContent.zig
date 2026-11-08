@@ -1,33 +1,34 @@
 const AutoReleasePool = @import("runtime").AutoReleasePool;
 const std = @import("std");
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const z = @import("macos").z;
 const ns = @import("foundation");
 const cg = @import("core-graphics");
 const SCWindow = @import("SCWindow.zig").SCWindow;
 
 pub const SCShareableContent = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const windows = h.prop("windows", *ns.Array.With(SCWindow)).getter;
+    pub const windows = h._p("windows", *ns.Array.With(SCWindow)).getter;
 
     /// The context pointer must remain valid until the completion handler returns.
-    pub const getShareableContent = h.cls.m.withCallback(
-        "getShareableContentWithCompletionHandler:",
-        fn (fn (?*Self, ?*ns.Error) void) void,
-    );
+    pub fn getShareableContent(ctx: anytype, comptime cb: *const fn (@TypeOf(ctx), ?*Self, ?*ns.Error) void) void {
+        h._cls(null)._callWithCallback(void, "getShareableContentWithCompletionHandler:", ctx, .{}, cb);
+    }
 
     /// Returns retained content. The caller must release the result.
-    pub const getShareableContentSync = h.cls.m.withSync(
-        "getShareableContentWithCompletionHandler:",
-        fn () anyerror!*Self,
-    );
+    pub fn getShareableContentSync() anyerror!*Self {
+        return h._cls(null)._callSync(anyerror!*Self, "getShareableContentWithCompletionHandler:", .{});
+    }
 };
 
 test "SCShareableContent: getShareableContent invokes a Zig completion" {

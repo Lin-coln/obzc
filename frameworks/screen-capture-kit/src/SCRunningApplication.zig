@@ -1,15 +1,18 @@
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const ns = @import("foundation");
 
 pub const SCRunningApplication = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
 
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
     /// The returned name is borrowed from the application.
-    pub const applicationName = h.prop("applicationName", *ns.String).getter;
+    pub const applicationName = h._p("applicationName", *ns.String).getter;
 };

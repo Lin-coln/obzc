@@ -1,8 +1,7 @@
 const std = @import("std");
 const c = @import("macos").c;
-const core = @import("core");
-const e = core.ffi.metadata.e;
 const z = @import("macos").z;
+const ns = @import("foundation");
 const cf = @import("core-foundation");
 const cg = @import("core-graphics");
 const cm = @import("core-media");
@@ -15,44 +14,52 @@ pub const SCCaptureResolutionType = enum(z.SCCaptureResolutionType) {
 };
 
 pub const SCStreamConfiguration = opaque {
-    pub const _encoding = e(.obj);
     const Self = @This();
-    const h = core.h(Self);
+    const h = ns.Object.Mixin(Self);
 
-    pub const new = h.cls.new;
+    pub const _encoding = h._encoding;
     pub const retain = h.retain;
     pub const release = h.release;
+    pub const equal = h.equal;
+    pub const hash = h.hash;
+    pub const class = h.class;
+    pub const isKindOfClass = h.isKindOfClass;
+    pub const respondsToSelector = h.respondsToSelector;
 
-    pub const width = h.prop("width", usize).getter;
-    pub const setWidth = h.prop("width", usize).setter;
-    pub const height = h.prop("height", usize).getter;
-    pub const setHeight = h.prop("height", usize).setter;
-    pub const queueDepth = h.prop("queueDepth", z.NSInteger).getter;
-    pub const setQueueDepth = h.prop("queueDepth", z.NSInteger).setter;
-    pub const showsCursor = h.prop("showsCursor", bool).getter;
-    pub const setShowsCursor = h.prop("showsCursor", bool).setter;
-    pub const capturesAudio = h.prop("capturesAudio", bool).getter;
-    pub const setCapturesAudio = h.prop("capturesAudio", bool).setter;
-    pub const minimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).getter;
-    pub const setMinimumFrameInterval = h.prop("minimumFrameInterval", cm.Time).setter;
+    pub fn new() *Self {
+        return h._cls(null).new(Self);
+    }
+
+    pub const width = h._p("width", usize).getter;
+    pub const setWidth = h._p("width", usize).setter;
+    pub const height = h._p("height", usize).getter;
+    pub const setHeight = h._p("height", usize).setter;
+    pub const queueDepth = h._p("queueDepth", z.NSInteger).getter;
+    pub const setQueueDepth = h._p("queueDepth", z.NSInteger).setter;
+    pub const showsCursor = h._p("showsCursor", bool).getter;
+    pub const setShowsCursor = h._p("showsCursor", bool).setter;
+    pub const capturesAudio = h._p("capturesAudio", bool).getter;
+    pub const setCapturesAudio = h._p("capturesAudio", bool).setter;
+    pub const minimumFrameInterval = h._p("minimumFrameInterval", cm.Time).getter;
+    pub const setMinimumFrameInterval = h._p("minimumFrameInterval", cm.Time).setter;
     pub fn pixelFormat(self: *Self) c.OSType {
-        return h.call(self, c.OSType, "pixelFormat", .{});
+        return h._call(self, c.OSType, "pixelFormat", .{});
     }
 
     pub fn setPixelFormat(self: *Self, format: c.OSType) void {
-        h.call(self, void, "setPixelFormat:", .{format});
+        h._call(self, void, "setPixelFormat:", .{format});
     }
-    pub const captureResolution = h.prop("captureResolution", SCCaptureResolutionType).getter;
-    pub const setCaptureResolution = h.prop("captureResolution", SCCaptureResolutionType).setter;
+    pub const captureResolution = h._p("captureResolution", SCCaptureResolutionType).getter;
+    pub const setCaptureResolution = h._p("captureResolution", SCCaptureResolutionType).setter;
     pub fn colorSpaceName(self: *Self) ?*const cf.String {
-        return h.call(self, ?*const cf.String, "colorSpaceName", .{});
+        return h._call(self, ?*const cf.String, "colorSpaceName", .{});
     }
 
     pub fn setColorSpaceName(self: *Self, name: ?*const cf.String) void {
-        h.call(self, void, "setColorSpaceName:", .{name});
+        h._call(self, void, "setColorSpaceName:", .{name});
     }
-    pub const backgroundColor = h.prop("backgroundColor", ?*cg.Color).getter;
-    pub const setBackgroundColor = h.prop("backgroundColor", ?*cg.Color).setter;
+    pub const backgroundColor = h._p("backgroundColor", ?*cg.Color).getter;
+    pub const setBackgroundColor = h._p("backgroundColor", ?*cg.Color).setter;
 };
 
 test "SCStreamConfiguration: configure video and audio properties" {

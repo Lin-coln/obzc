@@ -5,11 +5,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run ScreenCaptureKit tests");
-    const macos, const core, const rt, const cf, const cg, const cm, const ns = blk: {
+    const macos, const rt, const cf, const cg, const cm, const ns = blk: {
         const opts = .{ .target = target, .optimize = optimize };
         break :blk .{
             b.dependency("macos", opts).module("macos"),
-            b.dependency("core", opts).module("core"),
             b.dependency("runtime", opts).module("runtime"),
             b.dependency("core-foundation", opts).module("core-foundation"),
             b.dependency("core-graphics", opts).module("core-graphics"),
@@ -25,7 +24,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "macos", .module = macos },
-                .{ .name = "core", .module = core },
+                .{ .name = "runtime", .module = rt },
                 .{ .name = "foundation", .module = ns },
                 .{ .name = "core-foundation", .module = cf },
                 .{ .name = "core-graphics", .module = cg },
@@ -37,7 +36,6 @@ pub fn build(b: *std.Build) void {
         mod.linkFramework("ScreenCaptureKit", .{ .needed = true });
 
         const test_mod = b.createModule(opts);
-        test_mod.addImport("runtime", rt);
         test_mod.linkFramework("ScreenCaptureKit", .{ .needed = true });
         test_mod.linkFramework("CoreGraphics", .{});
         test_mod.linkFramework("CoreMedia", .{});

@@ -18,7 +18,15 @@ pub const Class = opaque {
         return self._call(*T, "new", .{});
     }
 
-    pub inline fn _call(self: *Self, comptime Return: type, name: [:0]const u8, args: anytype) Return {
+    pub inline fn _call(self: *Self, comptime Return: type, comptime name: [:0]const u8, args: anytype) Return {
         return call(self, Return, name, args);
+    }
+
+    pub inline fn _callWithCallback(self: *Self, comptime Return: type, comptime name: [:0]const u8, ctx: anytype, args: anytype, comptime cb: anytype) Return {
+        return @import("call.zig").callWithCallback(self, Return, name, ctx, args, cb);
+    }
+
+    pub inline fn _callSync(self: *Self, comptime Return: type, comptime name: [:0]const u8, args: anytype) Return {
+        return @import("call.zig").callSync(self, Return, name, args);
     }
 };
